@@ -116,6 +116,7 @@ export function Demo() {
   const streamRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
+  const hasProcessedNavPrompt = useRef(false);
 
   const hasApiKey = isConfigured();
 
@@ -239,7 +240,9 @@ export function Demo() {
   // Auto-trigger generation if navigated with a prompt from Landing page
   useEffect(() => {
     const navigationPrompt = (location.state as { prompt?: string })?.prompt;
-    if (navigationPrompt && hasApiKey && !isGenerating) {
+    if (navigationPrompt && hasApiKey && !isGenerating && !hasProcessedNavPrompt.current) {
+      // Mark as processed to prevent double-firing (React StrictMode)
+      hasProcessedNavPrompt.current = true;
       // Clear the state to prevent re-triggering on subsequent renders
       window.history.replaceState({}, document.title);
       // Small delay to ensure component is fully mounted

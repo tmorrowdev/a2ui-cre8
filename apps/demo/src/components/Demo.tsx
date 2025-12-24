@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Surface, useA2uiProcessor } from '@a2ui-bridge/react';
 import type { ServerToClientMessage, UserAction } from '@a2ui-bridge/core';
-import { generateUI, isConfigured } from '../services/ai';
+import { generateUI, isConfigured, getConfiguredProviders, PROVIDERS, type Provider } from '../services/ai';
 import { cn } from '@/lib/utils';
 
 // ShadCN Components
@@ -34,6 +34,7 @@ import {
   Target,
   Loader2,
   X,
+  ChevronDown,
 } from 'lucide-react';
 
 import { mantineComponents } from '../adapters/mantine';
@@ -105,6 +106,13 @@ export function Demo() {
   const [showPreview, setShowPreview] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [provider, setProvider] = useState<Provider>('anthropic');
+  const [availableProviders, setAvailableProviders] = useState<Record<Provider, boolean>>({
+    anthropic: false,
+    openai: false,
+    google: false,
+  });
+  const [providerDropdownOpen, setProviderDropdownOpen] = useState(false);
 
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -119,6 +127,17 @@ export function Demo() {
   const hasProcessedNavPrompt = useRef(false);
 
   const hasApiKey = isConfigured();
+
+  // Fetch available providers on mount
+  useEffect(() => {
+    getConfiguredProviders().then((providers) => {
+      setAvailableProviders(providers);
+      // Auto-select first available provider
+      if (providers.anthropic) setProvider('anthropic');
+      else if (providers.openai) setProvider('openai');
+      else if (providers.google) setProvider('google');
+    });
+  }, []);
 
   // Toggle dark mode
   const toggleDarkMode = useCallback(() => {
@@ -158,8 +177,13 @@ export function Demo() {
   const handleGenerate = useCallback(async (inputPrompt?: string) => {
     const textToSend = inputPrompt || prompt;
     if (!textToSend.trim() || isGenerating) return;
-    if (!hasApiKey) {
-      setError('API key not configured. Set VITE_ANTHROPIC_API_KEY in .env file.');
+    if (!availableProviders[provider]) {
+      const envVar = {
+        anthropic: 'VITE_ANTHROPIC_API_KEY',
+        openai: 'VITE_OPENAI_API_KEY',
+        google: 'VITE_GOOGLE_API_KEY',
+      }[provider];
+      setError(`API key not configured. Set ${envVar} in .env file.`);
       return;
     }
 
@@ -218,8 +242,8 @@ export function Demo() {
         setError(err.message);
         setIsGenerating(false);
       },
-    });
-  }, [prompt, hasApiKey, isGenerating, processor]);
+    }, provider);
+  }, [prompt, availableProviders, provider, isGenerating, processor]);
 
   // Handle keyboard shortcuts
   const handleKeyDown = useCallback(
@@ -274,17 +298,66 @@ export function Demo() {
               Predictive UI
             </Badge>
           </div>
-          <div className="flex items-center gap-1">
-            {parsedMessages.length > 0 && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" onClick={() => setSheetOpen(true)}>
-                    <Code className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>View Protocol</TooltipContent>
-              </Tooltip>
-            )}
+          <div className="flex items-center gap-2">
+            {/* Provider Selector */}
+            <div className="relative">
+              <button
+                onClick={() => setProviderDropdownOpen(!providerDropdownOpen)}
+                className={cn(
+                  "flex items-center gap-2 px-3 py-1.5 rounded-sm text-sm font-medium transition-colors",
+                  isDark
+                    ? "bg-zinc-700 border border-zinc-600 hover:bg-zinc-600 text-zinc-200"
+                    : "bg-zinc-100 border border-zinc-200 hover:bg-zinc-200 text-zinc-700"
+                )}
+              >
+                <span>{PROVIDERS[provider].name}</span>
+                <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", providerDropdownOpen && "rotate-180")} />
+              </button>
+              {providerDropdownOpen && (
+                <div
+                  className={cn(
+                    "absolute right-0 top-full mt-1 py-1 rounded-sm shadow-lg border z-50 min-w-[180px]",
+                    isDark ? "bg-zinc-800 border-zinc-700" : "bg-white border-zinc-200"
+                  )}
+                >
+                  {(Object.keys(PROVIDERS) as Provider[]).map((p) => (
+                    <button
+                      key={p}
+                      onClick={() => {
+                        setProvider(p);
+                        setProviderDropdownOpen(false);
+                      }}
+                      disabled={!availableProviders[p]}
+                      className={cn(
+                        "w-full flex items-center justify-between px-3 py-2 text-sm text-left transition-colors",
+                        provider === p
+                          ? isDark ? "bg-zinc-700 text-zinc-200" : "bg-zinc-100 text-zinc-900"
+                          : isDark ? "text-zinc-300 hover:bg-zinc-700" : "text-zinc-700 hover:bg-zinc-50",
+                        !availableProviders[p] && "opacity-50 cursor-not-allowed"
+                      )}
+                    >
+                      <span>{PROVIDERS[p].name}</span>
+                      {!availableProviders[p] && (
+                        <span className="text-xs text-zinc-400">No API key</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-1">
+              {parsedMessages.length > 0 && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" onClick={() => setSheetOpen(true)}>
+                      <Code className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>View Protocol</TooltipContent>
+                </Tooltip>
+              )}
+            </div>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button variant="ghost" size="icon" onClick={toggleDarkMode}>
@@ -410,12 +483,12 @@ export function Demo() {
                     </button>
                   </div>
                 )}
-                {!hasApiKey && (
+                {!Object.values(availableProviders).some(Boolean) && (
                   <div className={cn(
                     "p-3 rounded-sm mb-3 text-sm",
                     "bg-orange-500/10 text-orange-600 border border-orange-500/20"
                   )}>
-                    Set VITE_ANTHROPIC_API_KEY in .env
+                    Set API key in .env (VITE_ANTHROPIC_API_KEY, VITE_OPENAI_API_KEY, or VITE_GOOGLE_API_KEY)
                   </div>
                 )}
                 <div className="flex gap-2 items-end">
@@ -434,7 +507,7 @@ export function Demo() {
                   <Button
                     size="icon"
                     onClick={() => handleGenerate()}
-                    disabled={!prompt.trim() || !hasApiKey || isGenerating}
+                    disabled={!prompt.trim() || !availableProviders[provider] || isGenerating}
                   >
                     {isGenerating ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -503,7 +576,7 @@ export function Demo() {
                   </p>
                 </div>
                 <Badge variant="secondary" className="bg-blue-500/10 text-blue-600 border-0 text-sm px-3 py-1">
-                  Powered by Claude + A2UI Protocol
+                  Powered by {PROVIDERS[provider].name.split(' ')[0]} + A2UI Protocol
                 </Badge>
               </div>
             )}

@@ -1,14 +1,42 @@
 /**
  * AI Service for A2UI Generation
  *
- * Handles communication with Claude API to generate A2UI protocol messages.
- * API key is configured via VITE_ANTHROPIC_API_KEY environment variable.
+ * Handles communication with LLM APIs to generate A2UI protocol messages.
+ * Supports Anthropic (Claude), OpenAI (GPT), and Google (Gemini).
  */
 
 import type { ServerToClientMessage } from '@a2ui-bridge/core';
 import { A2UI_SYSTEM_PROMPT } from './system-prompt';
 
 const PROXY_URL = '/api/generate';
+const PROVIDERS_URL = '/api/providers';
+
+export type Provider = 'anthropic' | 'openai' | 'google';
+
+export interface ProviderInfo {
+  id: Provider;
+  name: string;
+  model: string;
+  configured: boolean;
+}
+
+export const PROVIDERS: Record<Provider, Omit<ProviderInfo, 'configured'>> = {
+  anthropic: {
+    id: 'anthropic',
+    name: 'Claude (Anthropic)',
+    model: 'claude-opus-4-5-20251101',
+  },
+  openai: {
+    id: 'openai',
+    name: 'GPT (OpenAI)',
+    model: 'gpt-5.2',
+  },
+  google: {
+    id: 'google',
+    name: 'Gemini (Google)',
+    model: 'gemini-3-flash',
+  },
+};
 
 export interface StreamCallbacks {
   onMessage: (messages: ServerToClientMessage[]) => void;
@@ -18,10 +46,31 @@ export interface StreamCallbacks {
 }
 
 /**
- * Check if API is configured via environment variable
+ * Fetch which providers have API keys configured
+ */
+export async function getConfiguredProviders(): Promise<Record<Provider, boolean>> {
+  try {
+    const response = await fetch(PROVIDERS_URL);
+    if (!response.ok) {
+      return { anthropic: false, openai: false, google: false };
+    }
+    return response.json();
+  } catch {
+    return { anthropic: false, openai: false, google: false };
+  }
+}
+
+/**
+ * Check if any provider is configured
  */
 export function isConfigured(): boolean {
-  return !!import.meta.env.VITE_ANTHROPIC_API_KEY;
+  // This is a synchronous check for backward compatibility
+  // Use getConfiguredProviders() for accurate async check
+  return !!(
+    import.meta.env.VITE_ANTHROPIC_API_KEY ||
+    import.meta.env.VITE_OPENAI_API_KEY ||
+    import.meta.env.VITE_GOOGLE_API_KEY
+  );
 }
 
 /**
@@ -54,13 +103,9 @@ function parseA2UIMessages(text: string): ServerToClientMessage[] {
  */
 export async function generateUI(
   prompt: string,
-  callbacks: StreamCallbacks
+  callbacks: StreamCallbacks,
+  provider: Provider = 'anthropic'
 ): Promise<void> {
-  if (!isConfigured()) {
-    callbacks.onError?.(new Error('API key not configured. Set VITE_ANTHROPIC_API_KEY in .env file.'));
-    return;
-  }
-
   try {
     const response = await fetch(PROXY_URL, {
       method: 'POST',
@@ -68,7 +113,8 @@ export async function generateUI(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-5-20251101',
+        provider,
+        model: PROVIDERS[provider].model,
         maxTokens: 4096,
         system: A2UI_SYSTEM_PROMPT,
         messages: [
@@ -136,4 +182,6 @@ export async function generateUI(
 export default {
   generateUI,
   isConfigured,
+  getConfiguredProviders,
+  PROVIDERS,
 };

@@ -132,6 +132,18 @@ Updates the data model for data binding:
 }
 \`\`\`
 
+**Image** - Display an image:
+\`\`\`json
+{
+  "Image": {
+    "url": { "literalString": "https://example.com/image.jpg" },
+    "alt": { "literalString": "Description of image" }
+  }
+}
+\`\`\`
+- url: Required. The image URL
+- alt: Accessibility text for the image
+
 ### Interactive Components
 
 **Button** - Clickable button with action:

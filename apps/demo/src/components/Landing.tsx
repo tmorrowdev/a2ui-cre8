@@ -2,13 +2,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { PageHeader, PageFooter } from '@/components/shared/PageLayout';
 import {
-  Github,
   ArrowRight,
   FileCode,
   Package,
   Terminal,
-  ExternalLink,
   Network,
   Component,
   Layers,
@@ -133,39 +132,7 @@ export function Landing() {
 
   return (
     <div className="min-h-screen bg-[#fafafa]">
-      {/* Header with Navigation */}
-      <header className="py-5 border-b border-gray-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-12">
-              <h4 className="text-xl text-title">A2UI Bridge</h4>
-              <nav className="hidden md:flex items-center gap-8">
-                <Link to="/learn" className="text-base text-gray-600 hover:text-gray-900 transition-colors text-nav">
-                  Learn
-                </Link>
-                <Link to="/use-cases" className="text-base text-gray-600 hover:text-gray-900 transition-colors text-nav">
-                  Use Cases
-                </Link>
-                <Link to="/teams" className="text-base text-gray-600 hover:text-gray-900 transition-colors text-nav">
-                  For Teams
-                </Link>
-                <Link to="/demo" className="text-base text-gray-600 hover:text-gray-900 transition-colors text-nav">
-                  Demo
-                </Link>
-              </nav>
-            </div>
-            <a
-              href="https://github.com/southleft/a2ui-bridge"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 text-lg text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <Github size={22} />
-              <span className="hidden sm:inline">GitHub</span>
-            </a>
-          </div>
-        </div>
-      </header>
+      <PageHeader />
 
       {/* Hero - Two Column Layout */}
       <div className="max-w-7xl mx-auto px-8 py-20">
@@ -631,114 +598,7 @@ export function Landing() {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="py-12 border-t border-gray-200 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-            {/* Brand */}
-            <div>
-              <h4 className="text-xl mb-4 text-title">A2UI Bridge</h4>
-              <p className="text-base text-muted-foreground text-feature">
-                A React implementation of Google's A2UI protocol for AI-generated user interfaces.
-              </p>
-            </div>
-
-            {/* Learn */}
-            <div>
-              <p className="text-muted-foreground mb-4 text-label">Learn</p>
-              <div className="flex flex-col gap-2">
-                <Link to="/learn" className="text-base text-muted-foreground hover:text-foreground transition-colors text-nav">
-                  What is A2UI?
-                </Link>
-                <Link to="/use-cases" className="text-base text-muted-foreground hover:text-foreground transition-colors text-nav">
-                  Use Cases
-                </Link>
-                <Link to="/teams" className="text-base text-muted-foreground hover:text-foreground transition-colors text-nav">
-                  For Teams
-                </Link>
-                <Link to="/demo" className="text-base text-muted-foreground hover:text-foreground transition-colors text-nav">
-                  Interactive Demo
-                </Link>
-              </div>
-            </div>
-
-            {/* Resources */}
-            <div>
-              <p className="text-muted-foreground mb-4 text-label">Resources</p>
-              <div className="flex flex-col gap-2">
-                <a
-                  href="https://a2ui.org"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-base text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 text-nav"
-                >
-                  A2UI Protocol <ExternalLink size={12} />
-                </a>
-                <a
-                  href="https://github.com/southleft/a2ui-bridge"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-base text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 text-nav"
-                >
-                  GitHub Repository <ExternalLink size={12} />
-                </a>
-                <a
-                  href="https://github.com/google/A2UI"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-base text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 text-nav"
-                >
-                  Google A2UI <ExternalLink size={12} />
-                </a>
-              </div>
-            </div>
-
-            {/* Community */}
-            <div>
-              <p className="text-muted-foreground mb-4 text-label">Community</p>
-              <div className="flex flex-col gap-2">
-                <a
-                  href="https://github.com/southleft/a2ui-bridge/issues"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-base text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 text-nav"
-                >
-                  Report an Issue <ExternalLink size={12} />
-                </a>
-                <a
-                  href="https://github.com/southleft/a2ui-bridge/discussions"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-base text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 text-nav"
-                >
-                  Discussions <ExternalLink size={12} />
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <Separator className="mb-8" />
-
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <p className="text-base text-muted-foreground">
-              Built by{' '}
-              <a href="https://southleft.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors font-medium">
-                Southleft
-              </a>
-            </p>
-            <div className="flex items-center gap-6">
-              <a
-                href="https://github.com/southleft/a2ui-bridge"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                <Github size={20} />
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageFooter />
     </div>
   );
 }

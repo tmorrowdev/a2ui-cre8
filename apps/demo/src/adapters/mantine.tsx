@@ -1200,7 +1200,12 @@ function DateTimeInputComponent({
   disabled?: boolean;
   onChange?: (value: string) => void;
 }) {
-  const inputType = enableTime ? 'datetime-local' : 'date';
+  // Determine input type based on enabled fields
+  const inputType = enableDate && enableTime
+    ? 'datetime-local'
+    : enableTime
+      ? 'time'
+      : 'date';
 
   return (
     <Box>

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Surface, useA2uiProcessor } from '@a2ui-bridge/react';
 import type { ServerToClientMessage, UserAction } from '@a2ui-bridge/core';
 import { generateUI, isConfigured, getConfiguredProviders, PROVIDERS, type Provider } from '../services/ai';
+import { generateUIWithSnippets, type GenerationStats } from '../services/snippets';
 import { cn } from '@/lib/utils';
 
 // ShadCN Components
@@ -35,9 +36,13 @@ import {
   Loader2,
   X,
   ChevronDown,
+  Zap,
+  Clock,
 } from 'lucide-react';
 
 import { mantineComponents } from '../adapters/mantine';
+import { StreamingProgress, StreamingProgressCompact } from './StreamingProgress';
+import { A2UIErrorBoundary } from './ErrorBoundary';
 
 // Intent-based scenarios (user-centric, not developer-centric)
 const SCENARIOS = [
@@ -101,6 +106,8 @@ export function Demo() {
     google: false,
   });
   const [providerDropdownOpen, setProviderDropdownOpen] = useState(false);
+  const [useSnippets, setUseSnippets] = useState(true); // Enable snippet mode by default
+  const [generationStats, setGenerationStats] = useState<GenerationStats | null>(null);
 
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -113,6 +120,7 @@ export function Demo() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const hasProcessedNavPrompt = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const hasApiKey = isConfigured();
 
@@ -161,6 +169,20 @@ export function Demo() {
     URL.revokeObjectURL(url);
   }, [parsedMessages]);
 
+  // Cancel generation
+  const handleCancel = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+      setIsGenerating(false);
+      setChatHistory((prev) => [...prev, {
+        role: 'assistant',
+        content: 'Generation cancelled.',
+        timestamp: new Date(),
+      }]);
+    }
+  }, []);
+
   // Generate UI from prompt
   const handleGenerate = useCallback(async (inputPrompt?: string) => {
     const textToSend = inputPrompt || prompt;
@@ -189,6 +211,10 @@ export function Demo() {
     setActionLog([]);
     setPrompt('');
     setShowPreview(false);
+    setGenerationStats(null);
+
+    // Create abort controller for cancellation
+    abortControllerRef.current = new AbortController();
 
     processor.processMessages([
       { deleteSurface: { surfaceId: '@default' } },
@@ -201,37 +227,83 @@ export function Demo() {
       }
     }, 50);
 
-    await generateUI(textToSend, {
-      onChunk: (chunk) => {
-        setProtocolStream((prev) => {
-          const newStream = prev + chunk;
-          setTimeout(() => {
-            if (streamRef.current) {
-              streamRef.current.scrollTop = streamRef.current.scrollHeight;
-            }
-          }, 10);
-          return newStream;
-        });
-      },
-      onMessage: (messages) => {
-        setParsedMessages(messages);
-        processor.processMessages(messages);
-        setShowPreview(true);
-      },
-      onComplete: () => {
-        setIsGenerating(false);
-        setChatHistory((prev) => [...prev, {
-          role: 'assistant',
-          content: 'Here\'s an interface to help you with that.',
-          timestamp: new Date(),
-        }]);
-      },
-      onError: (err) => {
-        setError(err.message);
-        setIsGenerating(false);
-      },
-    }, provider);
-  }, [prompt, availableProviders, provider, isGenerating, processor]);
+    // Use snippet-aware generation if enabled, otherwise fallback to traditional
+    if (useSnippets) {
+      await generateUIWithSnippets(textToSend, {
+        signal: abortControllerRef.current.signal,
+        onChunk: (chunk) => {
+          setProtocolStream((prev) => {
+            const newStream = prev + chunk;
+            setTimeout(() => {
+              if (streamRef.current) {
+                streamRef.current.scrollTop = streamRef.current.scrollHeight;
+              }
+            }, 10);
+            return newStream;
+          });
+        },
+        onMessage: (messages) => {
+          setParsedMessages(messages);
+          processor.processMessages(messages);
+          setShowPreview(true);
+        },
+        onComplete: (stats) => {
+          abortControllerRef.current = null;
+          setIsGenerating(false);
+          setGenerationStats(stats);
+          const timeStr = (stats.timeMs / 1000).toFixed(1);
+          setChatHistory((prev) => [...prev, {
+            role: 'assistant',
+            content: `Here's an interface to help you with that. (${timeStr}s, ${stats.snippetsUsed} snippets)`,
+            timestamp: new Date(),
+          }]);
+        },
+        onError: (err) => {
+          abortControllerRef.current = null;
+          if (err.name !== 'AbortError') {
+            setError(err.message);
+          }
+          setIsGenerating(false);
+        },
+      }, provider);
+    } else {
+      await generateUI(textToSend, {
+        signal: abortControllerRef.current.signal,
+        onChunk: (chunk) => {
+          setProtocolStream((prev) => {
+            const newStream = prev + chunk;
+            setTimeout(() => {
+              if (streamRef.current) {
+                streamRef.current.scrollTop = streamRef.current.scrollHeight;
+              }
+            }, 10);
+            return newStream;
+          });
+        },
+        onMessage: (messages) => {
+          setParsedMessages(messages);
+          processor.processMessages(messages);
+          setShowPreview(true);
+        },
+        onComplete: () => {
+          abortControllerRef.current = null;
+          setIsGenerating(false);
+          setChatHistory((prev) => [...prev, {
+            role: 'assistant',
+            content: 'Here\'s an interface to help you with that.',
+            timestamp: new Date(),
+          }]);
+        },
+        onError: (err) => {
+          abortControllerRef.current = null;
+          if (err.name !== 'AbortError') {
+            setError(err.message);
+          }
+          setIsGenerating(false);
+        },
+      }, provider);
+    }
+  }, [prompt, availableProviders, provider, isGenerating, processor, useSnippets]);
 
   // Handle keyboard shortcuts
   const handleKeyDown = useCallback(
@@ -297,6 +369,31 @@ export function Demo() {
             </Badge>
           </div>
           <div className="flex items-center gap-2">
+            {/* Snippet Mode Toggle */}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant={useSnippets ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setUseSnippets(!useSnippets)}
+                  className={cn(
+                    "gap-1.5 text-xs h-8",
+                    useSnippets
+                      ? "bg-amber-500 hover:bg-amber-600 text-white"
+                      : isDark ? "border-zinc-600" : ""
+                  )}
+                >
+                  <Zap className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">{useSnippets ? 'Fast Mode' : 'Standard'}</span>
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                {useSnippets
+                  ? 'Snippet composition enabled (faster generation)'
+                  : 'Traditional full generation (slower, more flexible)'}
+              </TooltipContent>
+            </Tooltip>
+
             {/* Provider Selector */}
             <div className="relative">
               <button
@@ -452,15 +549,11 @@ export function Demo() {
                     )}
                     {isGenerating && (
                       <div className="chat-message thinking-indicator self-start max-w-[85%]">
-                        <div className={cn(
-                          "px-3 py-2 text-sm flex items-center gap-2 rounded-tl-2xl rounded-tr-2xl rounded-br-2xl rounded-bl-sm",
-                          isDark
-                            ? "bg-zinc-700 border border-zinc-600"
-                            : "bg-white border border-zinc-200"
-                        )}>
-                          <Loader2 className="h-3 w-3 animate-spin text-zinc-400" />
-                          <span className="text-zinc-400">Creating your interface...</span>
-                        </div>
+                        <StreamingProgressCompact
+                          isGenerating={isGenerating}
+                          componentCount={parsedMessages.length}
+                          isDark={isDark}
+                        />
                       </div>
                     )}
                   </div>
@@ -527,11 +620,80 @@ export function Demo() {
             {/* Preview with animation */}
             {showPreview && parsedMessages.length > 0 && (
               <div className="preview-container w-full max-w-[600px]">
-                <Surface
-                  processor={processor}
-                  components={mantineComponents}
-                  onAction={handleAction}
-                />
+                <A2UIErrorBoundary
+                  isDark={isDark}
+                  onReset={() => {
+                    // Reset the surface state
+                    processor.processMessages([
+                      { deleteSurface: { surfaceId: '@default' } },
+                    ]);
+                    setShowPreview(false);
+                    setParsedMessages([]);
+                  }}
+                >
+                  <Surface
+                    processor={processor}
+                    components={mantineComponents}
+                    onAction={handleAction}
+                  />
+                </A2UIErrorBoundary>
+
+                {/* Generation Stats */}
+                {generationStats && (
+                  <div className={cn(
+                    "mt-4 p-3 rounded-sm border",
+                    isDark ? "border-zinc-700 bg-zinc-800/50" : "border-zinc-200 bg-zinc-50"
+                  )}>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Clock className={cn("h-3.5 w-3.5", isDark ? "text-zinc-400" : "text-zinc-500")} />
+                      <p className={cn("text-xs font-medium", isDark ? "text-zinc-400" : "text-zinc-500")}>
+                        Generation Stats
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-4 gap-3 text-center">
+                      <div>
+                        <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
+                          {(generationStats.timeMs / 1000).toFixed(1)}s
+                        </p>
+                        <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Time</p>
+                      </div>
+                      <div>
+                        <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
+                          {generationStats.snippetsUsed}
+                        </p>
+                        <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Snippets</p>
+                      </div>
+                      <div>
+                        <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
+                          {generationStats.totalComponents}
+                        </p>
+                        <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Components</p>
+                      </div>
+                      <div>
+                        <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
+                          ~{generationStats.responseTokensEstimate}
+                        </p>
+                        <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Tokens</p>
+                      </div>
+                    </div>
+                    <div className="mt-2 flex items-center gap-1">
+                      <Badge
+                        variant="secondary"
+                        className={cn(
+                          "text-[10px] px-1.5 py-0",
+                          generationStats.mode === 'snippets'
+                            ? "bg-green-500/10 text-green-600"
+                            : generationStats.mode === 'hybrid'
+                            ? "bg-amber-500/10 text-amber-600"
+                            : "bg-zinc-500/10 text-zinc-600"
+                        )}
+                      >
+                        {generationStats.mode === 'snippets' ? 'Pure Snippets' :
+                         generationStats.mode === 'hybrid' ? 'Hybrid' : 'Fallback'}
+                      </Badge>
+                    </div>
+                  </div>
+                )}
 
                 {/* Action Log - Expandable */}
                 {actionLog.length > 0 && (
@@ -583,12 +745,16 @@ export function Demo() {
               </div>
             )}
 
-            {/* Generating State */}
-            {isGenerating && parsedMessages.length === 0 && (
-              <div className="flex flex-col items-center gap-4">
-                <Loader2 className={cn("h-8 w-8 animate-spin", isDark ? "text-zinc-400" : "text-zinc-500")} />
-                <p className={isDark ? "text-zinc-400" : "text-zinc-500"}>Building your interface...</p>
-              </div>
+            {/* Generating State - Enhanced Streaming Progress */}
+            {isGenerating && (
+              <StreamingProgress
+                isGenerating={isGenerating}
+                componentCount={parsedMessages.length}
+                streamLength={protocolStream.length}
+                isDark={isDark}
+                className="py-8"
+                onCancel={handleCancel}
+              />
             )}
             </div>
           </main>

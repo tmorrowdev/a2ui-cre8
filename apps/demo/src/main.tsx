@@ -57,7 +57,7 @@ const theme = createTheme({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <HelmetProvider>
-      <MantineProvider theme={theme} defaultColorScheme="light">
+      <MantineProvider theme={theme} forceColorScheme="light">
         <BrowserRouter>
           <ScrollToTop />
           <Routes>

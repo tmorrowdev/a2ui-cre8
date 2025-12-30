@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { PageLayout } from './shared/PageLayout';
+import { SEO } from '@/components/shared/SEO';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -152,6 +153,11 @@ const SECURITY_POINTS = [
 export function Teams() {
   return (
     <PageLayout>
+      <SEO
+        title="For Teams"
+        description="How engineering teams, design system teams, product managers, and architects can leverage A2UI Bridge for AI-powered UI generation."
+        path="/teams"
+      />
       {/* Hero */}
       <div className="max-w-7xl mx-auto px-8 py-20">
         <div className="max-w-4xl">

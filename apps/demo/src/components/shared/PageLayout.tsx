@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 const NAV_LINKS = [
   { path: '/learn', label: 'Learn' },
+  { path: '/architecture', label: 'Architecture' },
   { path: '/use-cases', label: 'Use Cases' },
   { path: '/teams', label: 'For Teams' },
   { path: '/demo', label: 'Demo' },
@@ -117,6 +118,9 @@ export function PageFooter() {
             <div className="flex flex-col gap-3">
               <Link to="/learn" className="text-base text-gray-600 hover:text-gray-900 transition-colors text-nav">
                 What is A2UI?
+              </Link>
+              <Link to="/architecture" className="text-base text-gray-600 hover:text-gray-900 transition-colors text-nav">
+                Architecture
               </Link>
               <Link to="/use-cases" className="text-base text-gray-600 hover:text-gray-900 transition-colors text-nav">
                 Use Cases

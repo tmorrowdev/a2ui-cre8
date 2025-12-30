@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { PageLayout } from './shared/PageLayout';
+import { SEO } from '@/components/shared/SEO';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -125,6 +126,11 @@ const INTEGRATION_PATTERNS = [
 export function UseCases() {
   return (
     <PageLayout>
+      <SEO
+        title="Use Cases"
+        description="Explore real-world applications of A2UI Bridge: dynamic forms, adaptive workflows, internal tools, conversational commerce, and enterprise agent UIs."
+        path="/use-cases"
+      />
       {/* Hero */}
       <div className="max-w-7xl mx-auto px-8 py-20">
         <div className="max-w-4xl">

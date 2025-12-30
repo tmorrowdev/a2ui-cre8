@@ -9,7 +9,7 @@ interface SEOProps {
 const SITE_NAME = 'A2UI Bridge';
 const SITE_URL = 'https://a2ui.southleft.com';
 const DEFAULT_DESCRIPTION = 'Let AI agents build real user interfaces. A React implementation of Google\'s A2UI protocol for AI-generated UIs using your design system.';
-const OG_IMAGE = '/og-image.png';
+const OG_IMAGE = '/og-image.jpg';
 
 export function SEO({ title, description = DEFAULT_DESCRIPTION, path = '' }: SEOProps) {
   const pageTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;

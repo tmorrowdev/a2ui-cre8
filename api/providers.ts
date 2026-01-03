@@ -3,9 +3,18 @@
  * Returns which LLM providers have API keys configured
  */
 
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+interface Request {
+  method?: string;
+}
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+interface Response {
+  setHeader(name: string, value: string): Response;
+  status(code: number): Response;
+  end(): void;
+  json(data: unknown): void;
+}
+
+export default function handler(req: Request, res: Response) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');

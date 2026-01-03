@@ -3,11 +3,21 @@
  * Proxies requests to LLM APIs (Anthropic, OpenAI, Google)
  */
 
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-
 export const config = {
   maxDuration: 60, // Allow up to 60 seconds for MCP Enhanced mode
 };
+
+interface VercelRequest {
+  method?: string;
+  body: GenerateRequest;
+}
+
+interface VercelResponse {
+  setHeader(name: string, value: string): VercelResponse;
+  status(code: number): VercelResponse;
+  end(): void;
+  json(data: unknown): void;
+}
 
 type Provider = 'anthropic' | 'openai' | 'google';
 

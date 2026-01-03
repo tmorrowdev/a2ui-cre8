@@ -3,46 +3,19 @@
  * Proxies requests to LLM APIs (Anthropic, OpenAI, Google)
  */
 
-export const config = {
-  maxDuration: 60, // Allow up to 60 seconds for MCP Enhanced mode
-};
-
-interface VercelRequest {
-  method?: string;
-  body: GenerateRequest;
-}
-
-interface VercelResponse {
-  setHeader(name: string, value: string): VercelResponse;
-  status(code: number): VercelResponse;
-  end(): void;
-  json(data: unknown): void;
-}
-
-type Provider = 'anthropic' | 'openai' | 'google';
-
-interface GenerateRequest {
-  provider: Provider;
-  apiKey?: string;
-  model?: string;
-  maxTokens?: number;
-  system: string;
-  messages: Array<{ role: string; content: string }>;
-}
-
-const DEFAULT_MODELS: Record<Provider, string> = {
+const DEFAULT_MODELS = {
   anthropic: 'claude-sonnet-4-5-20250929',
   openai: 'gpt-4o',
   google: 'gemini-2.0-flash-exp',
 };
 
-const ENV_KEYS: Record<Provider, string> = {
+const ENV_KEYS = {
   anthropic: 'VITE_ANTHROPIC_API_KEY',
   openai: 'VITE_OPENAI_API_KEY',
   google: 'VITE_GOOGLE_API_KEY',
 };
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+module.exports = async function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -57,7 +30,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const requestData: GenerateRequest = req.body;
+  const requestData = req.body;
   const provider = requestData.provider || 'anthropic';
   const apiKey = requestData.apiKey || process.env[ENV_KEYS[provider]];
 
@@ -70,7 +43,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const model = requestData.model || DEFAULT_MODELS[provider];
     const maxTokens = requestData.maxTokens || 4096;
-    let data: unknown;
+    let data;
 
     if (provider === 'anthropic') {
       data = await callAnthropic(apiKey, model, maxTokens, requestData.system, requestData.messages);
@@ -87,15 +60,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.error(`${provider} API error:`, error);
     return res.status(500).json({ error: String(error) });
   }
-}
+};
 
-async function callAnthropic(
-  apiKey: string,
-  model: string,
-  maxTokens: number,
-  system: string,
-  messages: Array<{ role: string; content: string }>
-) {
+// Allow up to 60 seconds for MCP Enhanced mode
+module.exports.config = {
+  maxDuration: 60,
+};
+
+async function callAnthropic(apiKey, model, maxTokens, system, messages) {
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -119,13 +91,7 @@ async function callAnthropic(
   return response.json();
 }
 
-async function callOpenAI(
-  apiKey: string,
-  model: string,
-  maxTokens: number,
-  system: string,
-  messages: Array<{ role: string; content: string }>
-) {
+async function callOpenAI(apiKey, model, maxTokens, system, messages) {
   const openaiMessages = [
     { role: 'system', content: system },
     ...messages,
@@ -155,13 +121,7 @@ async function callOpenAI(
   };
 }
 
-async function callGoogle(
-  apiKey: string,
-  model: string,
-  maxTokens: number,
-  system: string,
-  messages: Array<{ role: string; content: string }>
-) {
+async function callGoogle(apiKey, model, maxTokens, system, messages) {
   const geminiContents = messages.map((msg) => ({
     role: msg.role === 'assistant' ? 'model' : 'user',
     parts: [{ text: msg.content }],

@@ -1472,9 +1472,11 @@ export const SelectAdapter = createAdapter(Select, {
         if (typeof opt === 'string') {
           return { value: opt, label: opt };
         }
-        // Handle object options
-        const value = String(opt.value ?? opt.id ?? opt.label ?? '');
-        const label = String(opt.label ?? opt.text ?? opt.value ?? value);
+        // Handle object options - ensure values are primitives, not nested objects
+        const rawValue = opt.value ?? opt.id ?? opt.label ?? '';
+        const value = typeof rawValue === 'object' ? JSON.stringify(rawValue) : String(rawValue);
+        const rawLabel = opt.label ?? opt.text ?? opt.value ?? value;
+        const label = typeof rawLabel === 'object' ? JSON.stringify(rawLabel) : String(rawLabel);
         return {
           value,
           label,
@@ -1518,8 +1520,11 @@ export const MultiSelectAdapter = createAdapter(MultiSelect, {
         if (typeof opt === 'string') {
           return { value: opt, label: opt };
         }
-        const value = String(opt.value ?? opt.id ?? opt.label ?? '');
-        const label = String(opt.label ?? opt.text ?? opt.value ?? value);
+        // Handle object options - ensure values are primitives, not nested objects
+        const rawValue = opt.value ?? opt.id ?? opt.label ?? '';
+        const value = typeof rawValue === 'object' ? JSON.stringify(rawValue) : String(rawValue);
+        const rawLabel = opt.label ?? opt.text ?? opt.value ?? value;
+        const label = typeof rawLabel === 'object' ? JSON.stringify(rawLabel) : String(rawLabel);
         return {
           value,
           label,
@@ -2312,7 +2317,9 @@ export const mantineComponents = createComponentMapping(
     textarea: TextAreaAdapter,
     dateTimeInput: DateTimeInputAdapter,
     dateInput: DateTimeInputAdapter,
+    DatePicker: DateTimeInputAdapter,
     datePicker: DateTimeInputAdapter,
+    DateInput: DateTimeInputAdapter,
     numberInput: NumberInputAdapter,
     passwordInput: PasswordInputAdapter,
     colorInput: ColorInputAdapter,

@@ -491,22 +491,23 @@ export function Landing() {
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 rounded-full bg-[#006699] text-white text-xl flex items-center justify-center">1</div>
                 <div>
-                  <p className="text-2xl text-headline">Install packages</p>
+                  <p className="text-2xl text-headline">Clone the repository</p>
                 </div>
               </div>
               <p className="text-lg text-muted-foreground mb-6 text-feature">
-                Add the A2UI Bridge packages to your project. The <strong className="text-strong">core</strong> package handles protocol parsing,
+                Clone the A2UI Bridge repo and build the packages. The <strong className="text-strong">core</strong> package handles protocol parsing,
                 while <strong className="text-strong">react</strong> provides hooks and components for rendering.
               </p>
               <div className="flex flex-wrap gap-3">
-                <Badge variant="secondary" className="text-base px-3 py-1">@a2ui-bridge/core</Badge>
-                <Badge variant="secondary" className="text-base px-3 py-1">@a2ui-bridge/react</Badge>
+                <Badge variant="secondary" className="text-base px-3 py-1">packages/core</Badge>
+                <Badge variant="secondary" className="text-base px-3 py-1">packages/react</Badge>
               </div>
             </div>
             <CodeBlock
               language="bash"
               label="Terminal"
-              code="npm install @a2ui-bridge/core @a2ui-bridge/react"
+              code={`git clone https://github.com/tpitre/a2ui-bridge.git
+cd a2ui-bridge && pnpm install && pnpm build`}
             />
           </div>
 

@@ -7,6 +7,8 @@
 
 import type { ServerToClientMessage } from '@a2ui-bridge/core';
 import { A2UI_SYSTEM_PROMPT } from './system-prompt';
+import { composeFromAIResponse } from './snippets/composer';
+import { initializeSnippetLibrary } from './snippets/library';
 
 const PROXY_URL = '/api/generate';
 const PROVIDERS_URL = '/api/providers';
@@ -74,11 +76,60 @@ export function isConfigured(): boolean {
   );
 }
 
+// Ensure snippets are initialized for composition
+let snippetsInitialized = false;
+function ensureSnippetsInitialized(): void {
+  if (!snippetsInitialized) {
+    initializeSnippetLibrary();
+    snippetsInitialized = true;
+  }
+}
+
+/**
+ * Try to parse as snippet composition format (object with "compose" array)
+ * Returns A2UI messages if successful, null otherwise
+ */
+function tryParseSnippetComposition(text: string): ServerToClientMessage[] | null {
+  try {
+    // Try to find JSON object in the response
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) return null;
+
+    const parsed = JSON.parse(jsonMatch[0]);
+
+    // Check if it's snippet composition format (has compose array)
+    if (parsed && Array.isArray(parsed.compose)) {
+      console.log('[A2UI] Detected snippet composition format, converting...');
+      ensureSnippetsInitialized();
+
+      const result = composeFromAIResponse(text);
+      if (result.success && result.messages) {
+        console.log('[A2UI] Snippet composition successful:', result.stats);
+        return result.messages;
+      } else {
+        console.warn('[A2UI] Snippet composition failed:', result.error);
+        return null;
+      }
+    }
+
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Parse A2UI messages from AI response text
+ * Supports both direct A2UI format and snippet composition format
  */
 function parseA2UIMessages(text: string): ServerToClientMessage[] {
-  // Try to find JSON array in the response
+  // First, try to parse as snippet composition format
+  const snippetMessages = tryParseSnippetComposition(text);
+  if (snippetMessages && snippetMessages.length > 0) {
+    return snippetMessages;
+  }
+
+  // Fall back to direct A2UI array format
   const jsonMatch = text.match(/\[[\s\S]*\]/);
   if (!jsonMatch) {
     console.warn('No JSON array found in response');
@@ -168,12 +219,17 @@ export async function generateUI(
     } else {
       // Handle non-streaming response
       const data = await response.json();
+      console.log('[A2UI] Raw response:', data);
       const text = data.content?.[0]?.text || data.text || JSON.stringify(data);
+      console.log('[A2UI] Extracted text:', text.substring(0, 500));
       callbacks.onChunk?.(text);
 
       const messages = parseA2UIMessages(text);
+      console.log('[A2UI] Parsed messages:', messages.length, 'messages');
       if (messages.length > 0) {
         callbacks.onMessage(messages);
+      } else {
+        console.warn('[A2UI] No messages parsed from response. AI may have returned invalid format.');
       }
     }
 

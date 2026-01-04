@@ -261,15 +261,12 @@ export function Demo() {
           setIsGenerating(false);
           setGenerationStats(stats);
           const timeStr = (stats.timeMs / 1000).toFixed(1);
-          // Include generated JSON in assistant message for context in follow-up requests
-          setProtocolStream((currentStream) => {
-            setChatHistory((prev) => [...prev, {
-              role: 'assistant',
-              content: currentStream || `Generated UI (${timeStr}s, ${stats.snippetsUsed} snippets)`,
-              timestamp: new Date(),
-            }]);
-            return currentStream;
-          });
+          // Show friendly message in chat (JSON is still visible in protocol stream panel)
+          setChatHistory((prev) => [...prev, {
+            role: 'assistant',
+            content: `Here's an interface to help you with that.`,
+            timestamp: new Date(),
+          }]);
         },
         onError: (err) => {
           abortControllerRef.current = null;

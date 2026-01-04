@@ -1464,7 +1464,8 @@ export const RadioGroupAdapter = createAdapter(Radio.Group, {
 /** Select adapter */
 export const SelectAdapter = createAdapter(Select, {
   mapProps: (a2ui, ctx) => {
-    const rawOptions = extractValue(a2ui.options) ?? [];
+    const extractedOptions = extractValue(a2ui.options);
+    const rawOptions = Array.isArray(extractedOptions) ? extractedOptions : [];
     const data = rawOptions
       .filter((opt: any) => opt != null)
       .map((opt: any) => {
@@ -1472,7 +1473,12 @@ export const SelectAdapter = createAdapter(Select, {
         if (typeof opt === 'string') {
           return { value: opt, label: opt };
         }
-        // Handle object options - use extractValue to unwrap literalString/literalNumber etc.
+        // Handle literalString wrapped options (e.g., { literalString: "Option 1" })
+        const unwrapped = extractValue(opt);
+        if (typeof unwrapped === 'string') {
+          return { value: unwrapped, label: unwrapped };
+        }
+        // Handle object options with value/label properties
         const rawValue = extractValue(opt.value) ?? extractValue(opt.id) ?? extractValue(opt.label) ?? '';
         const value = String(rawValue);
         const rawLabel = extractValue(opt.label) ?? extractValue(opt.text) ?? extractValue(opt.value) ?? value;
@@ -1513,14 +1519,20 @@ export const SelectAdapter = createAdapter(Select, {
 /** MultiSelect adapter */
 export const MultiSelectAdapter = createAdapter(MultiSelect, {
   mapProps: (a2ui, ctx) => {
-    const rawOptions = extractValue(a2ui.options) ?? [];
+    const extractedOptions = extractValue(a2ui.options);
+    const rawOptions = Array.isArray(extractedOptions) ? extractedOptions : [];
     const data = rawOptions
       .filter((opt: any) => opt != null)
       .map((opt: any) => {
         if (typeof opt === 'string') {
           return { value: opt, label: opt };
         }
-        // Handle object options - use extractValue to unwrap literalString/literalNumber etc.
+        // Handle literalString wrapped options (e.g., { literalString: "Option 1" })
+        const unwrapped = extractValue(opt);
+        if (typeof unwrapped === 'string') {
+          return { value: unwrapped, label: unwrapped };
+        }
+        // Handle object options with value/label properties
         const rawValue = extractValue(opt.value) ?? extractValue(opt.id) ?? extractValue(opt.label) ?? '';
         const value = String(rawValue);
         const rawLabel = extractValue(opt.label) ?? extractValue(opt.text) ?? extractValue(opt.value) ?? value;

@@ -76,6 +76,25 @@ function processComponent(
     processedProps.child = replaceSlots(processedProps.child, slots, instanceId);
   }
 
+  // Handle array slots that were stringified during JSON processing
+  // If a prop value is a string that looks like "{{slotName}}" and the slot is an array, use the array directly
+  for (const [key, value] of Object.entries(processedProps)) {
+    if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
+      const slotName = value.slice(2, -2);
+      if (slots[slotName] !== undefined) {
+        processedProps[key] = slots[slotName];
+      }
+    }
+    // Also handle cases where array was converted to string during JSON round-trip
+    if (typeof value === 'string' && value.startsWith('[') && value.endsWith(']')) {
+      try {
+        processedProps[key] = JSON.parse(value);
+      } catch {
+        // Not valid JSON array, keep as string
+      }
+    }
+  }
+
   return {
     id: processedId,
     component: {

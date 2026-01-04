@@ -107,7 +107,7 @@ export const selectSnippet: Snippet = {
     { name: 'label', type: 'string', required: true, description: 'Field label' },
     { name: 'binding', type: 'dataPath', required: true, description: 'Data model path' },
     { name: 'placeholder', type: 'string', default: 'Select...', description: 'Placeholder text' },
-    { name: 'options', type: 'string', description: 'Comma-separated options' },
+    { name: 'options', type: 'array', description: 'Array of option strings' },
   ],
   template: {
     componentIds: ['{{id}}-select'],
@@ -119,6 +119,7 @@ export const selectSnippet: Snippet = {
           label: { literalString: '{{label}}' },
           placeholder: { literalString: '{{placeholder}}' },
           value: { path: '{{binding}}' },
+          options: '{{options}}',
         },
       },
     ],

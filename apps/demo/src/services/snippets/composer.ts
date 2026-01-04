@@ -26,6 +26,7 @@ function generateId(prefix: string, index: number): string {
 /**
  * Replace slot placeholders in a string
  * Placeholders are in the format {{slotName}}
+ * NOTE: Array/object slots are skipped here and handled separately in processComponent
  */
 function replaceSlots(
   template: string,
@@ -37,8 +38,11 @@ function replaceSlots(
   // Replace {{id}} with instance ID
   result = result.replace(/\{\{id\}\}/g, instanceId);
 
-  // Replace other slots
+  // Replace other slots (skip arrays/objects - they're handled separately)
   for (const [key, value] of Object.entries(slots)) {
+    if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+      continue; // Skip arrays and objects - handled in processComponent
+    }
     const placeholder = `{{${key}}}`;
     result = result.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), String(value ?? ''));
   }
@@ -59,7 +63,7 @@ function processComponent(
 ): { id: string; component: Record<string, unknown> } {
   const processedId = replaceSlots(component.id, slots, instanceId);
 
-  // Deep clone and process props
+  // Deep clone and process props (string slots are replaced, array/object slots left as placeholders)
   const processedProps = JSON.parse(
     replaceSlots(JSON.stringify(component.props), slots, instanceId)
   );
@@ -76,16 +80,19 @@ function processComponent(
     processedProps.child = replaceSlots(processedProps.child, slots, instanceId);
   }
 
-  // Handle array slots that were stringified during JSON processing
-  // If a prop value is a string that looks like "{{slotName}}" and the slot is an array, use the array directly
-  for (const [key, value] of Object.entries(processedProps)) {
-    if (typeof value === 'string' && value.startsWith('{{') && value.endsWith('}}')) {
-      const slotName = value.slice(2, -2);
-      if (slots[slotName] !== undefined) {
-        processedProps[key] = slots[slotName];
+  // Handle array/object slots that were skipped during string replacement
+  // These will either be empty strings (from placeholder removal) or remaining placeholders
+  for (const [key, value] of Object.entries(slots)) {
+    if (Array.isArray(value) || (typeof value === 'object' && value !== null)) {
+      // Check if this prop exists in the template (will be empty string or placeholder after processing)
+      if (key in processedProps) {
+        processedProps[key] = value;
       }
     }
-    // Also handle cases where array was converted to string during JSON round-trip
+  }
+
+  // Also handle cases where array was converted to string during JSON round-trip (fallback)
+  for (const [key, value] of Object.entries(processedProps)) {
     if (typeof value === 'string' && value.startsWith('[') && value.endsWith(']')) {
       try {
         processedProps[key] = JSON.parse(value);

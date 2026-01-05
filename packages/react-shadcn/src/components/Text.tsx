@@ -8,10 +8,19 @@ import type { A2UIComponentProps } from '@a2ui-bridge/react';
 import { useTheme } from '../theme/context.js';
 import { cn, classesToString } from '../utils.js';
 
+type UsageHintValue = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'caption' | 'body';
+
 export function Text({ node }: A2UIComponentProps<TextNode>): JSX.Element {
   const theme = useTheme();
   const { properties } = node;
-  const usageHint = properties.usageHint || 'body';
+
+  // Extract usageHint - handle both string format and literalString object format
+  // Runtime data may come as { literalString: "h1" } even though types say string
+  const usageHintRaw = properties.usageHint as unknown;
+  const usageHint: UsageHintValue = typeof usageHintRaw === 'string'
+    ? (usageHintRaw as UsageHintValue)
+    : ((usageHintRaw as { literalString?: string; literal?: string })?.literalString ??
+       (usageHintRaw as { literalString?: string; literal?: string })?.literal ?? 'body') as UsageHintValue;
 
   // Get theme classes for the usage hint
   const themeClasses = theme.components.Text[usageHint] ?? theme.components.Text.all;

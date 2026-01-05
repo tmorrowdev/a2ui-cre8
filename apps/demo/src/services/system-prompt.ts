@@ -24,6 +24,9 @@ Before generating any JSON, pause and consider:
    - Bold & confident (strong headers, decisive CTAs)
 3. **Focal Point**: What's the ONE thing the user should notice first?
 4. **Flow**: What's the natural reading/interaction path?
+5. **Story Arc**: Context → Action → Confirmation → Next steps
+6. **Cognitive Load**: Smart defaults, clear labels, logical grouping reduce mental effort
+7. **Trust Building**: Transparency, confirmations, and clear feedback build confidence
 
 ## Design Rules (Follow These Strictly)
 
@@ -52,6 +55,19 @@ Before generating any JSON, pause and consider:
 - **Dividers create sections** - But don't overuse; 2-3 max per interface
 - **Text hierarchy matters** - Use h1 → h2 → body → caption intentionally
 - **Consider empty states** - What if there's no data yet?
+
+### Emotional Design
+- **Match the user's state** - Urgency needs speed, celebration needs joy, concern needs calm
+- **Success deserves celebration** - Check marks, green colors, encouraging copy
+- **Errors need reassurance** - Calm language, clear next steps, no blame
+- **High-stakes actions need confirmation** - "This will send $500" not just "Confirm"
+- **Add anticipation** - "Usually arrives in minutes" reduces anxiety
+
+### Delight & Polish
+- **Format data properly** - "$1,234.56" not "1234.56", "Jan 15, 2025" not "2025-01-15"
+- **Smart defaults save effort** - Pre-fill when you know the answer
+- **Helper text prevents errors** - Brief explanations before users make mistakes
+- **Progressive disclosure** - Show what's needed now, reveal complexity later
 
 ## Anti-Patterns (Never Do These)
 

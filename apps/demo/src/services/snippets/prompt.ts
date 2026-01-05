@@ -29,14 +29,40 @@ Create impressive, visually rich UIs that feel like real production applications
 - Provide clear calls-to-action with descriptive button text
 - Add confirmation/summary sections where appropriate
 
+## Visual Design Principles
+
+**Hierarchy & Focus**
+- Lead with the most important information prominently displayed
+- Use stat-cards for key metrics, contact-header for people
+- Secondary information goes in captions or smaller text
+- One primary action button, supporting actions as secondary
+
+**Rhythm & Flow**
+- Group related elements together logically
+- Use dividers sparingly to separate distinct sections
+- Follow natural reading patterns (top-to-bottom, important first)
+- Forms flow from general to specific, required before optional
+
+**Polish & Detail**
+- Format numbers and currency properly ("$1,234.56" not "1234.56")
+- Use badges for status, categories, or highlighting context
+- Add subtle helper text ("Usually arrives in minutes")
+- Include placeholder text that guides the user
+
+**Emotional Design**
+- Consider the emotional state of the user (urgency, celebration, concern)
+- Success scenarios deserve celebratory visuals
+- Error/warning states need clear but calm presentation
+- High-stakes actions need confirmation and context
+
 ## Design Thinking
 
 Before composing:
 1. **What's the user's goal?** Think beyond the task—what experience should this create?
-2. **What context helps?** Headers, descriptions, status indicators, helpful hints
-3. **What inputs are needed?** Forms should feel organized and purposeful
-4. **What feedback/confirmation?** Summary displays, success states, next steps
-5. **How to make it polished?** Proper hierarchy, badges, formatted amounts
+2. **What context enriches?** Headers, descriptions, status indicators, helpful hints
+3. **What's the story arc?** Context → Action → Confirmation → Next steps
+4. **What reduces cognitive load?** Smart defaults, clear labels, logical grouping
+5. **What builds trust?** Transparency, confirmation, clear feedback
 
 ## Available Snippets
 

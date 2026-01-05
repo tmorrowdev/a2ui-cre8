@@ -13,6 +13,11 @@ import { Divider } from './components/Divider.js';
 import { Separator } from './components/Separator.js';
 import { ScrollArea } from './components/ScrollArea.js';
 import { AspectRatio } from './components/AspectRatio.js';
+import { Flex } from './components/Flex.js';
+import { Grid } from './components/Grid.js';
+import { Center } from './components/Center.js';
+import { Box } from './components/Box.js';
+import { Container } from './components/Container.js';
 
 // Typography & Display
 import { Text } from './components/Text.js';
@@ -22,6 +27,9 @@ import { Link } from './components/Link.js';
 import { Image } from './components/Image.js';
 import { Avatar } from './components/Avatar.js';
 import { Skeleton } from './components/Skeleton.js';
+import { Title } from './components/Title.js';
+import { Code } from './components/Code.js';
+import { Blockquote } from './components/Blockquote.js';
 
 // Form inputs
 import { Button } from './components/Button.js';
@@ -33,6 +41,9 @@ import { Switch } from './components/Switch.js';
 import { Select } from './components/Select.js';
 import { RadioGroup } from './components/RadioGroup.js';
 import { Slider } from './components/Slider.js';
+import { ActionIcon } from './components/ActionIcon.js';
+import { MultiSelect } from './components/MultiSelect.js';
+import { NumberInput } from './components/NumberInput.js';
 
 // Feedback & Status
 import { Alert } from './components/Alert.js';
@@ -85,7 +96,7 @@ import { Fallback } from './components/Fallback.js';
  * ```
  */
 export const shadcnComponents: ComponentMapping = {
-  // Layout (7)
+  // Layout (12 + aliases)
   Row,
   Column,
   Card,
@@ -93,8 +104,17 @@ export const shadcnComponents: ComponentMapping = {
   Separator,
   ScrollArea,
   AspectRatio,
+  Flex,
+  Grid,
+  Center,
+  Box,
+  Container,
+  // Layout aliases
+  HStack: Row,
+  VStack: Column,
+  Stack: Column,
 
-  // Typography & Display (7)
+  // Typography & Display (10)
   Text,
   Badge,
   Label,
@@ -102,8 +122,19 @@ export const shadcnComponents: ComponentMapping = {
   Image,
   Avatar,
   Skeleton,
+  Title,
+  Code,
+  Blockquote,
+  // Typography aliases
+  Heading: Title,
+  H1: Title,
+  H2: Title,
+  H3: Title,
+  H4: Title,
+  H5: Title,
+  H6: Title,
 
-  // Form inputs (9)
+  // Form inputs (12)
   Button,
   Input,
   TextField,
@@ -113,6 +144,13 @@ export const shadcnComponents: ComponentMapping = {
   Select,
   RadioGroup,
   Slider,
+  ActionIcon,
+  MultiSelect,
+  NumberInput,
+  // Form aliases
+  IconButton: ActionIcon,
+  TextInput: TextField,
+  Textarea: TextArea,
 
   // Feedback & Status (5)
   Alert,
@@ -120,12 +158,17 @@ export const shadcnComponents: ComponentMapping = {
   Spinner,
   Toast,
   Tooltip,
+  // Feedback aliases
+  Loader: Spinner,
+  Loading: Spinner,
 
   // Navigation (4)
   Tabs,
   TabPanel,
   Breadcrumb,
   Pagination,
+  // Navigation aliases
+  Breadcrumbs: Breadcrumb,
 
   // Data display (6)
   List,
@@ -144,6 +187,10 @@ export const shadcnComponents: ComponentMapping = {
   Popover,
   DropdownMenu,
   HoverCard,
+  // Overlay aliases
+  Modal: Dialog,
+  Drawer: Sheet,
+  Menu: DropdownMenu,
 
   // Fallback for unknown components (1)
   // This is used by createComponentsWithFallback

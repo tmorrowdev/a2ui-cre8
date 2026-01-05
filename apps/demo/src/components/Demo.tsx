@@ -38,10 +38,12 @@ import {
   ChevronDown,
   Zap,
   Clock,
-  Brain,
+  Palette,
+  Sparkles,
 } from 'lucide-react';
 
-import { mantineComponents } from '../adapters/mantine';
+import { mantineComponents } from '@a2ui-bridge/react-mantine';
+import { shadcnComponents } from '@a2ui-bridge/react-shadcn';
 import { StreamingProgress, StreamingProgressCompact } from './StreamingProgress';
 import { A2UIErrorBoundary } from './ErrorBoundary';
 import { SEO } from '@/components/shared/SEO';
@@ -108,9 +110,10 @@ export function Demo() {
     google: false,
   });
   const [providerDropdownOpen, setProviderDropdownOpen] = useState(false);
+  const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
   const [useSnippets, setUseSnippets] = useState(true); // Enable snippet mode by default
-  const [useMcpTools, setUseMcpTools] = useState(false); // MCP tool use for component intelligence
   const [generationStats, setGenerationStats] = useState<GenerationStats | null>(null);
+  const [designSystem, setDesignSystem] = useState<'mantine' | 'shadcn'>('mantine');
 
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -136,6 +139,19 @@ export function Demo() {
       else if (providers.openai) setProvider('openai');
       else if (providers.google) setProvider('google');
     });
+  }, []);
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Element;
+      if (!target.closest('[data-dropdown]')) {
+        setModeDropdownOpen(false);
+        setProviderDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // Toggle dark mode
@@ -300,9 +316,7 @@ export function Demo() {
           setIsGenerating(false);
           setChatHistory((prev) => [...prev, {
             role: 'assistant',
-            content: useMcpTools
-              ? 'Here\'s an interface built with component intelligence.'
-              : 'Here\'s an interface to help you with that.',
+            content: 'Here\'s an interface to help you with that.',
             timestamp: new Date(),
           }]);
         },
@@ -313,9 +327,9 @@ export function Demo() {
           }
           setIsGenerating(false);
         },
-      }, provider, useMcpTools);
+      }, provider);
     }
-  }, [prompt, availableProviders, provider, isGenerating, processor, useSnippets, useMcpTools]);
+  }, [prompt, availableProviders, provider, isGenerating, processor, useSnippets]);
 
   // Handle keyboard shortcuts
   const handleKeyDown = useCallback(
@@ -386,60 +400,116 @@ export function Demo() {
             </Badge>
           </div>
           <div className="flex items-center gap-2">
-            {/* Snippet Mode Toggle */}
+            {/* Design System Segmented Toggle */}
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  variant={useSnippets ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setUseSnippets(!useSnippets)}
-                  className={cn(
-                    "gap-1.5 text-xs h-8",
-                    useSnippets
-                      ? "bg-amber-500 hover:bg-amber-600 text-white"
-                      : isDark ? "border-zinc-600" : ""
-                  )}
-                >
-                  <Zap className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">{useSnippets ? 'Fast Mode' : 'Standard'}</span>
-                </Button>
+                <div className={cn(
+                  "flex items-center rounded-md border p-0.5 h-8",
+                  isDark ? "border-zinc-600 bg-zinc-800" : "border-zinc-300 bg-zinc-100"
+                )}>
+                  <button
+                    onClick={() => setDesignSystem('mantine')}
+                    className={cn(
+                      "flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium transition-all",
+                      designSystem === 'mantine'
+                        ? "bg-blue-500 text-white shadow-sm"
+                        : isDark
+                          ? "text-zinc-400 hover:text-zinc-200"
+                          : "text-zinc-500 hover:text-zinc-700"
+                    )}
+                  >
+                    <Palette className="h-3 w-3" />
+                    Mantine
+                  </button>
+                  <button
+                    onClick={() => setDesignSystem('shadcn')}
+                    className={cn(
+                      "flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium transition-all",
+                      designSystem === 'shadcn'
+                        ? "bg-zinc-900 text-white shadow-sm"
+                        : isDark
+                          ? "text-zinc-400 hover:text-zinc-200"
+                          : "text-zinc-500 hover:text-zinc-700"
+                    )}
+                  >
+                    <Palette className="h-3 w-3" />
+                    ShadCN
+                  </button>
+                </div>
               </TooltipTrigger>
               <TooltipContent>
-                {useSnippets
-                  ? 'Snippet composition enabled (faster generation)'
-                  : 'Traditional full generation (slower, more flexible)'}
+                Switch between design systems to see the same UI rendered differently
               </TooltipContent>
             </Tooltip>
 
-            {/* MCP Tools Toggle - Only visible when not using snippets */}
-            {!useSnippets && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant={useMcpTools ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setUseMcpTools(!useMcpTools)}
+            {/* Mode Selector */}
+            <div className="relative" data-dropdown>
+              <button
+                onClick={() => setModeDropdownOpen(!modeDropdownOpen)}
+                className={cn(
+                  "flex items-center gap-2 px-3 py-1.5 rounded-sm text-sm font-medium transition-colors",
+                  isDark
+                    ? "bg-zinc-700 border border-zinc-600 hover:bg-zinc-600 text-zinc-200"
+                    : "bg-zinc-100 border border-zinc-200 hover:bg-zinc-200 text-zinc-700"
+                )}
+              >
+                {useSnippets ? <Zap className="h-3.5 w-3.5 text-amber-500" /> : <Sparkles className="h-3.5 w-3.5 text-violet-500" />}
+                <span>{useSnippets ? 'Fast' : 'Standard'}</span>
+                <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", modeDropdownOpen && "rotate-180")} />
+              </button>
+              {modeDropdownOpen && (
+                <div
+                  className={cn(
+                    "absolute right-0 top-full mt-1 py-1 rounded-sm shadow-lg border z-50 min-w-[200px]",
+                    isDark ? "bg-zinc-800 border-zinc-700" : "bg-white border-zinc-200"
+                  )}
+                >
+                  <button
+                    onClick={() => {
+                      setUseSnippets(true);
+                      setModeDropdownOpen(false);
+                    }}
                     className={cn(
-                      "gap-1.5 text-xs h-8",
-                      useMcpTools
-                        ? "bg-violet-500 hover:bg-violet-600 text-white"
-                        : isDark ? "border-zinc-600" : ""
+                      "w-full flex items-start gap-3 px-3 py-2.5 text-left transition-colors",
+                      useSnippets
+                        ? isDark ? "bg-zinc-700" : "bg-zinc-100"
+                        : isDark ? "hover:bg-zinc-700" : "hover:bg-zinc-50"
                     )}
                   >
-                    <Brain className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">{useMcpTools ? 'MCP Enhanced' : 'Basic'}</span>
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  {useMcpTools
-                    ? 'AI uses MCP tools to discover components and validate output'
-                    : 'Traditional generation without component intelligence'}
-                </TooltipContent>
-              </Tooltip>
-            )}
+                    <Zap className="h-4 w-4 mt-0.5 text-amber-500 flex-shrink-0" />
+                    <div>
+                      <div className={cn("font-medium text-sm", isDark ? "text-zinc-200" : "text-zinc-900")}>Fast Mode</div>
+                      <div className={cn("text-xs mt-0.5", isDark ? "text-zinc-400" : "text-zinc-500")}>
+                        Snippet composition (faster, cheaper)
+                      </div>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setUseSnippets(false);
+                      setModeDropdownOpen(false);
+                    }}
+                    className={cn(
+                      "w-full flex items-start gap-3 px-3 py-2.5 text-left transition-colors",
+                      !useSnippets
+                        ? isDark ? "bg-zinc-700" : "bg-zinc-100"
+                        : isDark ? "hover:bg-zinc-700" : "hover:bg-zinc-50"
+                    )}
+                  >
+                    <Sparkles className="h-4 w-4 mt-0.5 text-violet-500 flex-shrink-0" />
+                    <div>
+                      <div className={cn("font-medium text-sm", isDark ? "text-zinc-200" : "text-zinc-900")}>Standard</div>
+                      <div className={cn("text-xs mt-0.5", isDark ? "text-zinc-400" : "text-zinc-500")}>
+                        Full AI generation (more flexible)
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Provider Selector */}
-            <div className="relative">
+            <div className="relative" data-dropdown>
               <button
                 onClick={() => setProviderDropdownOpen(!providerDropdownOpen)}
                 className={cn(
@@ -677,7 +747,7 @@ export function Demo() {
                 >
                   <Surface
                     processor={processor}
-                    components={mantineComponents}
+                    components={designSystem === 'mantine' ? mantineComponents : shadcnComponents}
                     onAction={handleAction}
                   />
                 </A2UIErrorBoundary>

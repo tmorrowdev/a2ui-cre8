@@ -2,7 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Surface, useA2uiProcessor } from '@a2ui-bridge/react';
 import type { ServerToClientMessage, UserAction } from '@a2ui-bridge/core';
-import { generateUI, isConfigured, getConfiguredProviders, PROVIDERS, type Provider } from '../services/ai';
+import { generateUI, getConfiguredProviders, PROVIDERS, type Provider } from '../services/ai';
 import { generateUIWithSnippets, type GenerationStats, type ChatMessage as AIChatMessage } from '../services/snippets';
 import { cn } from '@/lib/utils';
 
@@ -109,6 +109,7 @@ export function Demo() {
     openai: false,
     google: false,
   });
+  const [providersChecked, setProvidersChecked] = useState(false);
   const [providerDropdownOpen, setProviderDropdownOpen] = useState(false);
   const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
   const [useSnippets, setUseSnippets] = useState(true); // Enable snippet mode by default
@@ -128,12 +129,11 @@ export function Demo() {
   const hasProcessedNavPrompt = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  const hasApiKey = isConfigured();
-
   // Fetch available providers on mount
   useEffect(() => {
     getConfiguredProviders().then((providers) => {
       setAvailableProviders(providers);
+      setProvidersChecked(true);
       // Auto-select first available provider
       if (providers.anthropic) setProvider('anthropic');
       else if (providers.openai) setProvider('openai');
@@ -360,7 +360,8 @@ export function Demo() {
   // Auto-trigger generation if navigated with a prompt from Landing page
   useEffect(() => {
     const navigationPrompt = (location.state as { prompt?: string })?.prompt;
-    if (navigationPrompt && hasApiKey && !isGenerating && !hasProcessedNavPrompt.current) {
+    // Wait for providers check to complete before triggering
+    if (navigationPrompt && providersChecked && !isGenerating && !hasProcessedNavPrompt.current) {
       // Mark as processed to prevent double-firing (React StrictMode)
       hasProcessedNavPrompt.current = true;
       // Clear the state to prevent re-triggering on subsequent renders
@@ -370,7 +371,7 @@ export function Demo() {
         handleGenerate(navigationPrompt);
       }, 100);
     }
-  }, [location.state, hasApiKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [location.state, providersChecked]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <TooltipProvider>
@@ -904,7 +905,14 @@ export function Demo() {
             {/* JSON Content */}
             <ScrollArea className="flex-1 mt-3">
               <div ref={streamRef}>
-                {protocolStream ? (
+                {parsedMessages.length > 0 ? (
+                  <pre className={cn(
+                    "text-xs p-4 rounded-sm whitespace-pre-wrap break-words font-mono leading-relaxed",
+                    isDark ? "bg-zinc-900 text-zinc-300" : "bg-zinc-50 text-zinc-700"
+                  )}>
+                    {JSON.stringify(parsedMessages, null, 2)}
+                  </pre>
+                ) : protocolStream ? (
                   <pre className={cn(
                     "text-xs p-4 rounded-sm whitespace-pre-wrap break-words font-mono",
                     isDark ? "bg-zinc-900 text-zinc-300" : "bg-zinc-50 text-zinc-700"

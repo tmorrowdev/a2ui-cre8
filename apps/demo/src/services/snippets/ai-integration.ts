@@ -120,7 +120,7 @@ export async function generateUIWithSnippets(
       },
       body: JSON.stringify({
         provider,
-        model: provider === 'anthropic' ? 'claude-sonnet-4-5-20250929' : undefined,
+        model: provider === 'anthropic' ? 'claude-opus-4-5-20251101' : undefined,
         maxTokens: 2048, // Much smaller - snippets need fewer tokens
         system: snippetPrompt,
         messages,

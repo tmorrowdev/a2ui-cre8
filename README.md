@@ -184,19 +184,19 @@ Removes a surface:
 
 ## Supported Components
 
-| Component | Description |
-|-----------|-------------|
-| `Text` | Text display with semantic hints (h1, h2, body, caption) |
-| `Button` | Interactive button with action callbacks |
-| `TextField` | Text input with data binding |
-| `CheckBox` | Boolean toggle |
-| `Card` | Container with border/shadow |
-| `Row` | Horizontal layout |
-| `Column` | Vertical layout |
-| `List` | Item container |
-| `Badge` | Status indicator |
-| `Divider` | Visual separator |
-| `Image` | Image display |
+Both design system packages support 70+ components across these categories:
+
+| Category | Components |
+|----------|------------|
+| **Layout** | Row, Column, Flex, Grid, Center, Box, Container, Card, Divider, ScrollArea, AspectRatio |
+| **Typography** | Text, Title, Code, Blockquote, Badge, Label, Link |
+| **Forms** | Button, ActionIcon, TextField, TextArea, Checkbox, Switch, Select, MultiSelect, RadioGroup, Slider, NumberInput |
+| **Feedback** | Alert, Progress, Spinner, Toast, Tooltip |
+| **Navigation** | Tabs, TabPanel, Breadcrumb, Pagination |
+| **Data Display** | List, Table, TableHeader, TableBody, TableRow, TableCell, Avatar, Image, Skeleton |
+| **Disclosure** | Accordion, AccordionItem, Collapsible, Dialog, Sheet, Popover, DropdownMenu, HoverCard |
+
+**Aliases included**: HStack, VStack, Stack, Modal, Drawer, Menu, Loader, IconButton, Heading, H1-H6, and more.
 
 ## Data Binding
 
@@ -230,37 +230,68 @@ Actions can include context from the data model:
 |---------|-------------|
 | `@a2ui-bridge/core` | Protocol processing, state management, data binding |
 | `@a2ui-bridge/react` | React adapter with hooks and Surface component |
+| `@a2ui-bridge/react-mantine` | **77 adapters** for Mantine UI components |
+| `@a2ui-bridge/react-shadcn` | **76 adapters** for ShadCN/Tailwind components |
+
+### Design System Adapters
+
+A2UI Bridge ships with two complete design system adapters you can use out of the box:
+
+```bash
+# Using Mantine (recommended for enterprise)
+npm install @a2ui-bridge/react-mantine @mantine/core @mantine/hooks
+
+# Using ShadCN/Tailwind (recommended for custom styling)
+npm install @a2ui-bridge/react-shadcn
+```
+
+```tsx
+// Mantine
+import { mantineComponents } from '@a2ui-bridge/react-mantine';
+<Surface components={mantineComponents} ... />
+
+// ShadCN/Tailwind
+import { shadcnComponents } from '@a2ui-bridge/react-shadcn';
+<Surface components={shadcnComponents} ... />
+```
+
+Both packages support 70+ component types including layouts, forms, navigation, feedback, and data display components.
 
 ## Architecture
 
 ```
-AI Agent (Claude, GPT, etc.)
-         |
-         v
-    A2UI JSON Messages
-         |
-         v
-+------------------+
-| @a2ui-bridge/core |  <-- Parses protocol, manages state
-+------------------+
-         |
-         v
-+------------------+
-| @a2ui-bridge/react|  <-- React bindings, Surface component
-+------------------+
-         |
-         v
-+------------------+
-|  Your Adapters   |  <-- Maps to your component library
-+------------------+
-         |
-         v
-   Rendered UI (Mantine, ShadCN, Material UI, etc.)
+AI Agent (Claude, GPT, Gemini, etc.)
+              |
+              v
+       A2UI JSON Messages
+              |
+              v
+    +------------------+
+    | @a2ui-bridge/core |  <-- Parses protocol, manages state
+    +------------------+
+              |
+              v
+    +------------------+
+    | @a2ui-bridge/react|  <-- React bindings, Surface component
+    +------------------+
+              |
+    +---------+---------+
+    |                   |
+    v                   v
++----------------------+  +---------------------+
+| react-mantine (77)   |  | react-shadcn (76)   |
+| Mantine adapters     |  | Tailwind adapters   |
++----------------------+  +---------------------+
+    |                   |
+    v                   v
+   Mantine UI         ShadCN/Tailwind
 ```
 
 ## Demo
 
-Try the interactive demo that lets you describe UIs to Claude and see them render in real-time:
+**[Try the live demo](https://a2ui.southleft.com/demo)** - Describe any UI and watch it render in real-time.
+
+Or run it locally:
 
 ```bash
 cd apps/demo
@@ -273,6 +304,7 @@ Visit http://localhost:5173 to start generating UIs. You can also enter your API
 
 ### Demo Features
 
+- **Design System Switcher**: Toggle between Mantine and ShadCN in real-time to see the same UI rendered with different component libraries
 - **Multi-Provider Support**: Switch between Anthropic Claude, OpenAI GPT, and Google Gemini
 - **Streaming Progress**: Real-time feedback with stage indicators, elapsed time, and cancel capability
 - **Error Recovery**: Graceful error boundaries prevent crashes and enable retry
@@ -298,7 +330,8 @@ cd apps/demo && pnpm run dev
 
 - [A2UI Protocol Specification](https://a2ui.org)
 - [A2UI GitHub](https://github.com/nicholaspetrov/a2ui)
-- [Mantine Components](https://mantine.dev) (used in demo)
+- [Mantine Components](https://mantine.dev) - Enterprise-ready React components
+- [ShadCN UI](https://ui.shadcn.com) - Beautifully designed Tailwind components
 
 ## License
 

@@ -38,7 +38,7 @@ export const PROVIDERS: Record<Provider, Omit<ProviderInfo, 'configured'>> = {
   anthropic: {
     id: 'anthropic',
     name: 'Claude',
-    model: 'claude-sonnet-4-5-20250929',
+    model: 'claude-opus-4-5-20251101',
   },
   openai: {
     id: 'openai',
@@ -48,7 +48,7 @@ export const PROVIDERS: Record<Provider, Omit<ProviderInfo, 'configured'>> = {
   google: {
     id: 'google',
     name: 'Gemini',
-    model: 'gemini-3-flash',
+    model: 'gemini-3-pro',
   },
 };
 

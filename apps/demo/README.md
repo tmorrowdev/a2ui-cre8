@@ -79,9 +79,9 @@ const response = await provider.generate({
 **Supported Providers:**
 | Provider | Model | Capabilities |
 |----------|-------|--------------|
-| Anthropic | claude-sonnet-4-5-20250929 | Streaming, Vision, Functions |
+| Anthropic | claude-opus-4-5-20251101 | Streaming, Vision, Functions |
 | OpenAI | gpt-5.2 | Streaming, Vision, Functions |
-| Google | gemini-3-flash | Streaming, Vision |
+| Google | gemini-3-pro | Streaming, Vision |
 
 #### Configuration Layer
 

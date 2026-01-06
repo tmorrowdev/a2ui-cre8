@@ -7,7 +7,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tpitre/a2ui-bridge.git"
+    "url": "https://github.com/southleft/a2ui-bridge.git"
   },
   "scripts": {
     "build": "turbo run build",

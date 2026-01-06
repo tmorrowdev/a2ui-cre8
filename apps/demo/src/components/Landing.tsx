@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-// Supported A2UI Components - organized by category (showing highlights, 70+ total)
+// A2UI Protocol Component Types - organized by category (adapters implement these for each design system)
 const COMPONENT_CATEGORIES = [
   {
     category: 'Layout',
@@ -185,24 +185,67 @@ export function Landing() {
               <div className="flex gap-5 items-start">
                 <Badge className="w-9 h-9 p-0 flex items-center justify-center rounded-full bg-[#006699] hover:bg-[#006699] text-white text-lg">1</Badge>
                 <div>
-                  <p className="text-lg mb-1 text-headline">Describe your UI</p>
-                  <p className="text-base text-muted-foreground text-quote">"Create a contact card with name and email"</p>
+                  <p className="text-lg mb-1 text-headline">Express intent</p>
+                  <p className="text-base text-muted-foreground text-quote">"I need to collect contact information"</p>
                 </div>
               </div>
               <div className="flex gap-5 items-start">
                 <Badge className="w-9 h-9 p-0 flex items-center justify-center rounded-full bg-[#006699] hover:bg-[#006699] text-white text-lg">2</Badge>
                 <div>
-                  <p className="text-lg mb-1 text-headline">AI generates A2UI JSON</p>
-                  <p className="text-base text-muted-foreground text-feature">A structured recipe, not framework-specific code</p>
+                  <p className="text-lg mb-1 text-headline">AI composes a solution</p>
+                  <p className="text-base text-muted-foreground text-feature">Declarative JSON—safe, portable, framework-agnostic</p>
                 </div>
               </div>
               <div className="flex gap-5 items-start">
                 <Badge className="w-9 h-9 p-0 flex items-center justify-center rounded-full bg-[#006699] hover:bg-[#006699] text-white text-lg">3</Badge>
                 <div>
-                  <p className="text-lg mb-1 text-headline">Bridge renders components</p>
-                  <p className="text-base text-muted-foreground text-feature">Recipe becomes real components from your design system</p>
+                  <p className="text-lg mb-1 text-headline">Interface materializes</p>
+                  <p className="text-base text-muted-foreground text-feature">Real components from your design system, ready to use</p>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Separator />
+
+      {/* Vision Section - The Future of UI */}
+      <div className="max-w-7xl mx-auto px-8 py-20 bg-gradient-to-b from-white to-[#006699]/5">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-base font-semibold text-[#006699] uppercase tracking-wide mb-4">
+            The Future of Interface
+          </p>
+
+          <h2 className="text-4xl mb-8 text-display">
+            UI that appears when needed,<br />dissolves when done
+          </h2>
+
+          <p className="text-xl text-muted-foreground mb-10 text-lead max-w-3xl mx-auto">
+            The next generation of human-computer interaction isn't about better buttons or smarter forms.
+            It's about interfaces that are <strong className="text-gray-900">ephemeral</strong>—materializing
+            in the moment to serve a specific need, then gracefully fading away. No persistent UI to maintain.
+            No static mockups to update. Just intent, expressed and fulfilled.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+            <div className="p-6 bg-white rounded-sm border border-gray-200">
+              <p className="text-lg font-semibold mb-2 text-headline">Contextual</p>
+              <p className="text-base text-muted-foreground text-feature">
+                Interfaces adapt to the user's current task, not the other way around. Different context, different UI.
+              </p>
+            </div>
+            <div className="p-6 bg-white rounded-sm border border-gray-200">
+              <p className="text-lg font-semibold mb-2 text-headline">Ephemeral</p>
+              <p className="text-base text-muted-foreground text-feature">
+                UI exists only as long as it's useful. No technical debt from outdated screens. No maintenance burden.
+              </p>
+            </div>
+            <div className="p-6 bg-white rounded-sm border border-gray-200">
+              <p className="text-lg font-semibold mb-2 text-headline">Composable</p>
+              <p className="text-base text-muted-foreground text-feature">
+                AI composes from your design system's vocabulary. Your brand, your patterns, infinite expressions.
+              </p>
             </div>
           </div>
         </div>
@@ -409,12 +452,16 @@ export function Landing() {
       {/* Components + Code Section */}
       <div className="max-w-7xl mx-auto px-8 py-20">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
-          {/* Components List - Showing highlights from 70+ components */}
+          {/* Components List - Protocol types with adapter implementations */}
           <div className="lg:col-span-5">
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-4">
               <Package size={24} strokeWidth={1.5} />
-              <p className="text-muted-foreground text-label">70+ Supported Components</p>
+              <p className="text-muted-foreground text-label">One Protocol, Any Design System</p>
             </div>
+
+            <p className="text-base text-muted-foreground mb-6 text-feature">
+              A2UI defines standard component types. Our adapters translate them into Mantine, ShadCN, or your custom components—same intent, your visual language.
+            </p>
 
             <div className="flex flex-col gap-5">
               {COMPONENT_CATEGORIES.map((cat) => (
@@ -436,7 +483,7 @@ export function Landing() {
             </div>
 
             <p className="text-sm text-muted-foreground mt-5 text-caption">
-              Case-insensitive matching + common aliases (e.g., Toggle → Switch)
+              Protocol types → Adapter implementations → Your design system components
             </p>
           </div>
 
@@ -506,7 +553,7 @@ export function Landing() {
             <CodeBlock
               language="bash"
               label="Terminal"
-              code={`git clone https://github.com/tpitre/a2ui-bridge.git
+              code={`git clone https://github.com/southleft/a2ui-bridge.git
 cd a2ui-bridge && pnpm install && pnpm build`}
             />
           </div>

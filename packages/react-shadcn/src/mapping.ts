@@ -44,6 +44,7 @@ import { Slider } from './components/Slider.js';
 import { ActionIcon } from './components/ActionIcon.js';
 import { MultiSelect } from './components/MultiSelect.js';
 import { NumberInput } from './components/NumberInput.js';
+import { DateTimeInput } from './components/DateTimeInput.js';
 
 // Feedback & Status
 import { Alert } from './components/Alert.js';
@@ -134,7 +135,7 @@ export const shadcnComponents: ComponentMapping = {
   H5: Title,
   H6: Title,
 
-  // Form inputs (12)
+  // Form inputs (13)
   Button,
   Input,
   TextField,
@@ -147,6 +148,7 @@ export const shadcnComponents: ComponentMapping = {
   ActionIcon,
   MultiSelect,
   NumberInput,
+  DateTimeInput,
   // Form aliases
   IconButton: ActionIcon,
   TextInput: TextField,

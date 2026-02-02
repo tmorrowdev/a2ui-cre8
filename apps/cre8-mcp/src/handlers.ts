@@ -75,6 +75,20 @@ export interface SearchComponentsInput {
   format?: ComponentFormat;
 }
 
+export interface GenerateCodeInput {
+  schema: ComponentNode | ComponentNode[];
+  format?: ComponentFormat;
+  indent?: number;
+}
+
+interface ComponentNode {
+  component: string;
+  props?: Record<string, unknown>;
+  children?: string | ComponentNode | ComponentNode[];
+  slots?: Record<string, string | ComponentNode | ComponentNode[]>;
+  content?: string;
+}
+
 /**
  * list_components - Lists all available Cre8 components
  */
@@ -247,5 +261,155 @@ export function handleSearchComponents(input: SearchComponentsInput): string {
       description: c.description,
     })),
     count: matches.length,
+  }, null, 2);
+}
+
+/**
+ * generate_code - Generates React or Web Component code from a JSON schema
+ */
+export function handleGenerateCode(input: GenerateCodeInput): string {
+  const format = input.format || 'web';
+  const baseIndent = input.indent || 0;
+
+  function generateNode(node: ComponentNode | string, indentLevel: number): string {
+    const indent = '  '.repeat(indentLevel);
+
+    // Handle string content
+    if (typeof node === 'string') {
+      return `${indent}${node}`;
+    }
+
+    // Get component name in correct format
+    let tagName = node.component;
+
+    // Normalize component name
+    if (format === 'react') {
+      // Ensure React format: Cre8Button
+      if (!tagName.startsWith('Cre8')) {
+        tagName = tagName.startsWith('cre8-')
+          ? 'Cre8' + tagName.slice(5).split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('')
+          : 'Cre8' + tagName.charAt(0).toUpperCase() + tagName.slice(1);
+      }
+    } else {
+      // Ensure Web Component format: cre8-button
+      if (!tagName.startsWith('cre8-')) {
+        tagName = tagName.startsWith('Cre8')
+          ? 'cre8-' + tagName.slice(4).replace(/([A-Z])/g, '-$1').toLowerCase().slice(1)
+          : 'cre8-' + tagName.toLowerCase();
+      }
+    }
+
+    // Build props/attributes string
+    let propsStr = '';
+    if (node.props) {
+      const propEntries = Object.entries(node.props);
+      for (const [key, value] of propEntries) {
+        let propName = key;
+
+        // Convert prop names for web components (camelCase -> kebab-case)
+        if (format === 'web' && /[A-Z]/.test(key)) {
+          propName = key.replace(/([A-Z])/g, '-$1').toLowerCase();
+        }
+
+        // Format the value
+        if (typeof value === 'boolean') {
+          if (value) {
+            propsStr += format === 'react' ? ` ${propName}` : ` ${propName}`;
+          }
+        } else if (typeof value === 'string') {
+          propsStr += ` ${propName}="${value}"`;
+        } else if (typeof value === 'number') {
+          propsStr += format === 'react' ? ` ${propName}={${value}}` : ` ${propName}="${value}"`;
+        } else if (typeof value === 'object') {
+          propsStr += format === 'react' ? ` ${propName}={${JSON.stringify(value)}}` : ` ${propName}='${JSON.stringify(value)}'`;
+        }
+      }
+    }
+
+    // Check for children/content
+    const hasChildren = node.children || node.content || node.slots;
+
+    if (!hasChildren) {
+      // Self-closing tag
+      return format === 'react'
+        ? `${indent}<${tagName}${propsStr} />`
+        : `${indent}<${tagName}${propsStr}></${tagName}>`;
+    }
+
+    // Build children
+    const childLines: string[] = [];
+
+    // Handle content
+    if (node.content) {
+      childLines.push(`${'  '.repeat(indentLevel + 1)}${node.content}`);
+    }
+
+    // Handle children
+    if (node.children) {
+      const children = Array.isArray(node.children) ? node.children : [node.children];
+      for (const child of children) {
+        childLines.push(generateNode(child, indentLevel + 1));
+      }
+    }
+
+    // Handle slots
+    if (node.slots) {
+      for (const [slotName, slotContent] of Object.entries(node.slots)) {
+        const slotChildren = Array.isArray(slotContent) ? slotContent : [slotContent];
+        for (const child of slotChildren) {
+          if (typeof child === 'string') {
+            if (format === 'react') {
+              // React uses slot props like slotHeader={<span>...</span>}
+              // For now, render as children with comments
+              childLines.push(`${'  '.repeat(indentLevel + 1)}{/* slot: ${slotName} */}`);
+              childLines.push(`${'  '.repeat(indentLevel + 1)}${child}`);
+            } else {
+              childLines.push(`${'  '.repeat(indentLevel + 1)}<span slot="${slotName}">${child}</span>`);
+            }
+          } else {
+            const childCode = generateNode(child, indentLevel + 1);
+            if (format === 'web' && slotName !== 'default') {
+              // Add slot attribute for web components
+              const slotAttr = ` slot="${slotName}"`;
+              const firstTagEnd = childCode.indexOf('>');
+              if (firstTagEnd > 0) {
+                childLines.push(childCode.slice(0, firstTagEnd) + slotAttr + childCode.slice(firstTagEnd));
+              } else {
+                childLines.push(childCode);
+              }
+            } else {
+              childLines.push(childCode);
+            }
+          }
+        }
+      }
+    }
+
+    // Combine
+    const openTag = `${indent}<${tagName}${propsStr}>`;
+    const closeTag = `${indent}</${tagName}>`;
+
+    if (childLines.length === 1 && !childLines[0].includes('\n') && childLines[0].trim().length < 40) {
+      // Single short child - inline
+      return `${indent}<${tagName}${propsStr}>${childLines[0].trim()}</${tagName}>`;
+    }
+
+    return `${openTag}\n${childLines.join('\n')}\n${closeTag}`;
+  }
+
+  // Handle array of nodes
+  if (Array.isArray(input.schema)) {
+    const lines = input.schema.map(node => generateNode(node, baseIndent));
+    return JSON.stringify({
+      format,
+      code: lines.join('\n'),
+    }, null, 2);
+  }
+
+  // Single node
+  const code = generateNode(input.schema, baseIndent);
+  return JSON.stringify({
+    format,
+    code,
   }, null, 2);
 }

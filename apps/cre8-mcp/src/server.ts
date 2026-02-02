@@ -15,8 +15,9 @@ import {
   handleSearchComponents,
   handleListComponents,
   handleGetComponent,
+  handleGenerateCode,
 } from './handlers.js';
-import type { GetPatternsInput, SearchComponentsInput, ComponentFormat } from './handlers.js';
+import type { GetPatternsInput, SearchComponentsInput, GenerateCodeInput, ComponentFormat } from './handlers.js';
 
 // Get data directory path
 function getDataDir(): string {
@@ -58,7 +59,7 @@ const app = new Hono();
 // CORS - allow all
 app.use('*', cors({
   origin: '*',
-  allowMethods: ['GET', 'OPTIONS'],
+  allowMethods: ['GET', 'POST', 'OPTIONS'],
 }));
 
 // Health check
@@ -67,7 +68,7 @@ app.get('/health', (c) => c.json({ status: 'ok', service: 'cre8-mcp' }));
 // Info endpoint
 app.get('/', (c) => c.json({
   name: 'cre8-mcp',
-  version: '0.2.0',
+  version: '0.3.0',
   description: 'Cre8 Design System MCP Server - Component intelligence for AI agents',
   defaultFormat: 'web',
   endpoints: {
@@ -84,6 +85,7 @@ app.get('/', (c) => c.json({
       patterns: 'GET /patterns',
       pattern: 'GET /patterns/:name',
       search: 'GET /search?q=query',
+      generate: 'POST /generate',
     },
     reactComponents: {
       list: 'GET /react/components',
@@ -91,6 +93,7 @@ app.get('/', (c) => c.json({
       patterns: 'GET /react/patterns',
       pattern: 'GET /react/patterns/:name',
       search: 'GET /react/search?q=query',
+      generate: 'POST /react/generate',
     },
   },
   usage: 'npx cre8-mcp-proxy',
@@ -207,6 +210,21 @@ app.get('/search', (c) => {
   return c.json(JSON.parse(result));
 });
 
+// POST /generate - Generate Web Component code from schema
+app.post('/generate', async (c) => {
+  try {
+    const body = await c.req.json();
+    if (!body.schema) {
+      return c.json({ error: 'Missing required field: schema' }, 400);
+    }
+    const input: GenerateCodeInput = { schema: body.schema, format: 'web' };
+    const result = handleGenerateCode(input);
+    return c.json(JSON.parse(result));
+  } catch (err) {
+    return c.json({ error: 'Invalid JSON body' }, 400);
+  }
+});
+
 // ==========================================
 // React Components (/react/*)
 // ==========================================
@@ -247,6 +265,21 @@ app.get('/react/search', (c) => {
   const input: SearchComponentsInput = { query: q, format: 'react' };
   const result = handleSearchComponents(input);
   return c.json(JSON.parse(result));
+});
+
+// POST /react/generate - Generate React code from schema
+app.post('/react/generate', async (c) => {
+  try {
+    const body = await c.req.json();
+    if (!body.schema) {
+      return c.json({ error: 'Missing required field: schema' }, 400);
+    }
+    const input: GenerateCodeInput = { schema: body.schema, format: 'react' };
+    const result = handleGenerateCode(input);
+    return c.json(JSON.parse(result));
+  } catch (err) {
+    return c.json({ error: 'Invalid JSON body' }, 400);
+  }
 });
 
 // Start server

@@ -12,12 +12,13 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 
-import { tools, ListComponentsSchema, GetComponentSchema, GetPatternsSchema, SearchComponentsSchema } from './tools.js';
+import { tools, ListComponentsSchema, GetComponentSchema, GetPatternsSchema, SearchComponentsSchema, GenerateCodeSchema } from './tools.js';
 import {
   handleListComponents,
   handleGetComponent,
   handleGetPatterns,
   handleSearchComponents,
+  handleGenerateCode,
 } from './handlers.js';
 
 // Create server instance
@@ -64,6 +65,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'search_components': {
         const input = SearchComponentsSchema.parse(args);
         result = handleSearchComponents(input);
+        break;
+      }
+      case 'generate_code': {
+        const input = GenerateCodeSchema.parse(args);
+        result = handleGenerateCode(input as Parameters<typeof handleGenerateCode>[0]);
         break;
       }
       default:

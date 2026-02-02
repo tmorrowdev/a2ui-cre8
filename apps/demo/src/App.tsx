@@ -719,7 +719,7 @@ const Sidebar = ({ activeSection, setActiveSection, activeComponent, setActiveCo
           </div>
           <div>
             <h1 className="font-bold text-white text-lg">CRE8 A2UI</h1>
-            <p className="text-xs text-slate-400">v{componentManifest.metadata.version} • 72 components</p>
+            <p className="text-xs text-slate-400">v{componentManifest.metadata.version} • {componentManifest.metadata.totalComponents} components</p>
           </div>
         </div>
         <div className="relative">
@@ -825,7 +825,7 @@ const OverviewPage = ({ setActiveSection }) => (
       </h1>
       <p className="text-xl text-slate-400 max-w-2xl leading-relaxed">
         A semantic component schema enabling AI agents to generate consistent, framework-agnostic UIs. 
-        72 components across React and Web Components.
+        {componentManifest.metadata.totalComponents} components across React and Web Components.
       </p>
     </div>
     
@@ -873,9 +873,9 @@ const OverviewPage = ({ setActiveSection }) => (
     {/* Stats */}
     <div className="grid grid-cols-4 gap-4 mb-12">
       {[
-        { label: 'Components', value: '72', icon: Layers },
-        { label: 'Categories', value: '10', icon: Box },
-        { label: 'Patterns', value: '5', icon: GitBranch },
+        { label: 'Components', value: String(componentManifest.metadata.totalComponents), icon: Layers },
+        { label: 'Categories', value: String(Object.keys(componentManifest.categories).length), icon: Box },
+        { label: 'Patterns', value: String(Object.keys(usagePatterns).length), icon: GitBranch },
         { label: 'Frameworks', value: '2', icon: Code }
       ].map(stat => (
         <div key={stat.label} className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-4 text-center">
@@ -916,7 +916,7 @@ const OverviewPage = ({ setActiveSection }) => (
 function App() {
   return (
     <Cre8Card>
-      <Cre8Heading type="h2">Welcome</Cre8Heading>
+      <Cre8Heading tagVariant="h2" type="headline-default">Welcome</Cre8Heading>
       <Cre8Button text="Get Started" variant="primary" />
     </Cre8Card>
   );
@@ -927,7 +927,7 @@ function App() {
         code={`<script type="module" src="@tmorrow/cre8-wc"></script>
 
 <cre8-card>
-  <cre8-heading type="h2">Welcome</cre8-heading>
+  <cre8-heading tag-variant="h2" type="headline-default">Welcome</cre8-heading>
   <cre8-button text="Get Started" variant="primary"></cre8-button>
 </cre8-card>`}
       />
@@ -957,8 +957,8 @@ const GettingStartedPage = () => (
           <CodeBlock title="Install" code="npm install @tmorrow/cre8-react" />
           <CodeBlock
             title="Usage"
-            code={`import { 
-  Cre8Layout, Cre8Header, Cre8Button, Cre8Card, Cre8Heading 
+            code={`import {
+  Cre8Layout, Cre8Header, Cre8Button, Cre8Card, Cre8Heading
 } from '@tmorrow/cre8-react';
 
 function App() {
@@ -967,7 +967,7 @@ function App() {
       <Cre8Header>{/* Navigation */}</Cre8Header>
       <main>
         <Cre8Card>
-          <Cre8Heading type="h1">Hello CRE8</Cre8Heading>
+          <Cre8Heading tagVariant="h1" type="display-default">Hello CRE8</Cre8Heading>
           <Cre8Button text="Click Me" variant="primary" />
         </Cre8Card>
       </main>
@@ -1001,7 +1001,7 @@ function App() {
     <cre8-header><!-- Navigation --></cre8-header>
     <main>
       <cre8-card>
-        <cre8-heading type="h1">Hello CRE8</cre8-heading>
+        <cre8-heading tag-variant="h1" type="display-default">Hello CRE8</cre8-heading>
         <cre8-button text="Click Me" variant="primary"></cre8-button>
       </cre8-card>
     </main>
@@ -1049,49 +1049,107 @@ function App() {
 // ============================================================================
 // A2UI SCHEMA PAGE
 // ============================================================================
-const A2UISchemaPage = () => (
+const A2UISchemaPage = () => {
+  const [activeFormat, setActiveFormat] = useState('react');
+
+  return (
   <div className="max-w-4xl">
-    <h1 className="text-4xl font-bold text-white mb-4">A2UI Schema</h1>
+    <h1 className="text-4xl font-bold text-white mb-4">Component Schemas</h1>
     <p className="text-xl text-slate-400 mb-8">
-      Agent-to-UI (A2UI) is a semantic abstraction layer enabling AI agents to generate framework-agnostic UI.
+      CRE8 provides separate component schemas for React and Web Components, each with format-specific APIs.
     </p>
-    
-    <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6 mb-10">
+
+    <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-2xl p-6 mb-10">
       <div className="flex items-start gap-4">
-        <div className="w-10 h-10 bg-indigo-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-          <Sparkles size={20} className="text-indigo-400" />
+        <div className="w-10 h-10 bg-amber-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+          <Info size={20} className="text-amber-400" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-white mb-2">What is A2UI?</h2>
+          <h2 className="text-lg font-semibold text-white mb-2">Two Separate Schemas</h2>
           <p className="text-slate-300 leading-relaxed">
-            A2UI provides a standardized schema for describing UI components, their properties, relationships, and usage patterns. 
-            AI agents generate UI specifications using this schema, which transpiles to React or Web Components.
+            React and Web Components have different APIs. React uses <code className="text-indigo-400">props</code> (camelCase),
+            while Web Components use <code className="text-emerald-400">attributes</code> (kebab-case), <code className="text-emerald-400">properties</code>, <code className="text-emerald-400">slots</code>, and <code className="text-emerald-400">events</code>.
+            Always use the correct schema for your target framework.
           </p>
         </div>
       </div>
     </div>
-    
+
     <section className="mb-10">
       <h2 className="text-2xl font-bold text-white mb-4">Component Schema</h2>
-      <CodeBlock
-        title="Example: Button Component Schema"
-        code={JSON.stringify({
-          name: "Button",
-          react: "Cre8Button",
-          wc: "cre8-button",
-          category: "actions",
-          description: "Primary interactive element for user actions",
-          props: {
-            text: { type: "string", required: true, description: "Button text" },
-            variant: { type: "enum", values: ["primary", "secondary", "tertiary"], default: "primary" },
-            disabled: { type: "boolean", default: false }
-          },
-          aiRules: [
-            "One variant='primary' per screen",
-            "Keep text short: max 3 words"
-          ]
-        }, null, 2)}
-      />
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => setActiveFormat('react')}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            activeFormat === 'react'
+              ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/25'
+              : 'bg-slate-800 text-slate-400 hover:text-white'
+          }`}
+        >
+          React Schema
+        </button>
+        <button
+          onClick={() => setActiveFormat('web')}
+          className={`px-4 py-2 rounded-xl text-sm font-medium transition-all ${
+            activeFormat === 'web'
+              ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/25'
+              : 'bg-slate-800 text-slate-400 hover:text-white'
+          }`}
+        >
+          Web Components Schema
+        </button>
+      </div>
+      {activeFormat === 'react' ? (
+        <CodeBlock
+          title="React: Cre8Button Schema"
+          code={JSON.stringify({
+            name: "Cre8Button",
+            category: "Actions",
+            description: "Primary interactive element for user actions",
+            props: {
+              text: { type: "string", description: "Button text label" },
+              variant: { type: "string", values: ["primary", "secondary", "tertiary"], default: "primary" },
+              disabled: { type: "boolean", default: false },
+              fullWidth: { type: "boolean", default: false },
+              onClick: { type: "function", description: "Click event handler" }
+            },
+            examples: [
+              { description: "Primary button", jsx: '<Cre8Button text="Submit" variant="primary" />' }
+            ]
+          }, null, 2)}
+        />
+      ) : (
+        <CodeBlock
+          title="Web Components: cre8-button Schema"
+          code={JSON.stringify({
+            name: "cre8-button",
+            category: "Actions",
+            description: "Primary interactive element for user actions",
+            attributes: {
+              text: { type: "string", description: "Button text label" },
+              variant: { type: "string", values: ["primary", "secondary", "tertiary"], default: "primary" },
+              disabled: { type: "boolean", default: false },
+              "full-width": { type: "boolean", default: false }
+            },
+            properties: {
+              text: { type: "string" },
+              variant: { type: "string" },
+              fullWidth: { type: "boolean", attribute: "full-width" }
+            },
+            slots: {
+              default: { description: "Button content (alternative to text attribute)" },
+              before: { description: "Content before button text" },
+              after: { description: "Content after button text" }
+            },
+            events: {
+              click: { description: "Fired when button is clicked" }
+            },
+            examples: [
+              { description: "Primary button", html: '<cre8-button text="Submit" variant="primary"></cre8-button>' }
+            ]
+          }, null, 2)}
+        />
+      )}
     </section>
     
     <section className="mb-10">
@@ -1102,7 +1160,7 @@ const A2UISchemaPage = () => (
           { step: 2, title: 'AI Generates A2UI Schema', code: `{
   "component": "Cre8Card",
   "children": [
-    { "component": "Cre8Heading", "props": { "type": "h2" }, "children": "Sign In" },
+    { "component": "Cre8Heading", "props": { "tagVariant": "h2", "type": "headline-default" }, "children": "Sign In" },
     { "component": "Cre8Field", "props": { "label": "Email", "type": "email" } },
     { "component": "Cre8Field", "props": { "label": "Password", "type": "password" } },
     { "component": "Cre8Button", "props": { "text": "Sign In", "variant": "primary" } }
@@ -1160,13 +1218,12 @@ const MCPIntegrationPage = () => (
     <section className="mb-10">
       <h2 className="text-2xl font-bold text-white mb-4">Server Configuration</h2>
       <CodeBlock
-        title="Claude Desktop / MCP Client Configuration"
+        title="Claude Desktop Configuration (~/.claude/claude_desktop_config.json)"
         code={`{
   "mcpServers": {
-    "cre8-design-system": {
-      "type": "url",
-      "url": "${componentManifest.metadata.mcpEndpoint}",
-      "name": "design-system"
+    "cre8": {
+      "command": "npx",
+      "args": ["-y", "cre8-mcp-proxy"]
     }
   }
 }`}
@@ -1175,12 +1232,27 @@ const MCPIntegrationPage = () => (
     
     <section className="mb-10">
       <h2 className="text-2xl font-bold text-white mb-4">Available Tools</h2>
+      <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20 rounded-xl p-4 mb-6">
+        <p className="text-slate-300 text-sm">
+          <strong className="text-amber-400">Important:</strong> All tools accept a <code className="text-cyan-400">format</code> parameter: <code className="text-indigo-400">"react"</code> or <code className="text-emerald-400">"web"</code> (default). This determines which schema is used.
+        </p>
+      </div>
       <div className="space-y-4">
         {[
-          { name: 'list_components', description: 'Get all available components with metadata', example: '{ "category": "forms" }' },
-          { name: 'get_component', description: 'Get detailed schema for a specific component', example: '{ "name": "Cre8Button" }' },
-          { name: 'get_patterns', description: 'Get usage patterns and examples', example: '{ "pattern": "loginForm" }' },
-          { name: 'validate_usage', description: 'Validate component prop combinations', example: '{ "component": "Cre8Button", "props": {...} }' }
+          { name: 'list_components', description: 'Lists all components grouped by category', example: '{ "category": "Forms", "format": "react" }' },
+          { name: 'get_component', description: 'Gets detailed schema for a specific component (props/attributes, slots, events)', example: '{ "name": "Cre8Button", "format": "react" }' },
+          { name: 'get_patterns', description: 'Gets pre-built UI patterns (Login Form, Data Table, Page Layout, etc.)', example: '{ "name": "Login Form", "format": "web" }' },
+          { name: 'search_components', description: 'Search components by name, description, or category', example: '{ "query": "navigation", "format": "react" }' },
+          { name: 'generate_code', description: 'Generates React JSX or Web Component HTML from a JSON schema', example: `{
+  "schema": {
+    "component": "Card",
+    "children": [
+      { "component": "Heading", "props": { "tagVariant": "h2" }, "children": "Title" },
+      { "component": "Button", "props": { "text": "Click", "variant": "primary" } }
+    ]
+  },
+  "format": "react"
+}` }
         ].map(tool => (
           <div key={tool.name} className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-5">
             <div className="flex items-center gap-3 mb-2">
@@ -1193,36 +1265,69 @@ const MCPIntegrationPage = () => (
       </div>
     </section>
     
-    <section>
-      <h2 className="text-2xl font-bold text-white mb-4">Example Workflow</h2>
+    <section className="mb-10">
+      <h2 className="text-2xl font-bold text-white mb-4">Example: React Workflow</h2>
       <CodeBlock
-        title="AI Agent Using MCP"
-        code={`// 1. Agent receives user request
-User: "Create a contact form with name, email, and message fields"
+        title="Generating React Code"
+        code={`// 1. Query components using React format
+await mcp.call("list_components", { category: "Forms", format: "react" });
+// Returns: { format: "react", library: "@tmorrow/cre8-react", ... }
 
-// 2. Agent queries MCP for form components
-await mcp.call("list_components", { category: "forms" });
-// Returns: [Cre8Field, Cre8Select, Cre8CheckboxField, ...]
+// 2. Get React component details (props, not attributes)
+await mcp.call("get_component", { name: "Cre8Field", format: "react" });
+// Returns: { format: "react", props: { label, type, required, ... } }
 
-// 3. Agent gets component details
-await mcp.call("get_component", { name: "Cre8Field" });
-// Returns: { props: [...], aiRules: [...], examples: [...] }
+// 3. Generate React JSX code
+await mcp.call("generate_code", {
+  schema: {
+    component: "Card",
+    children: [
+      { component: "Heading", props: { tagVariant: "h2" }, children: "Contact" },
+      { component: "Field", props: { label: "Email", type: "email" } },
+      { component: "Button", props: { text: "Submit", variant: "primary" } }
+    ]
+  },
+  format: "react"
+});
+// Returns:
+// <Cre8Card>
+//   <Cre8Heading tagVariant="h2">Contact</Cre8Heading>
+//   <Cre8Field label="Email" type="email" />
+//   <Cre8Button text="Submit" variant="primary" />
+// </Cre8Card>`}
+      />
+    </section>
 
-// 4. Agent generates A2UI schema following rules
-const schema = {
-  component: "Cre8Card",
-  children: [
-    { component: "Cre8Heading", props: { type: "h2" }, children: "Contact Us" },
-    { component: "Cre8Field", props: { label: "Name", required: true } },
-    { component: "Cre8Field", props: { label: "Email", type: "email", required: true } },
-    { component: "Cre8Field", props: { label: "Message" } },
-    { component: "Cre8Button", props: { text: "Send", variant: "primary" } }
-  ]
-};
+    <section>
+      <h2 className="text-2xl font-bold text-white mb-4">Example: Web Components Workflow</h2>
+      <CodeBlock
+        title="Generating Web Components HTML"
+        code={`// 1. Query components using Web format (default)
+await mcp.call("list_components", { category: "Forms", format: "web" });
+// Returns: { format: "web", library: "@tmorrow/cre8-wc", ... }
 
-// 5. Agent validates before rendering
-await mcp.call("validate_usage", { schema });
-// Returns: { valid: true }`}
+// 2. Get Web Component details (attributes, slots, events)
+await mcp.call("get_component", { name: "cre8-field", format: "web" });
+// Returns: { format: "web", attributes: {...}, slots: {...}, events: {...} }
+
+// 3. Generate Web Components HTML
+await mcp.call("generate_code", {
+  schema: {
+    component: "Card",
+    children: [
+      { component: "Heading", props: { tagVariant: "h2" }, children: "Contact" },
+      { component: "Field", props: { label: "Email", type: "email" } },
+      { component: "Button", props: { text: "Submit", variant: "primary" } }
+    ]
+  },
+  format: "web"
+});
+// Returns:
+// <cre8-card>
+//   <cre8-heading tag-variant="h2">Contact</cre8-heading>
+//   <cre8-field label="Email" type="email"></cre8-field>
+//   <cre8-button text="Submit" variant="primary"></cre8-button>
+// </cre8-card>`}
       />
     </section>
   </div>
@@ -1292,15 +1397,23 @@ const ComponentPage = ({ component }) => {
   
   const generateExample = (fw) => {
     const tag = fw === 'react' ? component.react : component.wc;
+
+    // Special handling for Heading component
+    if (component.name === 'Heading') {
+      return fw === 'react'
+        ? `<${tag} tagVariant="h2" type="headline-default">Section Title</${tag}>`
+        : `<${tag} tag-variant="h2" type="headline-default">Section Title</${tag}>`;
+    }
+
     const props = component.props?.slice(0, 2).map(p => {
       if (p.name === 'text') return `${fw === 'react' ? 'text' : 'text'}="Example"`;
       if (p.name === 'variant') return `${fw === 'react' ? 'variant' : 'variant'}="primary"`;
       if (p.name === 'label') return `${fw === 'react' ? 'label' : 'label'}="Field Label"`;
-      if (p.name === 'type') return `${fw === 'react' ? 'type' : 'type'}="h2"`;
+      if (p.name === 'type' && component.category !== 'typography') return `type="text"`;
       return '';
     }).filter(Boolean).join(' ');
-    
-    return fw === 'react' 
+
+    return fw === 'react'
       ? `<${tag}${props ? ' ' + props : ''} />`
       : `<${tag}${props ? ' ' + props : ''}></${tag}>`;
   };

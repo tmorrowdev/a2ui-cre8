@@ -70,6 +70,27 @@ export const tools = [
       required: ['query'],
     },
   },
+  {
+    name: 'generate_code',
+    description:
+      'Generates React JSX or Web Component HTML code from a JSON schema. ' +
+      'Takes a component tree definition and outputs formatted code ready to use.',
+    inputSchema: {
+      type: 'object' as const,
+      properties: {
+        schema: {
+          type: 'object',
+          description: 'Component tree schema with { component, props?, children?, slots? }',
+        },
+        format: {
+          type: 'string',
+          enum: ['react', 'web'],
+          description: 'Output format: "react" for JSX or "web" for HTML (default: "web")',
+        },
+      },
+      required: ['schema'],
+    },
+  },
 ];
 
 // Zod schemas for input validation
@@ -87,4 +108,20 @@ export const GetPatternsSchema = z.object({
 
 export const SearchComponentsSchema = z.object({
   query: z.string(),
+});
+
+const ComponentNodeSchema: z.ZodType<unknown> = z.lazy(() =>
+  z.object({
+    component: z.string(),
+    props: z.record(z.unknown()).optional(),
+    children: z.union([z.string(), ComponentNodeSchema, z.array(z.union([z.string(), ComponentNodeSchema]))]).optional(),
+    slots: z.record(z.union([z.string(), ComponentNodeSchema, z.array(z.union([z.string(), ComponentNodeSchema]))])).optional(),
+    content: z.string().optional(),
+  })
+);
+
+export const GenerateCodeSchema = z.object({
+  schema: z.union([ComponentNodeSchema, z.array(ComponentNodeSchema)]),
+  format: z.enum(['react', 'web']).optional(),
+  indent: z.number().optional(),
 });

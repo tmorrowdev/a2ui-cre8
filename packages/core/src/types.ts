@@ -414,24 +414,24 @@ export type ResolvedSlider = Slider;
 export interface ResolvedRow {
   children: AnyComponentNode[];
   distribution?:
-    | 'start'
-    | 'center'
-    | 'end'
-    | 'spaceBetween'
-    | 'spaceAround'
-    | 'spaceEvenly';
+  | 'start'
+  | 'center'
+  | 'end'
+  | 'spaceBetween'
+  | 'spaceAround'
+  | 'spaceEvenly';
   alignment?: 'start' | 'center' | 'end' | 'stretch';
 }
 
 export interface ResolvedColumn {
   children: AnyComponentNode[];
   distribution?:
-    | 'start'
-    | 'center'
-    | 'end'
-    | 'spaceBetween'
-    | 'spaceAround'
-    | 'spaceEvenly';
+  | 'start'
+  | 'center'
+  | 'end'
+  | 'spaceBetween'
+  | 'spaceAround'
+  | 'spaceEvenly';
   alignment?: 'start' | 'center' | 'end' | 'stretch';
 }
 

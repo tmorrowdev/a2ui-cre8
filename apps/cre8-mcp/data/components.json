@@ -1,0 +1,654 @@
+{
+  "version": "1.0.0",
+  "library": "@tmorrow/cre8-react",
+  "components": [
+    {
+      "name": "Cre8Button",
+      "category": "Actions",
+      "description": "Primary interactive element for user actions. Supports primary, secondary, and tertiary variants.",
+      "props": {
+        "text": { "type": "string", "description": "Button text. Keep short, max 3 words. Use Title Case." },
+        "variant": { "type": "string", "enum": ["primary", "secondary", "tertiary"], "default": "primary", "description": "Visual priority level" },
+        "size": { "type": "string", "enum": ["sm", "md", "lg"], "default": "md" },
+        "disabled": { "type": "boolean", "default": false },
+        "fullWidth": { "type": "boolean", "default": false },
+        "loading": { "type": "boolean", "default": false },
+        "iconName": { "type": "string", "description": "Icon name (deprecated, use svg)" },
+        "iconPosition": { "type": "string", "enum": ["before", "after"] },
+        "href": { "type": "string", "description": "Makes button an anchor element" },
+        "type": { "type": "string", "enum": ["button", "submit", "reset"], "default": "button" }
+      },
+      "examples": [
+        { "description": "Primary button", "jsx": "<Cre8Button text=\"Submit\" variant=\"primary\" />" },
+        { "description": "Secondary button", "jsx": "<Cre8Button text=\"Cancel\" variant=\"secondary\" />" },
+        { "description": "Loading state", "jsx": "<Cre8Button text=\"Saving...\" loading={true} />" }
+      ]
+    },
+    {
+      "name": "Cre8DangerButton",
+      "category": "Actions",
+      "description": "Button for destructive actions like delete or remove.",
+      "props": {
+        "text": { "type": "string", "description": "Button text" },
+        "disabled": { "type": "boolean", "default": false }
+      },
+      "examples": [
+        { "description": "Delete button", "jsx": "<Cre8DangerButton text=\"Delete\" />" }
+      ]
+    },
+    {
+      "name": "Cre8Field",
+      "category": "Forms",
+      "description": "Text input field with label and validation support.",
+      "props": {
+        "label": { "type": "string", "required": true },
+        "value": { "type": "string" },
+        "type": { "type": "string", "enum": ["text", "email", "password", "tel", "url", "number"], "default": "text" },
+        "placeholder": { "type": "string" },
+        "disabled": { "type": "boolean", "default": false },
+        "required": { "type": "boolean", "default": false },
+        "errorNote": { "type": "string", "description": "Error message to display" }
+      },
+      "examples": [
+        { "description": "Email input", "jsx": "<Cre8Field label=\"Email\" type=\"email\" placeholder=\"Enter email\" />" }
+      ]
+    },
+    {
+      "name": "Cre8Select",
+      "category": "Forms",
+      "description": "Dropdown select input for choosing from options.",
+      "props": {
+        "label": { "type": "string" },
+        "value": { "type": "string" },
+        "disabled": { "type": "boolean", "default": false },
+        "required": { "type": "boolean", "default": false }
+      },
+      "examples": [
+        { "description": "Basic select", "jsx": "<Cre8Select label=\"Country\"><option value=\"us\">United States</option></Cre8Select>" }
+      ]
+    },
+    {
+      "name": "Cre8MultiSelect",
+      "category": "Forms",
+      "description": "Multi-select dropdown for choosing multiple options.",
+      "props": {
+        "label": { "type": "string" },
+        "disabled": { "type": "boolean", "default": false }
+      }
+    },
+    {
+      "name": "Cre8CheckboxField",
+      "category": "Forms",
+      "description": "Container for checkbox items.",
+      "props": {
+        "label": { "type": "string" },
+        "disabled": { "type": "boolean", "default": false }
+      }
+    },
+    {
+      "name": "Cre8CheckboxFieldItem",
+      "category": "Forms",
+      "description": "Individual checkbox item within a CheckboxField.",
+      "props": {
+        "label": { "type": "string", "required": true },
+        "checked": { "type": "boolean", "default": false },
+        "disabled": { "type": "boolean", "default": false },
+        "value": { "type": "string" }
+      }
+    },
+    {
+      "name": "Cre8RadioField",
+      "category": "Forms",
+      "description": "Container for radio button items.",
+      "props": {
+        "label": { "type": "string" },
+        "name": { "type": "string", "required": true }
+      }
+    },
+    {
+      "name": "Cre8RadioFieldItem",
+      "category": "Forms",
+      "description": "Individual radio button within a RadioField.",
+      "props": {
+        "label": { "type": "string", "required": true },
+        "value": { "type": "string", "required": true },
+        "checked": { "type": "boolean", "default": false }
+      }
+    },
+    {
+      "name": "Cre8DatePicker",
+      "category": "Forms",
+      "description": "Date picker input component.",
+      "props": {
+        "label": { "type": "string" },
+        "value": { "type": "string" },
+        "disabled": { "type": "boolean", "default": false }
+      }
+    },
+    {
+      "name": "Cre8Card",
+      "category": "Layout",
+      "description": "Container card for grouping related content.",
+      "props": {
+        "children": { "type": "ReactNode", "description": "Card content" }
+      },
+      "examples": [
+        { "description": "Basic card", "jsx": "<Cre8Card><Cre8Heading>Title</Cre8Heading><p>Content</p></Cre8Card>" }
+      ]
+    },
+    {
+      "name": "Cre8Grid",
+      "category": "Layout",
+      "description": "CSS Grid layout container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8GridItem",
+      "category": "Layout",
+      "description": "Item within a Grid container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Layout",
+      "category": "Layout",
+      "description": "Page layout wrapper.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8LayoutSection",
+      "category": "Layout",
+      "description": "Section within a Layout.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8LayoutContainer",
+      "category": "Layout",
+      "description": "Content container with max-width constraints.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Section",
+      "category": "Layout",
+      "description": "Generic section container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Hero",
+      "category": "Layout",
+      "description": "Hero section for landing pages.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Band",
+      "category": "Layout",
+      "description": "Full-width content band/section.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Divider",
+      "category": "Layout",
+      "description": "Visual separator between content sections.",
+      "props": {}
+    },
+    {
+      "name": "Cre8Heading",
+      "category": "Typography",
+      "description": "Heading text component with semantic levels.",
+      "props": {
+        "type": { "type": "string", "enum": ["h1", "h2", "h3", "h4", "h5", "h6"], "default": "h2" },
+        "children": { "type": "ReactNode" }
+      },
+      "examples": [
+        { "description": "Page title", "jsx": "<Cre8Heading type=\"h1\">Welcome</Cre8Heading>" }
+      ]
+    },
+    {
+      "name": "Cre8TextPassage",
+      "category": "Typography",
+      "description": "Body text container for paragraphs.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8TextLink",
+      "category": "Typography",
+      "description": "Styled text link.",
+      "props": {
+        "href": { "type": "string", "required": true },
+        "target": { "type": "string", "enum": ["_blank", "_self"] },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Link",
+      "category": "Navigation",
+      "description": "Navigation link component.",
+      "props": {
+        "href": { "type": "string", "required": true },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8GlobalNav",
+      "category": "Navigation",
+      "description": "Global navigation bar container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8GlobalNavItem",
+      "category": "Navigation",
+      "description": "Item within GlobalNav.",
+      "props": {
+        "href": { "type": "string" },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8PrimaryNav",
+      "category": "Navigation",
+      "description": "Primary navigation container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8PrimaryNavItem",
+      "category": "Navigation",
+      "description": "Item within PrimaryNav.",
+      "props": {
+        "href": { "type": "string" },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8TertiaryNav",
+      "category": "Navigation",
+      "description": "Tertiary navigation container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8TertiaryNavItem",
+      "category": "Navigation",
+      "description": "Item within TertiaryNav.",
+      "props": {
+        "href": { "type": "string" },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Breadcrumbs",
+      "category": "Navigation",
+      "description": "Breadcrumb navigation container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8BreadcrumbsItem",
+      "category": "Navigation",
+      "description": "Item within Breadcrumbs.",
+      "props": {
+        "href": { "type": "string" },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Pagination",
+      "category": "Navigation",
+      "description": "Pagination controls for lists.",
+      "props": {
+        "currentPage": { "type": "number" },
+        "totalPages": { "type": "number" }
+      }
+    },
+    {
+      "name": "Cre8Header",
+      "category": "Navigation",
+      "description": "Page header container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Footer",
+      "category": "Navigation",
+      "description": "Page footer container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Tabs",
+      "category": "Navigation",
+      "description": "Tab navigation container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Tab",
+      "category": "Navigation",
+      "description": "Individual tab within Tabs.",
+      "props": {
+        "label": { "type": "string" },
+        "selected": { "type": "boolean" }
+      }
+    },
+    {
+      "name": "Cre8TabPanel",
+      "category": "Navigation",
+      "description": "Content panel for a Tab.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Accordion",
+      "category": "Disclosure",
+      "description": "Accordion container for collapsible sections.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8AccordionItem",
+      "category": "Disclosure",
+      "description": "Individual collapsible item within Accordion.",
+      "props": {
+        "label": { "type": "string", "required": true },
+        "expanded": { "type": "boolean", "default": false },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Dropdown",
+      "category": "Disclosure",
+      "description": "Dropdown menu container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8DropdownItem",
+      "category": "Disclosure",
+      "description": "Item within Dropdown.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Modal",
+      "category": "Disclosure",
+      "description": "Modal dialog overlay.",
+      "props": {
+        "open": { "type": "boolean", "default": false },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Popover",
+      "category": "Disclosure",
+      "description": "Popover content container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Tooltip",
+      "category": "Disclosure",
+      "description": "Tooltip for additional context.",
+      "props": {
+        "content": { "type": "string", "required": true },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Alert",
+      "category": "Feedback",
+      "description": "Alert message for important notifications.",
+      "props": {
+        "status": { "type": "string", "enum": ["info", "success", "warning", "error"], "default": "info" },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8InlineAlert",
+      "category": "Feedback",
+      "description": "Inline alert for contextual messages.",
+      "props": {
+        "status": { "type": "string", "enum": ["info", "success", "warning", "error"], "default": "info" },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Badge",
+      "category": "Feedback",
+      "description": "Badge for status indicators or counts.",
+      "props": {
+        "text": { "type": "string" },
+        "variant": { "type": "string", "enum": ["default", "success", "warning", "error"] }
+      }
+    },
+    {
+      "name": "Cre8LoadingSpinner",
+      "category": "Feedback",
+      "description": "Loading spinner indicator.",
+      "props": {
+        "size": { "type": "string", "enum": ["sm", "md", "lg"], "default": "md" }
+      }
+    },
+    {
+      "name": "Cre8SkeletonLoader",
+      "category": "Feedback",
+      "description": "Skeleton loading placeholder.",
+      "props": {}
+    },
+    {
+      "name": "Cre8ProgressMeter",
+      "category": "Feedback",
+      "description": "Progress bar for completion status.",
+      "props": {
+        "value": { "type": "number", "description": "Progress value 0-100" },
+        "max": { "type": "number", "default": 100 }
+      }
+    },
+    {
+      "name": "Cre8PercentBar",
+      "category": "Feedback",
+      "description": "Percentage bar visualization.",
+      "props": {
+        "value": { "type": "number" }
+      }
+    },
+    {
+      "name": "Cre8Table",
+      "category": "Data",
+      "description": "Data table container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8TableHeader",
+      "category": "Data",
+      "description": "Table header section.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8TableHeaderCell",
+      "category": "Data",
+      "description": "Header cell in table.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8TableBody",
+      "category": "Data",
+      "description": "Table body section.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8TableRow",
+      "category": "Data",
+      "description": "Table row.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8TableCell",
+      "category": "Data",
+      "description": "Table cell.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8List",
+      "category": "Data",
+      "description": "List container.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8ListItem",
+      "category": "Data",
+      "description": "Item within List.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8LinkList",
+      "category": "Data",
+      "description": "List of links.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8LinkListItem",
+      "category": "Data",
+      "description": "Link item within LinkList.",
+      "props": {
+        "href": { "type": "string" },
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8Tag",
+      "category": "Data",
+      "description": "Tag/chip for categorization.",
+      "props": {
+        "text": { "type": "string" }
+      }
+    },
+    {
+      "name": "Cre8TagList",
+      "category": "Data",
+      "description": "Container for tags.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8RemoveTag",
+      "category": "Data",
+      "description": "Removable tag with close button.",
+      "props": {
+        "text": { "type": "string" }
+      }
+    },
+    {
+      "name": "Cre8Chart",
+      "category": "Data",
+      "description": "Chart visualization component.",
+      "props": {}
+    },
+    {
+      "name": "Cre8Icon",
+      "category": "Media",
+      "description": "Icon component using SVG.",
+      "props": {
+        "svg": { "type": "string", "description": "Raw SVG string" },
+        "size": { "type": "string", "enum": ["sm", "md", "lg"] }
+      }
+    },
+    {
+      "name": "Cre8Logo",
+      "category": "Media",
+      "description": "Logo component.",
+      "props": {}
+    },
+    {
+      "name": "Cre8Feature",
+      "category": "Marketing",
+      "description": "Feature highlight component for marketing pages.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    },
+    {
+      "name": "Cre8PageHeader",
+      "category": "Marketing",
+      "description": "Page header with title and actions.",
+      "props": {
+        "children": { "type": "ReactNode" }
+      }
+    }
+  ],
+  "patterns": [
+    {
+      "name": "Login Form",
+      "description": "Standard login form with email and password",
+      "template": "<Cre8Card>\n  <Cre8Heading type=\"h2\">Sign In</Cre8Heading>\n  <Cre8Field label=\"Email\" type=\"email\" />\n  <Cre8Field label=\"Password\" type=\"password\" />\n  <Cre8Button text=\"Sign In\" variant=\"primary\" fullWidth />\n</Cre8Card>"
+    },
+    {
+      "name": "Data Table",
+      "description": "Table with header and data rows",
+      "template": "<Cre8Table>\n  <Cre8TableHeader>\n    <Cre8TableRow>\n      <Cre8TableHeaderCell>Name</Cre8TableHeaderCell>\n      <Cre8TableHeaderCell>Status</Cre8TableHeaderCell>\n    </Cre8TableRow>\n  </Cre8TableHeader>\n  <Cre8TableBody>\n    <Cre8TableRow>\n      <Cre8TableCell>Item 1</Cre8TableCell>\n      <Cre8TableCell><Cre8Badge text=\"Active\" /></Cre8TableCell>\n    </Cre8TableRow>\n  </Cre8TableBody>\n</Cre8Table>"
+    },
+    {
+      "name": "Page Layout",
+      "description": "Standard page with header, main content, and footer",
+      "template": "<Cre8Layout>\n  <Cre8Header>\n    <Cre8GlobalNav>\n      <Cre8GlobalNavItem href=\"/\">Home</Cre8GlobalNavItem>\n    </Cre8GlobalNav>\n  </Cre8Header>\n  <Cre8Main>\n    <Cre8LayoutContainer>\n      {/* Page content */}\n    </Cre8LayoutContainer>\n  </Cre8Main>\n  <Cre8Footer />\n</Cre8Layout>"
+    },
+    {
+      "name": "Alert Banner",
+      "description": "Dismissible alert at top of page",
+      "template": "<Cre8Alert status=\"info\">\n  Important announcement message here.\n</Cre8Alert>"
+    },
+    {
+      "name": "Tabbed Content",
+      "description": "Content organized in tabs",
+      "template": "<Cre8Tabs>\n  <Cre8Tab label=\"Tab 1\" selected />\n  <Cre8Tab label=\"Tab 2\" />\n  <Cre8TabPanel>Content for Tab 1</Cre8TabPanel>\n  <Cre8TabPanel>Content for Tab 2</Cre8TabPanel>\n</Cre8Tabs>"
+    }
+  ]
+}

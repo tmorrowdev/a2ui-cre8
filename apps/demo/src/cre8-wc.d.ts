@@ -1,0 +1,96 @@
+/**
+ * Type declarations for @tmorrow/cre8-wc CDN bundle
+ *
+ * These are permissive declarations to allow TypeScript builds to pass.
+ * The actual runtime behavior is handled by the web components.
+ */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+declare module '@tmorrow/cre8-wc/cdn' {
+  export const Cre8Accordion: any;
+  export const Cre8AccordionItem: any;
+  export const Cre8Alert: any;
+  export const Cre8Badge: any;
+  export const Cre8Band: any;
+  export const Cre8Breadcrumb: any;
+  export const Cre8Breadcrumbs: any;
+  export const Cre8BreadcrumbItem: any;
+  export const Cre8BreadcrumbsItem: any;
+  export const Cre8Button: any;
+  export const Cre8Card: any;
+  export const Cre8Checkbox: any;
+  export const Cre8CheckboxField: any;
+  export const Cre8CheckboxFieldItem: any;
+  export const Cre8CheckboxGroup: any;
+  export const Cre8Container: any;
+  export const Cre8LayoutContainer: any;
+  export const Cre8DatePicker: any;
+  export const Cre8DateTimeInput: any;
+  export const Cre8Dialog: any;
+  export const Cre8Modal: any;
+  export const Cre8Divider: any;
+  export const Cre8Dropdown: any;
+  export const Cre8DropdownItem: any;
+  export const Cre8DropdownMenu: any;
+  export const Cre8DropdownMenuItem: any;
+  export const Cre8Field: any;
+  export const Cre8Grid: any;
+  export const Cre8Heading: any;
+  export const Cre8Hero: any;
+  export const Cre8HoverCard: any;
+  export const Cre8Icon: any;
+  export const Cre8Image: any;
+  export const Cre8Input: any;
+  export const Cre8Link: any;
+  export const Cre8TextLink: any;
+  export const Cre8List: any;
+  export const Cre8ListItem: any;
+  export const Cre8LoadingSpinner: any;
+  export const Cre8MultiSelect: any;
+  export const Cre8NumberInput: any;
+  export const Cre8Pagination: any;
+  export const Cre8Popover: any;
+  export const Cre8ProgressIndicator: any;
+  export const Cre8ProgressMeter: any;
+  export const Cre8RadioField: any;
+  export const Cre8RadioFieldItem: any;
+  export const Cre8RadioItem: any;
+  export const Cre8RadioGroup: any;
+  export const Cre8Select: any;
+  export const Cre8SelectOption: any;
+  export const Cre8Skeleton: any;
+  export const Cre8SkeletonLoader: any;
+  export const Cre8Slider: any;
+  export const Cre8Switch: any;
+  export const Cre8Tab: any;
+  export const Cre8Tabs: any;
+  export const Cre8TabItem: any;
+  export const Cre8TabPanel: any;
+  export const Cre8Table: any;
+  export const Cre8TableBody: any;
+  export const Cre8TableCell: any;
+  export const Cre8TableHeader: any;
+  export const Cre8TableHeaderCell: any;
+  export const Cre8TableRow: any;
+  export const Cre8Tag: any;
+  export const Cre8Text: any;
+  export const Cre8TextArea: any;
+  export const Cre8TextPassage: any;
+  export const Cre8Toast: any;
+  export const Cre8Tooltip: any;
+  export const Cre8InlineAlert: any;
+  export const Cre8Avatar: any;
+  export const Cre8Box: any;
+  export const Cre8Center: any;
+  export const Cre8Code: any;
+  export const Cre8Collapsible: any;
+  export const Cre8Flex: any;
+  export const Cre8Label: any;
+  export const Cre8Row: any;
+  export const Cre8Column: any;
+  export const Cre8ScrollArea: any;
+  export const Cre8AspectRatio: any;
+  export const Cre8Blockquote: any;
+  export const Cre8Title: any;
+  export const Cre8Sheet: any;
+}

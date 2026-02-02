@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Surface, useA2uiProcessor } from '@a2ui-bridge/react';
+import * as cre8Components from '@a2ui-bridge/react-cre8';
 import type { ServerToClientMessage, UserAction } from '@a2ui-bridge/core';
 import { generateUI, getConfiguredProviders, PROVIDERS, type Provider } from '../services/ai';
 import { generateUIWithSnippets, type GenerationStats, type ChatMessage as AIChatMessage } from '../services/snippets';
@@ -40,10 +41,9 @@ import {
   Clock,
   Palette,
   Sparkles,
+  BarChart3,
 } from 'lucide-react';
 
-import { mantineComponents } from '@a2ui-bridge/react-mantine';
-import { shadcnComponents } from '@a2ui-bridge/react-shadcn';
 import { StreamingProgress, StreamingProgressCompact } from './StreamingProgress';
 import { A2UIErrorBoundary } from './ErrorBoundary';
 import { SEO } from '@/components/shared/SEO';
@@ -80,6 +80,11 @@ const SCENARIOS = [
     label: 'Track Goals',
     prompt: "Help me track my fitness goals for this week - I want to run 3 times and drink more water",
   },
+  {
+    icon: BarChart3,
+    label: 'Marketing Dashboard',
+    prompt: "Show me a marketing dashboard with campaign performance metrics, social media stats, lead generation progress, and upcoming campaign deadlines",
+  },
 ];
 
 // Chat message type
@@ -114,7 +119,7 @@ export function Demo() {
   const [modeDropdownOpen, setModeDropdownOpen] = useState(false);
   const [useSnippets, setUseSnippets] = useState(true); // Enable snippet mode by default
   const [generationStats, setGenerationStats] = useState<GenerationStats | null>(null);
-  const [designSystem, setDesignSystem] = useState<'mantine' | 'shadcn'>('mantine');
+  const [designSystem, setDesignSystem] = useState<'cre8'>('cre8');
 
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -408,33 +413,21 @@ export function Demo() {
                   "flex items-center rounded-md border p-0.5 h-8",
                   isDark ? "border-zinc-600 bg-zinc-800" : "border-zinc-300 bg-zinc-100"
                 )}>
+
+
                   <button
-                    onClick={() => setDesignSystem('mantine')}
+                    onClick={() => setDesignSystem('cre8')}
                     className={cn(
                       "flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium transition-all",
-                      designSystem === 'mantine'
-                        ? "bg-blue-500 text-white shadow-sm"
+                      designSystem === 'cre8'
+                        ? "bg-teal-600 text-white shadow-sm"
                         : isDark
                           ? "text-zinc-400 hover:text-zinc-200"
                           : "text-zinc-500 hover:text-zinc-700"
                     )}
                   >
                     <Palette className="h-3 w-3" />
-                    Mantine
-                  </button>
-                  <button
-                    onClick={() => setDesignSystem('shadcn')}
-                    className={cn(
-                      "flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium transition-all",
-                      designSystem === 'shadcn'
-                        ? "bg-zinc-900 text-white shadow-sm"
-                        : isDark
-                          ? "text-zinc-400 hover:text-zinc-200"
-                          : "text-zinc-500 hover:text-zinc-700"
-                    )}
-                  >
-                    <Palette className="h-3 w-3" />
-                    ShadCN
+                    Cre8
                   </button>
                 </div>
               </TooltipTrigger>
@@ -732,145 +725,147 @@ export function Demo() {
             isDark ? "bg-zinc-900" : "bg-zinc-50"
           )}>
             <div className="flex flex-col items-center">
-            {/* Preview with animation */}
-            {showPreview && parsedMessages.length > 0 && (
-              <div className="preview-container w-full max-w-[600px]">
-                <A2UIErrorBoundary
-                  isDark={isDark}
-                  onReset={() => {
-                    // Reset the surface state
-                    processor.processMessages([
-                      { deleteSurface: { surfaceId: '@default' } },
-                    ]);
-                    setShowPreview(false);
-                    setParsedMessages([]);
-                  }}
-                >
-                  <Surface
-                    processor={processor}
-                    components={designSystem === 'mantine' ? mantineComponents : shadcnComponents}
-                    onAction={handleAction}
-                  />
-                </A2UIErrorBoundary>
+              {/* Preview with animation */}
+              {showPreview && parsedMessages.length > 0 && (
+                <div className="preview-container w-full max-w-[600px]">
+                  <A2UIErrorBoundary
+                    isDark={isDark}
+                    onReset={() => {
+                      // Reset the surface state
+                      processor.processMessages([
+                        { deleteSurface: { surfaceId: '@default' } },
+                      ]);
+                      setShowPreview(false);
+                      setParsedMessages([]);
+                    }}
+                  >
+                    <Surface
+                      processor={processor}
+                      components={
+                        cre8Components
+                      }
+                      onAction={handleAction}
+                    />
+                  </A2UIErrorBoundary>
 
-                {/* Generation Stats */}
-                {generationStats && (
-                  <div className={cn(
-                    "mt-4 p-3 rounded-sm border",
-                    isDark ? "border-zinc-700 bg-zinc-800/50" : "border-zinc-200 bg-zinc-50"
-                  )}>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Clock className={cn("h-3.5 w-3.5", isDark ? "text-zinc-400" : "text-zinc-500")} />
-                      <p className={cn("text-xs font-medium", isDark ? "text-zinc-400" : "text-zinc-500")}>
-                        Generation Stats
-                      </p>
-                    </div>
-                    <div className="grid grid-cols-4 gap-3 text-center">
-                      <div>
-                        <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
-                          {(generationStats.timeMs / 1000).toFixed(1)}s
-                        </p>
-                        <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Time</p>
-                      </div>
-                      <div>
-                        <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
-                          {generationStats.snippetsUsed}
-                        </p>
-                        <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Snippets</p>
-                      </div>
-                      <div>
-                        <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
-                          {generationStats.totalComponents}
-                        </p>
-                        <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Components</p>
-                      </div>
-                      <div>
-                        <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
-                          ~{generationStats.responseTokensEstimate}
-                        </p>
-                        <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Tokens</p>
-                      </div>
-                    </div>
-                    <div className="mt-2 flex items-center gap-1">
-                      <Badge
-                        variant="secondary"
-                        className={cn(
-                          "text-[10px] px-1.5 py-0",
-                          generationStats.mode === 'snippets'
-                            ? "bg-green-500/10 text-green-600"
-                            : generationStats.mode === 'hybrid'
-                            ? "bg-amber-500/10 text-amber-600"
-                            : "bg-zinc-500/10 text-zinc-600"
-                        )}
-                      >
-                        {generationStats.mode === 'snippets' ? 'Pure Snippets' :
-                         generationStats.mode === 'hybrid' ? 'Hybrid' : 'Fallback'}
-                      </Badge>
-                    </div>
-                  </div>
-                )}
-
-                {/* Action Log - Expandable */}
-                {actionLog.length > 0 && (
-                  <div className="mt-4">
-                    <p className={cn("text-xs font-medium mb-2", isDark ? "text-zinc-500" : "text-zinc-400")}>
-                      User Actions ({actionLog.length})
-                    </p>
+                  {/* Generation Stats */}
+                  {generationStats && (
                     <div className={cn(
-                      "flex flex-col gap-1 max-h-[200px] overflow-y-auto rounded border p-2",
+                      "mt-4 p-3 rounded-sm border",
                       isDark ? "border-zinc-700 bg-zinc-800/50" : "border-zinc-200 bg-zinc-50"
                     )}>
-                      {actionLog.map((log, i) => (
-                        <pre
-                          key={i}
+                      <div className="flex items-center gap-2 mb-2">
+                        <Clock className={cn("h-3.5 w-3.5", isDark ? "text-zinc-400" : "text-zinc-500")} />
+                        <p className={cn("text-xs font-medium", isDark ? "text-zinc-400" : "text-zinc-500")}>
+                          Generation Stats
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-4 gap-3 text-center">
+                        <div>
+                          <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
+                            {(generationStats.timeMs / 1000).toFixed(1)}s
+                          </p>
+                          <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Time</p>
+                        </div>
+                        <div>
+                          <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
+                            {generationStats.snippetsUsed}
+                          </p>
+                          <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Snippets</p>
+                        </div>
+                        <div>
+                          <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
+                            {generationStats.totalComponents}
+                          </p>
+                          <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Components</p>
+                        </div>
+                        <div>
+                          <p className={cn("text-lg font-semibold", isDark ? "text-zinc-200" : "text-zinc-800")}>
+                            ~{generationStats.responseTokensEstimate}
+                          </p>
+                          <p className={cn("text-[10px]", isDark ? "text-zinc-500" : "text-zinc-400")}>Tokens</p>
+                        </div>
+                      </div>
+                      <div className="mt-2 flex items-center gap-1">
+                        <Badge
+                          variant="secondary"
                           className={cn(
-                            "text-[10px] p-1.5 rounded font-mono",
-                            isDark ? "bg-zinc-800 text-zinc-400" : "bg-zinc-100 text-zinc-600"
+                            "text-[10px] px-1.5 py-0",
+                            generationStats.mode === 'snippets'
+                              ? "bg-green-500/10 text-green-600"
+                              : generationStats.mode === 'hybrid'
+                                ? "bg-amber-500/10 text-amber-600"
+                                : "bg-zinc-500/10 text-zinc-600"
                           )}
                         >
-                          {log}
-                        </pre>
-                      ))}
+                          {generationStats.mode === 'snippets' ? 'Pure Snippets' :
+                            generationStats.mode === 'hybrid' ? 'Hybrid' : 'Fallback'}
+                        </Badge>
+                      </div>
                     </div>
+                  )}
+
+                  {/* Action Log - Expandable */}
+                  {actionLog.length > 0 && (
+                    <div className="mt-4">
+                      <p className={cn("text-xs font-medium mb-2", isDark ? "text-zinc-500" : "text-zinc-400")}>
+                        User Actions ({actionLog.length})
+                      </p>
+                      <div className={cn(
+                        "flex flex-col gap-1 max-h-[200px] overflow-y-auto rounded border p-2",
+                        isDark ? "border-zinc-700 bg-zinc-800/50" : "border-zinc-200 bg-zinc-50"
+                      )}>
+                        {actionLog.map((log, i) => (
+                          <pre
+                            key={i}
+                            className={cn(
+                              "text-[10px] p-1.5 rounded font-mono",
+                              isDark ? "bg-zinc-800 text-zinc-400" : "bg-zinc-100 text-zinc-600"
+                            )}
+                          >
+                            {log}
+                          </pre>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Empty State */}
+              {!showPreview && !isGenerating && parsedMessages.length === 0 && (
+                <div className="flex flex-col items-center gap-6">
+                  <div className={cn(
+                    "empty-state-icon w-20 h-20 rounded-full flex items-center justify-center",
+                    isDark ? "bg-zinc-800" : "bg-zinc-100"
+                  )}>
+                    <MessageSquare className={cn("h-10 w-10", isDark ? "text-zinc-600" : "text-zinc-400")} />
                   </div>
-                )}
-              </div>
-            )}
-
-            {/* Empty State */}
-            {!showPreview && !isGenerating && parsedMessages.length === 0 && (
-              <div className="flex flex-col items-center gap-6">
-                <div className={cn(
-                  "empty-state-icon w-20 h-20 rounded-full flex items-center justify-center",
-                  isDark ? "bg-zinc-800" : "bg-zinc-100"
-                )}>
-                  <MessageSquare className={cn("h-10 w-10", isDark ? "text-zinc-600" : "text-zinc-400")} />
+                  <div className="text-center">
+                    <h2 className={cn("text-2xl font-semibold mb-2", isDark ? "text-zinc-200" : "text-zinc-800")}>
+                      Predictive UI Demo
+                    </h2>
+                    <p className={cn("text-lg max-w-[400px]", isDark ? "text-zinc-400" : "text-zinc-500")}>
+                      Describe what you need, and AI will create the perfect interface to help you.
+                    </p>
+                  </div>
+                  <Badge variant="secondary" className="bg-[hsl(var(--brand-light))] text-[hsl(var(--brand))] border-0 text-sm px-3 py-1">
+                    Powered by {PROVIDERS[provider].name.split(' ')[0]} + A2UI Protocol
+                  </Badge>
                 </div>
-                <div className="text-center">
-                  <h2 className={cn("text-2xl font-semibold mb-2", isDark ? "text-zinc-200" : "text-zinc-800")}>
-                    Predictive UI Demo
-                  </h2>
-                  <p className={cn("text-lg max-w-[400px]", isDark ? "text-zinc-400" : "text-zinc-500")}>
-                    Describe what you need, and AI will create the perfect interface to help you.
-                  </p>
-                </div>
-                <Badge variant="secondary" className="bg-[hsl(var(--brand-light))] text-[hsl(var(--brand))] border-0 text-sm px-3 py-1">
-                  Powered by {PROVIDERS[provider].name.split(' ')[0]} + A2UI Protocol
-                </Badge>
-              </div>
-            )}
+              )}
 
-            {/* Generating State - Enhanced Streaming Progress */}
-            {isGenerating && (
-              <StreamingProgress
-                isGenerating={isGenerating}
-                componentCount={parsedMessages.length}
-                streamLength={protocolStream.length}
-                isDark={isDark}
-                className="py-8"
-                onCancel={handleCancel}
-              />
-            )}
+              {/* Generating State - Enhanced Streaming Progress */}
+              {isGenerating && (
+                <StreamingProgress
+                  isGenerating={isGenerating}
+                  componentCount={parsedMessages.length}
+                  streamLength={protocolStream.length}
+                  isDark={isDark}
+                  className="py-8"
+                  onCancel={handleCancel}
+                />
+              )}
             </div>
           </main>
         </div>

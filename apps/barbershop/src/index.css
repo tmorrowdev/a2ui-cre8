@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for dark barbershop theme */
+body {
+  background-color: #0B0B0E;
+  color: #FAFAF9;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+/* Override cre8 web component styles for dark theme */
+cre8-card {
+  --cre8-card-background: #16161A;
+  --cre8-card-border-color: #2A2A2E;
+}
+
+cre8-button {
+  --cre8-button-primary-background: #6366F1;
+}
+
+cre8-heading {
+  font-family: 'Fraunces', serif;
+  color: #FAFAF9;
+}
+
+cre8-text-passage {
+  color: #6B6B70;
+}

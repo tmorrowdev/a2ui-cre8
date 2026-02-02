@@ -1,49 +1,174 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.27",
   "library": "@tmorrow/cre8-wc",
   "tagPrefix": "cre8",
+  "description": "A library of presentational UI web components built with Lit Element and TypeScript for consumption by web applications.",
+  "framework": "Lit 3.3.1",
   "components": [
     {
       "name": "cre8-button",
       "category": "Actions",
-      "description": "Primary interactive element for user actions. Supports primary, secondary, and tertiary variants.",
+      "description": "Primary interactive element for user actions. Supports primary, secondary, and tertiary variants with extensive customization options.",
       "attributes": {
-        "text": { "type": "string", "description": "Button text. Keep short, max 3 words. Use Title Case." },
-        "variant": { "type": "string", "values": ["primary", "secondary", "tertiary"], "default": "primary", "description": "Visual priority level" },
-        "size": { "type": "string", "values": ["sm", "md", "lg"], "default": "md" },
-        "disabled": { "type": "boolean", "default": false },
-        "full-width": { "type": "boolean", "default": false },
-        "loading": { "type": "boolean", "default": false },
-        "icon-position": { "type": "string", "values": ["before", "after"] },
-        "href": { "type": "string", "description": "Makes button an anchor element" },
-        "type": { "type": "string", "values": ["button", "submit", "reset"], "default": "button" }
+        "text": {
+          "type": "string",
+          "description": "Button text label"
+        },
+        "variant": {
+          "type": "string",
+          "values": [
+            "primary",
+            "secondary",
+            "tertiary"
+          ],
+          "default": "primary",
+          "description": "Visual priority level"
+        },
+        "size": {
+          "type": "string",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "neutral": {
+          "type": "boolean",
+          "default": false,
+          "description": "Neutral style variant"
+        },
+        "inverse": {
+          "type": "boolean",
+          "default": false,
+          "description": "Inverse colors for dark backgrounds"
+        },
+        "full-width": {
+          "type": "boolean",
+          "default": false
+        },
+        "loading": {
+          "type": "boolean",
+          "default": false
+        },
+        "loading-complete": {
+          "type": "boolean",
+          "default": false,
+          "description": "Indicate loading completion"
+        },
+        "hide-text": {
+          "type": "boolean",
+          "default": false,
+          "description": "Visually hide text (icon-only)"
+        },
+        "icon-position": {
+          "type": "string",
+          "values": [
+            "before",
+            "after"
+          ],
+          "default": "before"
+        },
+        "icon-rotate-degree": {
+          "type": "number",
+          "description": "Icon rotation in degrees"
+        },
+        "icon-flip-direction": {
+          "type": "string",
+          "description": "Icon flip direction"
+        },
+        "href": {
+          "type": "string",
+          "description": "Makes button an anchor element"
+        },
+        "target": {
+          "type": "string",
+          "values": [
+            "_blank",
+            "_self",
+            "_parent",
+            "_top"
+          ]
+        },
+        "rel": {
+          "type": "string",
+          "description": "Rel attribute for links"
+        },
+        "type": {
+          "type": "string",
+          "values": [
+            "button",
+            "submit",
+            "reset"
+          ],
+          "default": "button"
+        },
+        "split-button-type": {
+          "type": "string",
+          "values": [
+            "text",
+            "caret"
+          ],
+          "description": "Split button style"
+        },
+        "button-aria-expanded": {
+          "type": "boolean",
+          "description": "ARIA expanded state"
+        },
+        "aria-live": {
+          "type": "string",
+          "values": [
+            "polite",
+            "assertive"
+          ],
+          "description": "ARIA live region"
+        }
       },
       "properties": {
-        "iconSvg": { "type": "SVGElement | string", "description": "SVG icon element or string" }
+        "svg": {
+          "type": "string",
+          "description": "SVG icon as raw string"
+        }
       },
       "slots": {
-        "default": { "description": "Button content (alternative to text attribute)" },
-        "icon": { "description": "Custom icon slot" }
+        "before": {
+          "description": "Content before button text"
+        },
+        "after": {
+          "description": "Content after button text"
+        }
       },
       "events": {
-        "cre8-click": { "detail": {}, "description": "Fired when button is clicked" }
+        "click": {
+          "detail": {},
+          "description": "Native click event"
+        }
       },
-      "cssProperties": {
-        "--cre8-button-background": { "default": "var(--cre8-color-primary)", "description": "Button background color" },
-        "--cre8-button-color": { "default": "var(--cre8-color-on-primary)", "description": "Button text color" },
-        "--cre8-button-border-radius": { "default": "var(--cre8-radius-md)", "description": "Button border radius" },
-        "--cre8-button-padding-x": { "default": "var(--cre8-spacing-md)", "description": "Horizontal padding" },
-        "--cre8-button-padding-y": { "default": "var(--cre8-spacing-sm)", "description": "Vertical padding" },
-        "--cre8-button-font-size": { "default": "var(--cre8-font-size-md)", "description": "Button font size" },
-        "--cre8-button-font-weight": { "default": "600", "description": "Button font weight" },
-        "--cre8-button-hover-background": { "default": "var(--cre8-color-primary-hover)", "description": "Hover state background" },
-        "--cre8-button-disabled-opacity": { "default": "0.5", "description": "Disabled state opacity" }
-      },
+      "cssProperties": {},
+      "parts": [
+        "button"
+      ],
       "examples": [
-        { "description": "Primary button", "html": "<cre8-button text=\"Submit\" variant=\"primary\"></cre8-button>" },
-        { "description": "Secondary button", "html": "<cre8-button text=\"Cancel\" variant=\"secondary\"></cre8-button>" },
-        { "description": "Loading state", "html": "<cre8-button text=\"Saving...\" loading></cre8-button>" },
-        { "description": "With slot content", "html": "<cre8-button><span slot=\"icon\">+</span>Add Item</cre8-button>" }
+        {
+          "description": "Primary button",
+          "html": "<cre8-button text=\"Submit\" variant=\"primary\"></cre8-button>"
+        },
+        {
+          "description": "Secondary button",
+          "html": "<cre8-button text=\"Cancel\" variant=\"secondary\"></cre8-button>"
+        },
+        {
+          "description": "Loading state",
+          "html": "<cre8-button text=\"Saving...\" loading></cre8-button>"
+        },
+        {
+          "description": "Full width button",
+          "html": "<cre8-button text=\"Continue\" full-width></cre8-button>"
+        }
       ]
     },
     {
@@ -51,95 +176,265 @@
       "category": "Actions",
       "description": "Button for destructive actions like delete or remove.",
       "attributes": {
-        "text": { "type": "string", "description": "Button text" },
-        "disabled": { "type": "boolean", "default": false }
+        "text": {
+          "type": "string",
+          "description": "Button text"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Button content" }
+        "default": {
+          "description": "Button content"
+        }
       },
       "events": {
-        "cre8-click": { "detail": {}, "description": "Fired when button is clicked" }
+        "click": {
+          "detail": {},
+          "description": "Native click event"
+        }
       },
-      "cssProperties": {
-        "--cre8-danger-button-background": { "default": "var(--cre8-color-error)", "description": "Button background" },
-        "--cre8-danger-button-color": { "default": "var(--cre8-color-on-error)", "description": "Button text color" }
-      },
+      "cssProperties": {},
       "examples": [
-        { "description": "Delete button", "html": "<cre8-danger-button text=\"Delete\"></cre8-danger-button>" }
+        {
+          "description": "Delete button",
+          "html": "<cre8-danger-button text=\"Delete\"></cre8-danger-button>"
+        }
       ]
+    },
+    {
+      "name": "cre8-button-group",
+      "category": "Actions",
+      "description": "Container for grouping related buttons.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Button elements"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-split-button",
+      "category": "Actions",
+      "description": "Split button with primary action and dropdown menu.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Split button content"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
     },
     {
       "name": "cre8-field",
       "category": "Forms",
-      "description": "Text input field with label and validation support.",
+      "description": "Text input field with label and validation support. Extends Cre8FormElement for form association.",
       "attributes": {
-        "label": { "type": "string", "required": true },
-        "value": { "type": "string" },
-        "type": { "type": "string", "values": ["text", "email", "password", "tel", "url", "number"], "default": "text" },
-        "placeholder": { "type": "string" },
-        "disabled": { "type": "boolean", "default": false },
-        "required": { "type": "boolean", "default": false },
-        "readonly": { "type": "boolean", "default": false },
-        "error-note": { "type": "string", "description": "Error message to display" },
-        "helper-text": { "type": "string", "description": "Helper text below input" },
-        "name": { "type": "string", "description": "Form field name" }
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "value": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "values": [
+            "text",
+            "email",
+            "password",
+            "tel",
+            "url",
+            "number"
+          ],
+          "default": "text"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        },
+        "readonly": {
+          "type": "boolean",
+          "default": false
+        },
+        "is-error": {
+          "type": "boolean",
+          "default": false
+        },
+        "is-success": {
+          "type": "boolean",
+          "default": false
+        },
+        "name": {
+          "type": "string",
+          "description": "Form field name"
+        }
       },
       "properties": {},
       "slots": {
-        "prefix": { "description": "Content before input (e.g., icon, currency symbol)" },
-        "suffix": { "description": "Content after input (e.g., icon, action button)" }
+        "prefix": {
+          "description": "Content before input"
+        },
+        "suffix": {
+          "description": "Content after input"
+        }
       },
       "events": {
-        "cre8-input": { "detail": { "value": "string" }, "description": "Fired on input" },
-        "cre8-change": { "detail": { "value": "string" }, "description": "Fired on change" },
-        "cre8-focus": { "detail": {}, "description": "Fired on focus" },
-        "cre8-blur": { "detail": {}, "description": "Fired on blur" }
+        "input": {
+          "detail": {
+            "value": "string"
+          },
+          "description": "Fired on input"
+        },
+        "change": {
+          "detail": {
+            "value": "string"
+          },
+          "description": "Fired on change"
+        }
       },
-      "cssProperties": {
-        "--cre8-field-border-color": { "default": "var(--cre8-color-border)", "description": "Input border color" },
-        "--cre8-field-border-radius": { "default": "var(--cre8-radius-sm)", "description": "Input border radius" },
-        "--cre8-field-background": { "default": "var(--cre8-color-surface)", "description": "Input background" },
-        "--cre8-field-focus-border-color": { "default": "var(--cre8-color-primary)", "description": "Focus state border" },
-        "--cre8-field-error-border-color": { "default": "var(--cre8-color-error)", "description": "Error state border" },
-        "--cre8-field-label-color": { "default": "var(--cre8-color-text)", "description": "Label text color" },
-        "--cre8-field-label-font-size": { "default": "var(--cre8-font-size-sm)", "description": "Label font size" },
-        "--cre8-field-padding": { "default": "var(--cre8-spacing-sm)", "description": "Input padding" }
-      },
+      "cssProperties": {},
       "examples": [
-        { "description": "Email input", "html": "<cre8-field label=\"Email\" type=\"email\" placeholder=\"Enter email\"></cre8-field>" },
-        { "description": "With error", "html": "<cre8-field label=\"Password\" type=\"password\" error-note=\"Password is required\"></cre8-field>" }
+        {
+          "description": "Email input",
+          "html": "<cre8-field label=\"Email\" type=\"email\" placeholder=\"Enter email\"></cre8-field>"
+        },
+        {
+          "description": "With error",
+          "html": "<cre8-field label=\"Password\" type=\"password\" is-error></cre8-field>"
+        }
       ]
+    },
+    {
+      "name": "cre8-field-note",
+      "category": "Forms",
+      "description": "Helper, error, or success text for form fields.",
+      "attributes": {
+        "icon-name": {
+          "type": "string",
+          "description": "Icon name to display"
+        },
+        "is-success": {
+          "type": "boolean",
+          "default": false
+        },
+        "is-error": {
+          "type": "boolean",
+          "default": false
+        },
+        "knockout": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Note text content"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
     },
     {
       "name": "cre8-select",
       "category": "Forms",
-      "description": "Dropdown select input for choosing from options.",
+      "description": "Native select dropdown with label and validation support. Extends Cre8FormElement.",
       "attributes": {
-        "label": { "type": "string" },
-        "value": { "type": "string" },
-        "disabled": { "type": "boolean", "default": false },
-        "required": { "type": "boolean", "default": false },
-        "placeholder": { "type": "string", "description": "Placeholder text when no value selected" },
-        "name": { "type": "string", "description": "Form field name" }
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "required": {
+          "type": "boolean",
+          "default": false
+        },
+        "field-id": {
+          "type": "string",
+          "description": "Unique field ID"
+        },
+        "field-note": {
+          "type": "string",
+          "description": "Helper text"
+        },
+        "aria-described-by": {
+          "type": "string"
+        },
+        "is-error": {
+          "type": "boolean",
+          "default": false
+        },
+        "error-note": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "is-success": {
+          "type": "boolean",
+          "default": false
+        },
+        "success-note": {
+          "type": "string",
+          "description": "Success message"
+        },
+        "name": {
+          "type": "string",
+          "description": "Form field name"
+        }
       },
       "properties": {
-        "options": { "type": "Array<{value: string, label: string, disabled?: boolean}>", "description": "Options array (alternative to slot)" }
+        "items": {
+          "type": "Array<Cre8SelectOption | Cre8SelectOptionGroup>",
+          "description": "Options array"
+        }
       },
       "slots": {
-        "default": { "description": "Option elements (<option> or <cre8-option>)" }
+        "fieldNote": {
+          "description": "Custom field note content"
+        }
       },
       "events": {
-        "cre8-change": { "detail": { "value": "string" }, "description": "Fired when selection changes" }
+        "change": {
+          "detail": {
+            "name": "string",
+            "value": "string"
+          },
+          "description": "Fired when selection changes"
+        }
       },
-      "cssProperties": {
-        "--cre8-select-border-color": { "default": "var(--cre8-color-border)", "description": "Select border color" },
-        "--cre8-select-background": { "default": "var(--cre8-color-surface)", "description": "Select background" },
-        "--cre8-select-dropdown-background": { "default": "var(--cre8-color-surface)", "description": "Dropdown background" },
-        "--cre8-select-option-hover": { "default": "var(--cre8-color-surface-hover)", "description": "Option hover color" }
+      "cssProperties": {},
+      "interfaces": {
+        "Cre8SelectOption": "{ label: string, value: string }",
+        "Cre8SelectOptionGroup": "{ optGroupLabel: string, options: Cre8SelectOption[] }"
       },
       "examples": [
-        { "description": "Basic select", "html": "<cre8-select label=\"Country\">\n  <option value=\"us\">United States</option>\n  <option value=\"uk\">United Kingdom</option>\n</cre8-select>" }
+        {
+          "description": "Basic select",
+          "html": "<cre8-select label=\"Country\"></cre8-select>"
+        }
       ]
     },
     {
@@ -147,42 +442,83 @@
       "category": "Forms",
       "description": "Multi-select dropdown for choosing multiple options.",
       "attributes": {
-        "label": { "type": "string" },
-        "disabled": { "type": "boolean", "default": false },
-        "placeholder": { "type": "string" }
+        "label": {
+          "type": "string"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "placeholder": {
+          "type": "string"
+        }
       },
       "properties": {
-        "value": { "type": "string[]", "description": "Array of selected values" },
-        "options": { "type": "Array<{value: string, label: string}>", "description": "Options array" }
+        "value": {
+          "type": "string[]",
+          "description": "Array of selected values"
+        },
+        "options": {
+          "type": "Array<{value: string, label: string}>",
+          "description": "Options array"
+        }
       },
       "slots": {
-        "default": { "description": "Option elements" }
+        "default": {
+          "description": "Option elements"
+        }
       },
       "events": {
-        "cre8-change": { "detail": { "value": "string[]" }, "description": "Fired when selection changes" }
+        "change": {
+          "detail": {
+            "value": "string[]"
+          },
+          "description": "Fired when selection changes"
+        }
       },
-      "cssProperties": {
-        "--cre8-multi-select-chip-background": { "default": "var(--cre8-color-surface-alt)", "description": "Selected chip background" },
-        "--cre8-multi-select-chip-color": { "default": "var(--cre8-color-text)", "description": "Selected chip text color" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-checkbox-field",
       "category": "Forms",
-      "description": "Container for checkbox items.",
+      "description": "Group container for checkbox items.",
       "attributes": {
-        "label": { "type": "string" },
-        "disabled": { "type": "boolean", "default": false }
+        "label": {
+          "type": "string",
+          "description": "Group legend label"
+        },
+        "field-note": {
+          "type": "string",
+          "description": "Helper text"
+        },
+        "aria-described-by": {
+          "type": "string"
+        },
+        "field-note-icon-name": {
+          "type": "string"
+        },
+        "field-note-knockout": {
+          "type": "boolean",
+          "default": false
+        },
+        "field-note-is-success": {
+          "type": "boolean",
+          "default": false
+        },
+        "field-note-is-error": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "cre8-checkbox-field-item elements" }
+        "default": {
+          "description": "cre8-checkbox-field-item elements"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-checkbox-field-gap": { "default": "var(--cre8-spacing-sm)", "description": "Gap between checkboxes" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -190,44 +526,73 @@
       "category": "Forms",
       "description": "Individual checkbox item within a CheckboxField.",
       "attributes": {
-        "label": { "type": "string", "required": true },
-        "checked": { "type": "boolean", "default": false },
-        "disabled": { "type": "boolean", "default": false },
-        "value": { "type": "string" },
-        "indeterminate": { "type": "boolean", "default": false }
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "checked": {
+          "type": "boolean",
+          "default": false
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "value": {
+          "type": "string"
+        },
+        "indeterminate": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {},
       "events": {
-        "cre8-change": { "detail": { "checked": "boolean", "value": "string" }, "description": "Fired when checked state changes" }
+        "change": {
+          "detail": {
+            "checked": "boolean",
+            "value": "string"
+          },
+          "description": "Fired when checked state changes"
+        }
       },
-      "cssProperties": {
-        "--cre8-checkbox-size": { "default": "20px", "description": "Checkbox size" },
-        "--cre8-checkbox-border-color": { "default": "var(--cre8-color-border)", "description": "Checkbox border color" },
-        "--cre8-checkbox-checked-background": { "default": "var(--cre8-color-primary)", "description": "Checked background color" },
-        "--cre8-checkbox-checkmark-color": { "default": "var(--cre8-color-on-primary)", "description": "Checkmark color" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-radio-field",
       "category": "Forms",
-      "description": "Container for radio button items.",
+      "description": "Group container for radio button items.",
       "attributes": {
-        "label": { "type": "string" },
-        "name": { "type": "string", "required": true, "description": "Shared name for radio group" },
-        "value": { "type": "string", "description": "Currently selected value" }
+        "label": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "required": true,
+          "description": "Shared name for radio group"
+        },
+        "value": {
+          "type": "string",
+          "description": "Currently selected value"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "cre8-radio-field-item elements" }
+        "default": {
+          "description": "cre8-radio-field-item elements"
+        }
       },
       "events": {
-        "cre8-change": { "detail": { "value": "string" }, "description": "Fired when selection changes" }
+        "change": {
+          "detail": {
+            "value": "string"
+          },
+          "description": "Fired when selection changes"
+        }
       },
-      "cssProperties": {
-        "--cre8-radio-field-gap": { "default": "var(--cre8-spacing-sm)", "description": "Gap between radio buttons" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -235,44 +600,104 @@
       "category": "Forms",
       "description": "Individual radio button within a RadioField.",
       "attributes": {
-        "label": { "type": "string", "required": true },
-        "value": { "type": "string", "required": true },
-        "checked": { "type": "boolean", "default": false },
-        "disabled": { "type": "boolean", "default": false }
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "value": {
+          "type": "string",
+          "required": true
+        },
+        "checked": {
+          "type": "boolean",
+          "default": false
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {},
       "events": {},
-      "cssProperties": {
-        "--cre8-radio-size": { "default": "20px", "description": "Radio button size" },
-        "--cre8-radio-border-color": { "default": "var(--cre8-color-border)", "description": "Radio border color" },
-        "--cre8-radio-checked-color": { "default": "var(--cre8-color-primary)", "description": "Checked indicator color" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-date-picker",
       "category": "Forms",
-      "description": "Date picker input component.",
+      "description": "Date picker input component. Extends Cre8FormElement.",
       "attributes": {
-        "label": { "type": "string" },
-        "value": { "type": "string", "description": "ISO date string (YYYY-MM-DD)" },
-        "disabled": { "type": "boolean", "default": false },
-        "min": { "type": "string", "description": "Minimum selectable date" },
-        "max": { "type": "string", "description": "Maximum selectable date" },
-        "placeholder": { "type": "string" }
+        "label": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "description": "ISO date string (YYYY-MM-DD)"
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "min": {
+          "type": "string",
+          "description": "Minimum selectable date"
+        },
+        "max": {
+          "type": "string",
+          "description": "Maximum selectable date"
+        },
+        "placeholder": {
+          "type": "string"
+        }
       },
       "properties": {
-        "dateValue": { "type": "Date", "description": "JavaScript Date object" }
+        "dateValue": {
+          "type": "Date",
+          "description": "JavaScript Date object"
+        }
       },
       "slots": {},
       "events": {
-        "cre8-change": { "detail": { "value": "string", "date": "Date" }, "description": "Fired when date changes" }
+        "change": {
+          "detail": {
+            "value": "string",
+            "date": "Date"
+          },
+          "description": "Fired when date changes"
+        }
       },
-      "cssProperties": {
-        "--cre8-date-picker-calendar-background": { "default": "var(--cre8-color-surface)", "description": "Calendar popup background" },
-        "--cre8-date-picker-selected-background": { "default": "var(--cre8-color-primary)", "description": "Selected date background" }
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-select-tile",
+      "category": "Forms",
+      "description": "Tile-based selection option.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Tile content"
+        }
       },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-select-tile-list",
+      "category": "Forms",
+      "description": "Container for select tiles.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "cre8-select-tile elements"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -280,62 +705,79 @@
       "category": "Layout",
       "description": "Container card for grouping related content.",
       "attributes": {
-        "elevation": { "type": "string", "values": ["none", "sm", "md", "lg"], "default": "sm", "description": "Shadow elevation level" },
-        "padding": { "type": "string", "values": ["none", "sm", "md", "lg"], "default": "md", "description": "Internal padding" }
+        "variant": {
+          "type": "string",
+          "values": [
+            "bare",
+            "horizontal",
+            "horizontal-bare"
+          ],
+          "description": "Card style variant"
+        },
+        "align": {
+          "type": "string",
+          "values": [
+            "center"
+          ],
+          "description": "Content alignment"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Card content" },
-        "header": { "description": "Card header content" },
-        "footer": { "description": "Card footer content" }
+        "header": {
+          "description": "Card header content"
+        },
+        "body": {
+          "description": "Card body content (default slot)"
+        },
+        "footer": {
+          "description": "Card footer content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-card-background": { "default": "var(--cre8-color-surface)", "description": "Card background color" },
-        "--cre8-card-border-radius": { "default": "var(--cre8-radius-md)", "description": "Card border radius" },
-        "--cre8-card-border-color": { "default": "var(--cre8-color-border)", "description": "Card border color" },
-        "--cre8-card-border-width": { "default": "1px", "description": "Card border width" },
-        "--cre8-card-padding": { "default": "var(--cre8-spacing-md)", "description": "Card padding" },
-        "--cre8-card-shadow": { "default": "var(--cre8-shadow-sm)", "description": "Card shadow" }
-      },
+      "cssProperties": {},
+      "parts": [
+        "card",
+        "header",
+        "body",
+        "footer"
+      ],
       "examples": [
-        { "description": "Basic card", "html": "<cre8-card>\n  <cre8-heading>Title</cre8-heading>\n  <p>Content</p>\n</cre8-card>" },
-        { "description": "Card with slots", "html": "<cre8-card>\n  <span slot=\"header\">Header</span>\n  Content\n  <span slot=\"footer\">Footer</span>\n</cre8-card>" }
+        {
+          "description": "Basic card",
+          "html": "<cre8-card>\n  <cre8-heading>Title</cre8-heading>\n  <p>Content</p>\n</cre8-card>"
+        },
+        {
+          "description": "Card with slots",
+          "html": "<cre8-card>\n  <span slot=\"header\">Header</span>\n  Content\n  <span slot=\"footer\">Footer</span>\n</cre8-card>"
+        }
       ]
     },
     {
       "name": "cre8-grid",
       "category": "Layout",
       "description": "CSS Grid layout container.",
-      "attributes": {
-        "columns": { "type": "string", "default": "12", "description": "Number of columns or grid-template-columns value" },
-        "gap": { "type": "string", "values": ["none", "sm", "md", "lg"], "default": "md", "description": "Gap between items" },
-        "align-items": { "type": "string", "values": ["start", "center", "end", "stretch"], "default": "stretch" },
-        "justify-items": { "type": "string", "values": ["start", "center", "end", "stretch"], "default": "stretch" }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "cre8-grid-item elements" }
+        "default": {
+          "description": "cre8-grid-item elements"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-grid-gap": { "default": "var(--cre8-spacing-md)", "description": "Grid gap" },
-        "--cre8-grid-columns": { "default": "12", "description": "Number of columns" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-grid-item",
       "category": "Layout",
       "description": "Item within a Grid container.",
-      "attributes": {
-        "span": { "type": "string", "default": "1", "description": "Number of columns to span" },
-        "start": { "type": "string", "description": "Starting column" },
-        "row-span": { "type": "string", "description": "Number of rows to span" }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Grid item content" }
+        "default": {
+          "description": "Grid item content"
+        }
       },
       "events": {},
       "cssProperties": {},
@@ -348,60 +790,84 @@
       "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Layout content (cre8-header, cre8-main, cre8-footer)" }
+        "default": {
+          "description": "Layout content (cre8-header, cre8-main, cre8-footer)"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-layout-min-height": { "default": "100vh", "description": "Minimum layout height" },
-        "--cre8-layout-background": { "default": "var(--cre8-color-background)", "description": "Layout background" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-layout-section",
       "category": "Layout",
       "description": "Section within a Layout.",
-      "attributes": {
-        "padding": { "type": "string", "values": ["none", "sm", "md", "lg", "xl"], "default": "md" }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Section content" }
+        "default": {
+          "description": "Section content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-layout-section-padding": { "default": "var(--cre8-spacing-lg)", "description": "Section padding" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-layout-container",
       "category": "Layout",
       "description": "Content container with max-width constraints.",
-      "attributes": {
-        "size": { "type": "string", "values": ["sm", "md", "lg", "xl", "full"], "default": "lg", "description": "Container max-width" }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Container content" }
+        "default": {
+          "description": "Container content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-container-max-width": { "default": "1200px", "description": "Maximum container width" },
-        "--cre8-container-padding": { "default": "var(--cre8-spacing-md)", "description": "Container horizontal padding" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-section",
       "category": "Layout",
       "description": "Generic section container.",
-      "attributes": {
-        "padding": { "type": "string", "values": ["none", "sm", "md", "lg"], "default": "md" }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Section content" }
+        "default": {
+          "description": "Section content"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-linelength-container",
+      "category": "Layout",
+      "description": "Container that constrains line length for optimal readability.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Container content"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-main",
+      "category": "Layout",
+      "description": "Semantic main content element.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Main content"
+        }
       },
       "events": {},
       "cssProperties": {},
@@ -411,124 +877,167 @@
       "name": "cre8-hero",
       "category": "Layout",
       "description": "Hero section for landing pages.",
-      "attributes": {
-        "align": { "type": "string", "values": ["left", "center", "right"], "default": "center" },
-        "size": { "type": "string", "values": ["sm", "md", "lg"], "default": "md" }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Hero content" },
-        "background": { "description": "Background image or video" },
-        "actions": { "description": "CTA buttons" }
+        "default": {
+          "description": "Hero content"
+        },
+        "background": {
+          "description": "Background image or video"
+        },
+        "actions": {
+          "description": "CTA buttons"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-hero-min-height": { "default": "400px", "description": "Minimum hero height" },
-        "--cre8-hero-background": { "default": "var(--cre8-color-surface)", "description": "Hero background" },
-        "--cre8-hero-text-color": { "default": "var(--cre8-color-text)", "description": "Hero text color" },
-        "--cre8-hero-padding": { "default": "var(--cre8-spacing-xl)", "description": "Hero padding" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-band",
       "category": "Layout",
       "description": "Full-width content band/section.",
-      "attributes": {
-        "background": { "type": "string", "values": ["default", "alt", "primary", "dark"], "default": "default" }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Band content" }
+        "default": {
+          "description": "Band content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-band-background": { "default": "var(--cre8-color-surface)", "description": "Band background" },
-        "--cre8-band-padding": { "default": "var(--cre8-spacing-xl)", "description": "Band vertical padding" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-divider",
       "category": "Layout",
       "description": "Visual separator between content sections.",
-      "attributes": {
-        "orientation": { "type": "string", "values": ["horizontal", "vertical"], "default": "horizontal" },
-        "spacing": { "type": "string", "values": ["none", "sm", "md", "lg"], "default": "md" }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {},
       "events": {},
-      "cssProperties": {
-        "--cre8-divider-color": { "default": "var(--cre8-color-border)", "description": "Divider color" },
-        "--cre8-divider-thickness": { "default": "1px", "description": "Divider thickness" },
-        "--cre8-divider-margin": { "default": "var(--cre8-spacing-md)", "description": "Divider margin" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-heading",
       "category": "Typography",
-      "description": "Heading text component with semantic levels.",
+      "description": "Heading text component with semantic levels and typography presets.",
       "attributes": {
-        "type": { "type": "string", "values": ["h1", "h2", "h3", "h4", "h5", "h6"], "default": "h2", "description": "Heading level" },
-        "size": { "type": "string", "values": ["xs", "sm", "md", "lg", "xl", "2xl"], "description": "Visual size (overrides type)" }
+        "type": {
+          "type": "string",
+          "values": [
+            "display-default",
+            "display-small",
+            "headline-large",
+            "headline-default",
+            "headline-small",
+            "title-xlarge",
+            "title-large",
+            "title-default",
+            "title-small",
+            "label-large",
+            "label-default",
+            "label-small",
+            "meta-large",
+            "meta-default",
+            "meta-small"
+          ],
+          "description": "Typography preset"
+        },
+        "tag-variant": {
+          "type": "string",
+          "values": [
+            "h1",
+            "h2",
+            "h3",
+            "h4",
+            "h5",
+            "h6"
+          ],
+          "default": "h2",
+          "description": "HTML heading level"
+        },
+        "inverted": {
+          "type": "boolean",
+          "default": false,
+          "description": "Light text for dark backgrounds"
+        },
+        "brand-color": {
+          "type": "boolean",
+          "default": false,
+          "description": "Apply brand color"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Heading text content" }
+        "default": {
+          "description": "Heading text content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-heading-color": { "default": "var(--cre8-color-text)", "description": "Heading color" },
-        "--cre8-heading-font-family": { "default": "var(--cre8-font-family-heading)", "description": "Heading font family" },
-        "--cre8-heading-font-weight": { "default": "700", "description": "Heading font weight" },
-        "--cre8-heading-line-height": { "default": "1.2", "description": "Heading line height" },
-        "--cre8-heading-margin-bottom": { "default": "var(--cre8-spacing-sm)", "description": "Bottom margin" }
-      },
+      "cssProperties": {},
+      "parts": [
+        "tag"
+      ],
       "examples": [
-        { "description": "Page title", "html": "<cre8-heading type=\"h1\">Welcome</cre8-heading>" },
-        { "description": "Section heading", "html": "<cre8-heading type=\"h2\" size=\"lg\">Features</cre8-heading>" }
+        {
+          "description": "Page title",
+          "html": "<cre8-heading tag-variant=\"h1\" type=\"display-default\">Welcome</cre8-heading>"
+        },
+        {
+          "description": "Section heading",
+          "html": "<cre8-heading tag-variant=\"h2\" type=\"headline-large\">Features</cre8-heading>"
+        }
       ]
     },
     {
       "name": "cre8-text-passage",
       "category": "Typography",
-      "description": "Body text container for paragraphs.",
-      "attributes": {
-        "size": { "type": "string", "values": ["sm", "md", "lg"], "default": "md" }
-      },
+      "description": "Typography wrapper for body text and paragraphs.",
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Text content" }
+        "default": {
+          "description": "Text content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-text-passage-color": { "default": "var(--cre8-color-text)", "description": "Text color" },
-        "--cre8-text-passage-line-height": { "default": "1.6", "description": "Line height" },
-        "--cre8-text-passage-font-size": { "default": "var(--cre8-font-size-md)", "description": "Font size" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-text-link",
       "category": "Typography",
-      "description": "Styled text link.",
+      "description": "Styled inline text link.",
       "attributes": {
-        "href": { "type": "string", "required": true },
-        "target": { "type": "string", "values": ["_blank", "_self", "_parent", "_top"] },
-        "rel": { "type": "string", "description": "Link relationship" }
+        "href": {
+          "type": "string",
+          "required": true
+        },
+        "target": {
+          "type": "string",
+          "values": [
+            "_blank",
+            "_self",
+            "_parent",
+            "_top"
+          ]
+        },
+        "rel": {
+          "type": "string",
+          "description": "Link relationship"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Link text" }
+        "default": {
+          "description": "Link text"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-text-link-color": { "default": "var(--cre8-color-primary)", "description": "Link color" },
-        "--cre8-text-link-hover-color": { "default": "var(--cre8-color-primary-hover)", "description": "Hover color" },
-        "--cre8-text-link-decoration": { "default": "underline", "description": "Text decoration" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -536,39 +1045,45 @@
       "category": "Navigation",
       "description": "Navigation link component.",
       "attributes": {
-        "href": { "type": "string", "required": true },
-        "active": { "type": "boolean", "default": false, "description": "Active/current state" }
+        "href": {
+          "type": "string",
+          "required": true
+        },
+        "active": {
+          "type": "boolean",
+          "default": false,
+          "description": "Active/current state"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Link content" }
+        "default": {
+          "description": "Link content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-link-color": { "default": "var(--cre8-color-text)", "description": "Link color" },
-        "--cre8-link-active-color": { "default": "var(--cre8-color-primary)", "description": "Active link color" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-global-nav",
       "category": "Navigation",
-      "description": "Global navigation bar container.",
-      "attributes": {
-        "sticky": { "type": "boolean", "default": false, "description": "Stick to top of viewport" }
-      },
+      "description": "Global/application navigation bar container.",
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Navigation items" },
-        "logo": { "description": "Logo/brand slot" },
-        "actions": { "description": "Right-side actions (buttons, user menu)" }
+        "default": {
+          "description": "Navigation items"
+        },
+        "logo": {
+          "description": "Logo/brand slot"
+        },
+        "actions": {
+          "description": "Right-side actions"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-global-nav-background": { "default": "var(--cre8-color-surface)", "description": "Nav background" },
-        "--cre8-global-nav-height": { "default": "64px", "description": "Nav height" },
-        "--cre8-global-nav-border-color": { "default": "var(--cre8-color-border)", "description": "Bottom border color" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -576,12 +1091,19 @@
       "category": "Navigation",
       "description": "Item within GlobalNav.",
       "attributes": {
-        "href": { "type": "string" },
-        "active": { "type": "boolean", "default": false }
+        "href": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Item content" }
+        "default": {
+          "description": "Item content"
+        }
       },
       "events": {},
       "cssProperties": {},
@@ -591,17 +1113,15 @@
       "name": "cre8-primary-nav",
       "category": "Navigation",
       "description": "Primary navigation container.",
-      "attributes": {
-        "orientation": { "type": "string", "values": ["horizontal", "vertical"], "default": "horizontal" }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Navigation items" }
+        "default": {
+          "description": "Navigation items"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-primary-nav-gap": { "default": "var(--cre8-spacing-md)", "description": "Gap between items" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -609,12 +1129,19 @@
       "category": "Navigation",
       "description": "Item within PrimaryNav.",
       "attributes": {
-        "href": { "type": "string" },
-        "active": { "type": "boolean", "default": false }
+        "href": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Item content" }
+        "default": {
+          "description": "Item content"
+        }
       },
       "events": {},
       "cssProperties": {},
@@ -627,7 +1154,9 @@
       "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Navigation items" }
+        "default": {
+          "description": "Navigation items"
+        }
       },
       "events": {},
       "cssProperties": {},
@@ -638,12 +1167,64 @@
       "category": "Navigation",
       "description": "Item within TertiaryNav.",
       "attributes": {
-        "href": { "type": "string" },
-        "active": { "type": "boolean", "default": false }
+        "href": {
+          "type": "string"
+        },
+        "active": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Item content" }
+        "default": {
+          "description": "Item content"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-utility-nav",
+      "category": "Navigation",
+      "description": "Utility navigation container.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Navigation items"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-utility-nav-item",
+      "category": "Navigation",
+      "description": "Item within UtilityNav.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Item content"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-nav-container",
+      "category": "Navigation",
+      "description": "Navigation wrapper container.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Navigation content"
+        }
       },
       "events": {},
       "cssProperties": {},
@@ -656,14 +1237,12 @@
       "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Breadcrumb items" },
-        "separator": { "description": "Custom separator element" }
+        "default": {
+          "description": "Breadcrumb items"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-breadcrumbs-separator": { "default": "'/'" , "description": "Separator character" },
-        "--cre8-breadcrumbs-gap": { "default": "var(--cre8-spacing-xs)", "description": "Gap between items" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -671,12 +1250,54 @@
       "category": "Navigation",
       "description": "Item within Breadcrumbs.",
       "attributes": {
-        "href": { "type": "string" },
-        "current": { "type": "boolean", "default": false, "description": "Is current page" }
+        "href": {
+          "type": "string"
+        },
+        "current": {
+          "type": "boolean",
+          "default": false,
+          "description": "Is current page"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Item content" }
+        "default": {
+          "description": "Item content"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-link-list",
+      "category": "Navigation",
+      "description": "List of links.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Link list items"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-link-list-item",
+      "category": "Navigation",
+      "description": "Link item within LinkList.",
+      "attributes": {
+        "href": {
+          "type": "string"
+        }
+      },
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Link text"
+        }
       },
       "events": {},
       "cssProperties": {},
@@ -687,41 +1308,69 @@
       "category": "Navigation",
       "description": "Pagination controls for lists.",
       "attributes": {
-        "current-page": { "type": "number", "default": 1 },
-        "total-pages": { "type": "number", "required": true },
-        "show-first-last": { "type": "boolean", "default": true, "description": "Show first/last buttons" },
-        "sibling-count": { "type": "number", "default": 1, "description": "Pages shown on each side of current" }
+        "total-results": {
+          "type": "number",
+          "required": true,
+          "description": "Total result count"
+        },
+        "page-size": {
+          "type": "number",
+          "default": 10,
+          "description": "Items per page"
+        },
+        "visible-pages": {
+          "type": "number",
+          "default": 5,
+          "description": "Visible page buttons"
+        },
+        "display": {
+          "type": "string",
+          "values": [
+            "compact",
+            "icon-only",
+            "default"
+          ],
+          "default": "default",
+          "description": "Display variant"
+        },
+        "hide-last-and-first-buttons": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hide first/last page buttons"
+        },
+        "current-page": {
+          "type": "number",
+          "default": 1,
+          "description": "Current page number"
+        }
       },
       "properties": {},
-      "slots": {
-        "previous": { "description": "Custom previous button" },
-        "next": { "description": "Custom next button" }
-      },
+      "slots": {},
       "events": {
-        "cre8-page-change": { "detail": { "page": "number" }, "description": "Fired when page changes" }
+        "pagination.click": {
+          "detail": {
+            "buttonName": "string",
+            "value": "number"
+          },
+          "description": "Fired when page changes"
+        }
       },
-      "cssProperties": {
-        "--cre8-pagination-button-size": { "default": "36px", "description": "Page button size" },
-        "--cre8-pagination-active-background": { "default": "var(--cre8-color-primary)", "description": "Active page background" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-header",
       "category": "Navigation",
       "description": "Page header container.",
-      "attributes": {
-        "sticky": { "type": "boolean", "default": false }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Header content" }
+        "default": {
+          "description": "Header content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-header-background": { "default": "var(--cre8-color-surface)", "description": "Header background" },
-        "--cre8-header-border-color": { "default": "var(--cre8-color-border)", "description": "Header border" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -731,37 +1380,75 @@
       "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Footer content" },
-        "nav": { "description": "Footer navigation" },
-        "copyright": { "description": "Copyright text" }
+        "default": {
+          "description": "Footer content"
+        },
+        "nav": {
+          "description": "Footer navigation"
+        },
+        "copyright": {
+          "description": "Copyright text"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-footer-background": { "default": "var(--cre8-color-surface-alt)", "description": "Footer background" },
-        "--cre8-footer-padding": { "default": "var(--cre8-spacing-lg)", "description": "Footer padding" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-tabs",
       "category": "Navigation",
-      "description": "Tab navigation container.",
+      "description": "Tab navigation container with automatic management.",
       "attributes": {
-        "selected-index": { "type": "number", "default": 0, "description": "Index of selected tab" }
+        "size": {
+          "type": "string",
+          "values": [
+            "sm"
+          ],
+          "description": "Small size variant"
+        },
+        "full-width": {
+          "type": "boolean",
+          "default": false,
+          "description": "Full width tabs"
+        },
+        "active-index": {
+          "type": "number",
+          "default": 0,
+          "description": "Initial active tab index"
+        }
       },
       "properties": {
-        "selectedTab": { "type": "string", "description": "ID of selected tab" }
+        "activeTab": {
+          "type": "HTMLElement",
+          "description": "Current active tab element"
+        },
+        "isStart": {
+          "type": "boolean",
+          "description": "Scroll position at start"
+        },
+        "isEnd": {
+          "type": "boolean",
+          "description": "Scroll position at end"
+        }
       },
       "slots": {
-        "default": { "description": "cre8-tab and cre8-tab-panel elements" }
+        "default": {
+          "description": "cre8-tab elements"
+        },
+        "panel": {
+          "description": "cre8-tab-panel elements"
+        }
       },
       "events": {
-        "cre8-tab-change": { "detail": { "index": "number", "tabId": "string" }, "description": "Fired when tab changes" }
+        "tabChange": {
+          "detail": {
+            "value": "any",
+            "activeTabIndex": "number"
+          },
+          "description": "Fired when tab changes"
+        }
       },
-      "cssProperties": {
-        "--cre8-tabs-border-color": { "default": "var(--cre8-color-border)", "description": "Tab bar border" },
-        "--cre8-tabs-indicator-color": { "default": "var(--cre8-color-primary)", "description": "Active tab indicator" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -769,14 +1456,28 @@
       "category": "Navigation",
       "description": "Individual tab within Tabs.",
       "attributes": {
-        "label": { "type": "string", "required": true },
-        "selected": { "type": "boolean", "default": false },
-        "disabled": { "type": "boolean", "default": false },
-        "tab-id": { "type": "string", "description": "Unique tab identifier" }
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "selected": {
+          "type": "boolean",
+          "default": false
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "tab-id": {
+          "type": "string",
+          "description": "Unique tab identifier"
+        }
       },
       "properties": {},
       "slots": {
-        "icon": { "description": "Tab icon" }
+        "icon": {
+          "description": "Tab icon"
+        }
       },
       "events": {},
       "cssProperties": {},
@@ -787,16 +1488,19 @@
       "category": "Navigation",
       "description": "Content panel for a Tab.",
       "attributes": {
-        "tab-id": { "type": "string", "description": "Associated tab ID" }
+        "tab-id": {
+          "type": "string",
+          "description": "Associated tab ID"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Panel content" }
+        "default": {
+          "description": "Panel content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-tab-panel-padding": { "default": "var(--cre8-spacing-md)", "description": "Panel padding" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -804,17 +1508,30 @@
       "category": "Disclosure",
       "description": "Accordion container for collapsible sections.",
       "attributes": {
-        "single": { "type": "boolean", "default": false, "description": "Only one item can be expanded at a time" }
+        "border-type": {
+          "type": "string",
+          "values": [
+            "rectangle",
+            "rounded-bottom",
+            "rounded",
+            "none"
+          ],
+          "description": "Border style"
+        },
+        "has-divider": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show internal dividers"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "cre8-accordion-item elements" }
+        "default": {
+          "description": "cre8-accordion-item elements"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-accordion-border-color": { "default": "var(--cre8-color-border)", "description": "Item border color" },
-        "--cre8-accordion-gap": { "default": "0", "description": "Gap between items" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -822,22 +1539,37 @@
       "category": "Disclosure",
       "description": "Individual collapsible item within Accordion.",
       "attributes": {
-        "label": { "type": "string", "required": true },
-        "expanded": { "type": "boolean", "default": false },
-        "disabled": { "type": "boolean", "default": false }
+        "label": {
+          "type": "string",
+          "required": true
+        },
+        "expanded": {
+          "type": "boolean",
+          "default": false
+        },
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Expandable content" },
-        "icon": { "description": "Custom expand/collapse icon" }
+        "default": {
+          "description": "Expandable content"
+        },
+        "icon": {
+          "description": "Custom expand/collapse icon"
+        }
       },
       "events": {
-        "cre8-toggle": { "detail": { "expanded": "boolean" }, "description": "Fired when toggled" }
+        "toggle": {
+          "detail": {
+            "expanded": "boolean"
+          },
+          "description": "Fired when toggled"
+        }
       },
-      "cssProperties": {
-        "--cre8-accordion-item-header-padding": { "default": "var(--cre8-spacing-md)", "description": "Header padding" },
-        "--cre8-accordion-item-content-padding": { "default": "var(--cre8-spacing-md)", "description": "Content padding" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -845,24 +1577,31 @@
       "category": "Disclosure",
       "description": "Dropdown menu container.",
       "attributes": {
-        "open": { "type": "boolean", "default": false },
-        "placement": { "type": "string", "values": ["top", "bottom", "left", "right"], "default": "bottom" },
-        "trigger": { "type": "string", "values": ["click", "hover"], "default": "click" }
+        "open": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Dropdown items" },
-        "trigger": { "description": "Trigger element" }
+        "default": {
+          "description": "Dropdown items"
+        },
+        "trigger": {
+          "description": "Trigger element"
+        }
       },
       "events": {
-        "cre8-open": { "detail": {}, "description": "Fired when dropdown opens" },
-        "cre8-close": { "detail": {}, "description": "Fired when dropdown closes" }
+        "open": {
+          "detail": {},
+          "description": "Fired when dropdown opens"
+        },
+        "close": {
+          "detail": {},
+          "description": "Fired when dropdown closes"
+        }
       },
-      "cssProperties": {
-        "--cre8-dropdown-background": { "default": "var(--cre8-color-surface)", "description": "Dropdown background" },
-        "--cre8-dropdown-shadow": { "default": "var(--cre8-shadow-md)", "description": "Dropdown shadow" },
-        "--cre8-dropdown-border-radius": { "default": "var(--cre8-radius-md)", "description": "Border radius" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -870,50 +1609,125 @@
       "category": "Disclosure",
       "description": "Item within Dropdown.",
       "attributes": {
-        "disabled": { "type": "boolean", "default": false },
-        "href": { "type": "string" }
+        "disabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "href": {
+          "type": "string"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Item content" },
-        "icon": { "description": "Item icon" }
+        "default": {
+          "description": "Item content"
+        },
+        "icon": {
+          "description": "Item icon"
+        }
       },
       "events": {
-        "cre8-select": { "detail": {}, "description": "Fired when item is selected" }
+        "select": {
+          "detail": {},
+          "description": "Fired when item is selected"
+        }
       },
-      "cssProperties": {
-        "--cre8-dropdown-item-padding": { "default": "var(--cre8-spacing-sm) var(--cre8-spacing-md)", "description": "Item padding" },
-        "--cre8-dropdown-item-hover": { "default": "var(--cre8-color-surface-hover)", "description": "Hover background" }
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-submenu",
+      "category": "Disclosure",
+      "description": "Submenu wrapper within dropdown.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Submenu items"
+        }
       },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-submenu-item",
+      "category": "Disclosure",
+      "description": "Submenu item.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Item content"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-modal",
       "category": "Disclosure",
-      "description": "Modal dialog overlay.",
+      "description": "Modal dialog overlay with focus trap.",
       "attributes": {
-        "open": { "type": "boolean", "default": false },
-        "size": { "type": "string", "values": ["sm", "md", "lg", "full"], "default": "md" },
-        "close-on-backdrop": { "type": "boolean", "default": true, "description": "Close when clicking backdrop" },
-        "close-on-escape": { "type": "boolean", "default": true, "description": "Close on Escape key" }
+        "is-active": {
+          "type": "boolean",
+          "default": false,
+          "description": "Modal visibility state"
+        },
+        "status": {
+          "type": "string",
+          "values": [
+            "error",
+            "warning",
+            "success",
+            "info",
+            "help"
+          ],
+          "description": "Status type"
+        },
+        "utility-modal-title": {
+          "type": "string",
+          "description": "Utility modal heading text"
+        },
+        "not-dismissible": {
+          "type": "boolean",
+          "default": false,
+          "description": "Prevent dismissal"
+        },
+        "close-button-text": {
+          "type": "string",
+          "description": "Close button label"
+        },
+        "close-button-icon": {
+          "type": "string",
+          "description": "Close button icon"
+        },
+        "aria-label": {
+          "type": "string",
+          "required": true,
+          "description": "Accessibility label"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Modal body content" },
-        "header": { "description": "Modal header" },
-        "footer": { "description": "Modal footer (actions)" }
+        "header": {
+          "description": "Modal header"
+        },
+        "body": {
+          "description": "Modal body content (default slot)"
+        },
+        "footer": {
+          "description": "Modal footer (actions)"
+        }
       },
       "events": {
-        "cre8-open": { "detail": {}, "description": "Fired when modal opens" },
-        "cre8-close": { "detail": { "reason": "string" }, "description": "Fired when modal closes" }
+        "close-modal": {
+          "detail": {},
+          "description": "Fired when modal closes"
+        }
       },
-      "cssProperties": {
-        "--cre8-modal-background": { "default": "var(--cre8-color-surface)", "description": "Modal background" },
-        "--cre8-modal-backdrop": { "default": "rgba(0, 0, 0, 0.5)", "description": "Backdrop color" },
-        "--cre8-modal-border-radius": { "default": "var(--cre8-radius-lg)", "description": "Border radius" },
-        "--cre8-modal-shadow": { "default": "var(--cre8-shadow-lg)", "description": "Modal shadow" },
-        "--cre8-modal-padding": { "default": "var(--cre8-spacing-lg)", "description": "Content padding" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -921,23 +1735,31 @@
       "category": "Disclosure",
       "description": "Popover content container.",
       "attributes": {
-        "open": { "type": "boolean", "default": false },
-        "placement": { "type": "string", "values": ["top", "bottom", "left", "right"], "default": "bottom" }
+        "open": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Popover content" },
-        "trigger": { "description": "Trigger element" }
+        "default": {
+          "description": "Popover content"
+        },
+        "trigger": {
+          "description": "Trigger element"
+        }
       },
       "events": {
-        "cre8-open": { "detail": {}, "description": "Fired when popover opens" },
-        "cre8-close": { "detail": {}, "description": "Fired when popover closes" }
+        "open": {
+          "detail": {},
+          "description": "Fired when popover opens"
+        },
+        "close": {
+          "detail": {},
+          "description": "Fired when popover closes"
+        }
       },
-      "cssProperties": {
-        "--cre8-popover-background": { "default": "var(--cre8-color-surface)", "description": "Popover background" },
-        "--cre8-popover-shadow": { "default": "var(--cre8-shadow-md)", "description": "Popover shadow" },
-        "--cre8-popover-padding": { "default": "var(--cre8-spacing-md)", "description": "Content padding" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -945,48 +1767,149 @@
       "category": "Disclosure",
       "description": "Tooltip for additional context.",
       "attributes": {
-        "content": { "type": "string", "required": true, "description": "Tooltip text" },
-        "placement": { "type": "string", "values": ["top", "bottom", "left", "right"], "default": "top" },
-        "delay": { "type": "number", "default": 200, "description": "Show delay in ms" }
+        "position": {
+          "type": "string",
+          "values": [
+            "top",
+            "bottom",
+            "left",
+            "right"
+          ],
+          "default": "bottom",
+          "description": "Tooltip position"
+        },
+        "knockout": {
+          "type": "boolean",
+          "default": false,
+          "description": "White background variant"
+        },
+        "is-dynamic": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-position based on viewport"
+        },
+        "is-active": {
+          "type": "boolean",
+          "default": false,
+          "description": "Visibility state"
+        },
+        "aria-describes": {
+          "type": "string",
+          "description": "Target element ID for accessibility"
+        }
       },
-      "properties": {},
+      "properties": {
+        "svg": {
+          "type": "string",
+          "description": "Icon SVG as raw string"
+        },
+        "iconRotateDegree": {
+          "type": "number",
+          "description": "Icon rotation"
+        },
+        "iconFlipDirection": {
+          "type": "string",
+          "description": "Icon flip"
+        }
+      },
       "slots": {
-        "default": { "description": "Trigger element" }
+        "trigger": {
+          "description": "Trigger element"
+        },
+        "default": {
+          "description": "Tooltip content"
+        }
       },
-      "events": {},
-      "cssProperties": {
-        "--cre8-tooltip-background": { "default": "var(--cre8-color-text)", "description": "Tooltip background" },
-        "--cre8-tooltip-color": { "default": "var(--cre8-color-background)", "description": "Tooltip text color" },
-        "--cre8-tooltip-padding": { "default": "var(--cre8-spacing-xs) var(--cre8-spacing-sm)", "description": "Tooltip padding" },
-        "--cre8-tooltip-font-size": { "default": "var(--cre8-font-size-sm)", "description": "Font size" }
+      "events": {
+        "open": {
+          "detail": {},
+          "description": "Fired when tooltip opens"
+        },
+        "close": {
+          "detail": {},
+          "description": "Fired when tooltip closes"
+        }
       },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-alert",
       "category": "Feedback",
-      "description": "Alert message for important notifications.",
+      "description": "Alert/notification display.",
       "attributes": {
-        "status": { "type": "string", "values": ["info", "success", "warning", "error"], "default": "info" },
-        "dismissible": { "type": "boolean", "default": false, "description": "Show dismiss button" }
+        "status": {
+          "type": "string",
+          "values": [
+            "error",
+            "info",
+            "notification",
+            "neutral",
+            "warning",
+            "success"
+          ],
+          "default": "info",
+          "description": "Alert type"
+        },
+        "variant": {
+          "type": "string",
+          "values": [
+            "standalone",
+            "banner"
+          ],
+          "description": "Display style"
+        },
+        "emphasis": {
+          "type": "string",
+          "values": [
+            "subtle",
+            "strong"
+          ],
+          "description": "Emphasis level"
+        },
+        "icon-alert": {
+          "type": "string",
+          "description": "Custom icon"
+        },
+        "icon-title": {
+          "type": "string",
+          "description": "Icon alt text"
+        },
+        "header-text": {
+          "type": "string",
+          "description": "Header text"
+        },
+        "cta-body": {
+          "type": "string",
+          "description": "Call-to-action body text"
+        },
+        "dismissed": {
+          "type": "boolean",
+          "default": false,
+          "description": "Dismissed state"
+        },
+        "not-dismissible": {
+          "type": "boolean",
+          "default": false,
+          "description": "Prevent dismissal"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Alert message content" },
-        "icon": { "description": "Custom icon" },
-        "action": { "description": "Action button" }
+        "default": {
+          "description": "Alert body content"
+        },
+        "cta": {
+          "description": "Call-to-action"
+        }
       },
       "events": {
-        "cre8-dismiss": { "detail": {}, "description": "Fired when dismissed" }
+        "dismiss": {
+          "detail": {},
+          "description": "Fired when dismissed"
+        }
       },
-      "cssProperties": {
-        "--cre8-alert-background": { "default": "var(--cre8-color-info-surface)", "description": "Alert background" },
-        "--cre8-alert-border-color": { "default": "var(--cre8-color-info)", "description": "Alert border" },
-        "--cre8-alert-color": { "default": "var(--cre8-color-info-text)", "description": "Alert text color" },
-        "--cre8-alert-icon-color": { "default": "var(--cre8-color-info)", "description": "Icon color" },
-        "--cre8-alert-padding": { "default": "var(--cre8-spacing-md)", "description": "Alert padding" },
-        "--cre8-alert-border-radius": { "default": "var(--cre8-radius-md)", "description": "Border radius" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -994,39 +1917,67 @@
       "category": "Feedback",
       "description": "Inline alert for contextual messages.",
       "attributes": {
-        "status": { "type": "string", "values": ["info", "success", "warning", "error"], "default": "info" }
+        "status": {
+          "type": "string",
+          "values": [
+            "info",
+            "success",
+            "warning",
+            "error"
+          ],
+          "default": "info"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Alert message" }
+        "default": {
+          "description": "Alert message"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-inline-alert-color": { "default": "var(--cre8-color-info)", "description": "Alert text color" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-badge",
       "category": "Feedback",
-      "description": "Badge for status indicators or counts.",
+      "description": "Status badge indicator.",
       "attributes": {
-        "text": { "type": "string" },
-        "variant": { "type": "string", "values": ["default", "primary", "success", "warning", "error"], "default": "default" },
-        "size": { "type": "string", "values": ["sm", "md"], "default": "md" }
+        "text": {
+          "type": "string",
+          "description": "Badge text"
+        },
+        "status": {
+          "type": "string",
+          "values": [
+            "neutral",
+            "success",
+            "warning",
+            "error",
+            "info",
+            "attention"
+          ],
+          "default": "neutral",
+          "description": "Status color"
+        },
+        "variant": {
+          "type": "string",
+          "values": [
+            "light",
+            "white"
+          ],
+          "description": "Background style"
+        }
       },
-      "properties": {},
-      "slots": {
-        "default": { "description": "Badge content (alternative to text)" }
+      "properties": {
+        "svg": {
+          "type": "string",
+          "description": "Icon SVG"
+        }
       },
+      "slots": {},
       "events": {},
-      "cssProperties": {
-        "--cre8-badge-background": { "default": "var(--cre8-color-surface-alt)", "description": "Badge background" },
-        "--cre8-badge-color": { "default": "var(--cre8-color-text)", "description": "Badge text color" },
-        "--cre8-badge-border-radius": { "default": "var(--cre8-radius-full)", "description": "Badge border radius" },
-        "--cre8-badge-padding": { "default": "var(--cre8-spacing-xs) var(--cre8-spacing-sm)", "description": "Badge padding" },
-        "--cre8-badge-font-size": { "default": "var(--cre8-font-size-sm)", "description": "Badge font size" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1034,17 +1985,32 @@
       "category": "Feedback",
       "description": "Loading spinner indicator.",
       "attributes": {
-        "size": { "type": "string", "values": ["sm", "md", "lg"], "default": "md" },
-        "label": { "type": "string", "description": "Accessible label for screen readers" }
+        "size": {
+          "type": "string",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        },
+        "neutral": {
+          "type": "boolean",
+          "default": false
+        },
+        "inverse": {
+          "type": "boolean",
+          "default": false
+        },
+        "button-variant": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {},
       "events": {},
-      "cssProperties": {
-        "--cre8-spinner-color": { "default": "var(--cre8-color-primary)", "description": "Spinner color" },
-        "--cre8-spinner-size": { "default": "24px", "description": "Spinner size" },
-        "--cre8-spinner-thickness": { "default": "3px", "description": "Spinner stroke thickness" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1052,19 +2018,33 @@
       "category": "Feedback",
       "description": "Skeleton loading placeholder.",
       "attributes": {
-        "variant": { "type": "string", "values": ["text", "circle", "rect"], "default": "text" },
-        "width": { "type": "string", "description": "Width (CSS value)" },
-        "height": { "type": "string", "description": "Height (CSS value)" },
-        "lines": { "type": "number", "default": 1, "description": "Number of text lines" }
+        "variant": {
+          "type": "string",
+          "values": [
+            "text",
+            "circle",
+            "rect"
+          ],
+          "default": "text"
+        },
+        "width": {
+          "type": "string",
+          "description": "Width (CSS value)"
+        },
+        "height": {
+          "type": "string",
+          "description": "Height (CSS value)"
+        },
+        "lines": {
+          "type": "number",
+          "default": 1,
+          "description": "Number of text lines"
+        }
       },
       "properties": {},
       "slots": {},
       "events": {},
-      "cssProperties": {
-        "--cre8-skeleton-background": { "default": "var(--cre8-color-surface-alt)", "description": "Base color" },
-        "--cre8-skeleton-highlight": { "default": "var(--cre8-color-surface)", "description": "Shimmer highlight color" },
-        "--cre8-skeleton-border-radius": { "default": "var(--cre8-radius-sm)", "description": "Border radius" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1072,20 +2052,59 @@
       "category": "Feedback",
       "description": "Progress bar for completion status.",
       "attributes": {
-        "value": { "type": "number", "description": "Current progress value" },
-        "max": { "type": "number", "default": 100, "description": "Maximum value" },
-        "label": { "type": "string", "description": "Accessible label" },
-        "show-value": { "type": "boolean", "default": false, "description": "Show value text" }
+        "value": {
+          "type": "number",
+          "description": "Current progress value"
+        },
+        "max": {
+          "type": "number",
+          "default": 100,
+          "description": "Maximum value"
+        },
+        "label": {
+          "type": "string",
+          "description": "Accessible label"
+        },
+        "show-value": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show value text"
+        }
       },
       "properties": {},
       "slots": {},
       "events": {},
-      "cssProperties": {
-        "--cre8-progress-background": { "default": "var(--cre8-color-surface-alt)", "description": "Track background" },
-        "--cre8-progress-fill": { "default": "var(--cre8-color-primary)", "description": "Progress fill color" },
-        "--cre8-progress-height": { "default": "8px", "description": "Bar height" },
-        "--cre8-progress-border-radius": { "default": "var(--cre8-radius-full)", "description": "Bar border radius" }
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-progress-steps",
+      "category": "Feedback",
+      "description": "Step indicator container.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "cre8-progress-steps-item elements"
+        }
       },
+      "events": {},
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-progress-steps-item",
+      "category": "Feedback",
+      "description": "Individual progress step.",
+      "attributes": {},
+      "properties": {},
+      "slots": {
+        "default": {
+          "description": "Step content"
+        }
+      },
+      "events": {},
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1093,36 +2112,54 @@
       "category": "Feedback",
       "description": "Percentage bar visualization.",
       "attributes": {
-        "value": { "type": "number", "description": "Percentage value (0-100)" }
+        "value": {
+          "type": "number",
+          "description": "Percentage value (0-100)"
+        }
       },
       "properties": {},
       "slots": {},
       "events": {},
-      "cssProperties": {
-        "--cre8-percent-bar-background": { "default": "var(--cre8-color-surface-alt)", "description": "Track background" },
-        "--cre8-percent-bar-fill": { "default": "var(--cre8-color-primary)", "description": "Fill color" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-table",
       "category": "Data",
-      "description": "Data table container.",
+      "description": "Data table wrapper.",
       "attributes": {
-        "striped": { "type": "boolean", "default": false, "description": "Alternating row colors" },
-        "hoverable": { "type": "boolean", "default": false, "description": "Row hover effect" },
-        "bordered": { "type": "boolean", "default": false, "description": "Cell borders" }
+        "caption": {
+          "type": "string",
+          "description": "Table caption/title"
+        },
+        "behavior": {
+          "type": "string",
+          "values": [
+            "responsive"
+          ],
+          "description": "Responsive stacking on small screens"
+        },
+        "is-hoverable": {
+          "type": "boolean",
+          "default": false,
+          "description": "Highlight rows on hover"
+        },
+        "variant": {
+          "type": "string",
+          "values": [
+            "striped"
+          ],
+          "description": "Zebra striping"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Table content (cre8-table-header, cre8-table-body)" }
+        "default": {
+          "description": "Table content (cre8-table-header, cre8-table-body)"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-table-border-color": { "default": "var(--cre8-color-border)", "description": "Table border color" },
-        "--cre8-table-stripe-background": { "default": "var(--cre8-color-surface-alt)", "description": "Stripe row background" },
-        "--cre8-table-hover-background": { "default": "var(--cre8-color-surface-hover)", "description": "Hover row background" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1132,12 +2169,12 @@
       "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Header rows" }
+        "default": {
+          "description": "Header rows"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-table-header-background": { "default": "var(--cre8-color-surface-alt)", "description": "Header background" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1145,20 +2182,44 @@
       "category": "Data",
       "description": "Header cell in table.",
       "attributes": {
-        "sortable": { "type": "boolean", "default": false },
-        "sort-direction": { "type": "string", "values": ["asc", "desc", "none"], "default": "none" },
-        "align": { "type": "string", "values": ["left", "center", "right"], "default": "left" }
+        "sortable": {
+          "type": "boolean",
+          "default": false
+        },
+        "sort-direction": {
+          "type": "string",
+          "values": [
+            "asc",
+            "desc",
+            "none"
+          ],
+          "default": "none"
+        },
+        "align": {
+          "type": "string",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ],
+          "default": "left"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Header content" }
+        "default": {
+          "description": "Header content"
+        }
       },
       "events": {
-        "cre8-sort": { "detail": { "direction": "string" }, "description": "Fired when sort is requested" }
+        "sort": {
+          "detail": {
+            "direction": "string"
+          },
+          "description": "Fired when sort is requested"
+        }
       },
-      "cssProperties": {
-        "--cre8-table-header-cell-padding": { "default": "var(--cre8-spacing-sm) var(--cre8-spacing-md)", "description": "Cell padding" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1168,7 +2229,9 @@
       "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Table rows" }
+        "default": {
+          "description": "Table rows"
+        }
       },
       "events": {},
       "cssProperties": {},
@@ -1179,18 +2242,24 @@
       "category": "Data",
       "description": "Table row.",
       "attributes": {
-        "selected": { "type": "boolean", "default": false }
+        "selected": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Table cells" }
+        "default": {
+          "description": "Table cells"
+        }
       },
       "events": {
-        "cre8-row-click": { "detail": {}, "description": "Fired when row is clicked" }
+        "row-click": {
+          "detail": {},
+          "description": "Fired when row is clicked"
+        }
       },
-      "cssProperties": {
-        "--cre8-table-row-selected-background": { "default": "var(--cre8-color-primary-surface)", "description": "Selected row background" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1198,34 +2267,50 @@
       "category": "Data",
       "description": "Table cell.",
       "attributes": {
-        "align": { "type": "string", "values": ["left", "center", "right"], "default": "left" }
+        "align": {
+          "type": "string",
+          "values": [
+            "left",
+            "center",
+            "right"
+          ],
+          "default": "left"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Cell content" }
+        "default": {
+          "description": "Cell content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-table-cell-padding": { "default": "var(--cre8-spacing-sm) var(--cre8-spacing-md)", "description": "Cell padding" }
-      },
+      "cssProperties": {},
+      "examples": []
+    },
+    {
+      "name": "cre8-table-object",
+      "category": "Data",
+      "description": "Object-based table abstraction for rendering tables from data.",
+      "attributes": {},
+      "properties": {},
+      "slots": {},
+      "events": {},
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-list",
       "category": "Data",
       "description": "List container.",
-      "attributes": {
-        "type": { "type": "string", "values": ["unordered", "ordered"], "default": "unordered" }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "List items" }
+        "default": {
+          "description": "List items"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-list-gap": { "default": "var(--cre8-spacing-xs)", "description": "Gap between items" },
-        "--cre8-list-marker-color": { "default": "var(--cre8-color-text-muted)", "description": "Marker color" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1235,40 +2320,12 @@
       "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Item content" },
-        "marker": { "description": "Custom marker/bullet" }
-      },
-      "events": {},
-      "cssProperties": {},
-      "examples": []
-    },
-    {
-      "name": "cre8-link-list",
-      "category": "Data",
-      "description": "List of links.",
-      "attributes": {
-        "orientation": { "type": "string", "values": ["vertical", "horizontal"], "default": "vertical" }
-      },
-      "properties": {},
-      "slots": {
-        "default": { "description": "Link list items" }
-      },
-      "events": {},
-      "cssProperties": {
-        "--cre8-link-list-gap": { "default": "var(--cre8-spacing-sm)", "description": "Gap between links" }
-      },
-      "examples": []
-    },
-    {
-      "name": "cre8-link-list-item",
-      "category": "Data",
-      "description": "Link item within LinkList.",
-      "attributes": {
-        "href": { "type": "string" }
-      },
-      "properties": {},
-      "slots": {
-        "default": { "description": "Link text" }
+        "default": {
+          "description": "Item content"
+        },
+        "marker": {
+          "description": "Custom marker/bullet"
+        }
       },
       "events": {},
       "cssProperties": {},
@@ -1277,22 +2334,31 @@
     {
       "name": "cre8-tag",
       "category": "Data",
-      "description": "Tag/chip for categorization.",
+      "description": "Tag/label component for categorization.",
       "attributes": {
-        "text": { "type": "string" },
-        "variant": { "type": "string", "values": ["default", "primary", "success", "warning", "error"], "default": "default" }
+        "text": {
+          "type": "string"
+        },
+        "variant": {
+          "type": "string",
+          "values": [
+            "default",
+            "primary",
+            "success",
+            "warning",
+            "error"
+          ],
+          "default": "default"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Tag content (alternative to text)" }
+        "default": {
+          "description": "Tag content (alternative to text)"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-tag-background": { "default": "var(--cre8-color-surface-alt)", "description": "Tag background" },
-        "--cre8-tag-color": { "default": "var(--cre8-color-text)", "description": "Tag text color" },
-        "--cre8-tag-border-radius": { "default": "var(--cre8-radius-sm)", "description": "Border radius" },
-        "--cre8-tag-padding": { "default": "var(--cre8-spacing-xs) var(--cre8-spacing-sm)", "description": "Tag padding" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1302,12 +2368,12 @@
       "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Tag elements" }
+        "default": {
+          "description": "Tag elements"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-tag-list-gap": { "default": "var(--cre8-spacing-xs)", "description": "Gap between tags" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1315,66 +2381,107 @@
       "category": "Data",
       "description": "Removable tag with close button.",
       "attributes": {
-        "text": { "type": "string" }
+        "text": {
+          "type": "string"
+        }
       },
       "properties": {},
       "slots": {
-        "default": { "description": "Tag content" }
+        "default": {
+          "description": "Tag content"
+        }
       },
       "events": {
-        "cre8-remove": { "detail": {}, "description": "Fired when remove button is clicked" }
+        "remove": {
+          "detail": {},
+          "description": "Fired when remove button is clicked"
+        }
       },
-      "cssProperties": {
-        "--cre8-remove-tag-background": { "default": "var(--cre8-color-surface-alt)", "description": "Tag background" },
-        "--cre8-remove-tag-remove-color": { "default": "var(--cre8-color-text-muted)", "description": "Remove icon color" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-chart",
       "category": "Data",
-      "description": "Chart visualization component.",
+      "description": "Chart visualization component. Integrates with Chart.js.",
       "attributes": {
-        "type": { "type": "string", "values": ["bar", "line", "pie", "donut", "area"], "default": "bar" },
-        "title": { "type": "string" }
+        "type": {
+          "type": "string",
+          "values": [
+            "bar",
+            "line",
+            "pie",
+            "donut",
+            "area"
+          ],
+          "default": "bar"
+        },
+        "title": {
+          "type": "string"
+        }
       },
       "properties": {
-        "data": { "type": "ChartData", "description": "Chart data object" },
-        "options": { "type": "ChartOptions", "description": "Chart configuration options" }
+        "data": {
+          "type": "ChartData",
+          "description": "Chart data object"
+        },
+        "options": {
+          "type": "ChartOptions",
+          "description": "Chart configuration options"
+        }
       },
       "slots": {
-        "legend": { "description": "Custom legend" }
+        "legend": {
+          "description": "Custom legend"
+        }
       },
       "events": {
-        "cre8-data-click": { "detail": { "dataPoint": "object" }, "description": "Fired when data point is clicked" }
+        "data-click": {
+          "detail": {
+            "dataPoint": "object"
+          },
+          "description": "Fired when data point is clicked"
+        }
       },
-      "cssProperties": {
-        "--cre8-chart-background": { "default": "var(--cre8-color-surface)", "description": "Chart background" },
-        "--cre8-chart-grid-color": { "default": "var(--cre8-color-border)", "description": "Grid line color" },
-        "--cre8-chart-text-color": { "default": "var(--cre8-color-text)", "description": "Labels and text color" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-icon",
       "category": "Media",
-      "description": "Icon component using SVG.",
+      "description": "SVG icon renderer with 100+ built-in icons.",
       "attributes": {
-        "name": { "type": "string", "description": "Icon name from icon set" },
-        "size": { "type": "string", "values": ["xs", "sm", "md", "lg", "xl"], "default": "md" },
-        "label": { "type": "string", "description": "Accessible label" }
+        "name": {
+          "type": "string",
+          "description": "Icon name (legacy method)"
+        },
+        "focusable": {
+          "type": "boolean",
+          "default": false,
+          "description": "Focusable state"
+        },
+        "icon-url": {
+          "type": "string",
+          "description": "Path to icon sprite"
+        },
+        "icon-title": {
+          "type": "string",
+          "description": "Icon title/alt text"
+        }
       },
       "properties": {
-        "svg": { "type": "string | SVGElement", "description": "Raw SVG string or element" }
+        "svg": {
+          "type": "string",
+          "description": "SVG as raw string (preferred)"
+        }
       },
       "slots": {
-        "default": { "description": "Custom SVG content" }
+        "default": {
+          "description": "Custom SVG content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-icon-size": { "default": "24px", "description": "Icon size" },
-        "--cre8-icon-color": { "default": "currentColor", "description": "Icon color" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1382,39 +2489,59 @@
       "category": "Media",
       "description": "Logo component.",
       "attributes": {
-        "variant": { "type": "string", "values": ["full", "mark", "wordmark"], "default": "full" },
-        "size": { "type": "string", "values": ["sm", "md", "lg"], "default": "md" }
+        "variant": {
+          "type": "string",
+          "values": [
+            "full",
+            "mark",
+            "wordmark"
+          ],
+          "default": "full"
+        },
+        "size": {
+          "type": "string",
+          "values": [
+            "sm",
+            "md",
+            "lg"
+          ],
+          "default": "md"
+        }
       },
       "properties": {
-        "src": { "type": "string", "description": "Custom logo image source" }
+        "src": {
+          "type": "string",
+          "description": "Custom logo image source"
+        }
       },
       "slots": {
-        "default": { "description": "Custom logo content" }
+        "default": {
+          "description": "Custom logo content"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-logo-height": { "default": "32px", "description": "Logo height" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
       "name": "cre8-feature",
       "category": "Marketing",
       "description": "Feature highlight component for marketing pages.",
-      "attributes": {
-        "layout": { "type": "string", "values": ["horizontal", "vertical"], "default": "vertical" }
-      },
+      "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Feature description" },
-        "icon": { "description": "Feature icon" },
-        "title": { "description": "Feature title" }
+        "default": {
+          "description": "Feature description"
+        },
+        "icon": {
+          "description": "Feature icon"
+        },
+        "title": {
+          "description": "Feature title"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-feature-gap": { "default": "var(--cre8-spacing-md)", "description": "Gap between elements" },
-        "--cre8-feature-icon-size": { "default": "48px", "description": "Icon size" }
-      },
+      "cssProperties": {},
       "examples": []
     },
     {
@@ -1424,102 +2551,156 @@
       "attributes": {},
       "properties": {},
       "slots": {
-        "default": { "description": "Subtitle or description" },
-        "title": { "description": "Page title" },
-        "actions": { "description": "Action buttons" },
-        "breadcrumbs": { "description": "Breadcrumb navigation" }
+        "default": {
+          "description": "Subtitle or description"
+        },
+        "title": {
+          "description": "Page title"
+        },
+        "actions": {
+          "description": "Action buttons"
+        },
+        "breadcrumbs": {
+          "description": "Breadcrumb navigation"
+        }
       },
       "events": {},
-      "cssProperties": {
-        "--cre8-page-header-padding": { "default": "var(--cre8-spacing-lg)", "description": "Header padding" },
-        "--cre8-page-header-background": { "default": "var(--cre8-color-surface)", "description": "Header background" }
-      },
+      "cssProperties": {},
       "examples": []
+    }
+  ],
+  "baseClasses": [
+    {
+      "name": "Cre8Element",
+      "description": "Base class extending LitElement with utility methods.",
+      "methods": {
+        "componentClassNames": {
+          "signature": "(baseClassName, additionalClassNames) => string",
+          "description": "Helper for applying class names with variants"
+        },
+        "slotEmpty": {
+          "signature": "(slotName: string) => boolean",
+          "description": "Check if a named slot has content"
+        },
+        "slotNotEmpty": {
+          "signature": "(slotName: string) => boolean",
+          "description": "Inverse check for slot content"
+        },
+        "dispatch": {
+          "signature": "({ e, eventName, detailObj, optionsObj }) => void",
+          "description": "Custom event dispatcher"
+        }
+      }
+    },
+    {
+      "name": "Cre8FormElement",
+      "description": "Base class for form-associated custom elements. Extends Cre8Element.",
+      "attributes": {
+        "name": {
+          "type": "string",
+          "description": "Form field name"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Disabled state"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Required state"
+        },
+        "is-error": {
+          "type": "boolean",
+          "description": "Error state indicator"
+        },
+        "is-success": {
+          "type": "boolean",
+          "description": "Success state indicator"
+        }
+      },
+      "properties": {
+        "value": {
+          "type": "any",
+          "description": "Form field value with getter/setter"
+        }
+      },
+      "formInternals": {
+        "description": "Uses ElementInternals API (attachInternals())",
+        "lifecycleCallbacks": [
+          "formResetCallback()",
+          "formDisabledCallback()",
+          "formStateRestoreCallback()"
+        ],
+        "methods": [
+          "checkValidity()",
+          "reportValidity()",
+          "setCustomValidity(message)"
+        ]
+      }
     }
   ],
   "patterns": [
     {
       "name": "Login Form",
       "description": "Standard login form with email and password",
-      "template": "<cre8-card>\n  <cre8-heading type=\"h2\">Sign In</cre8-heading>\n  <cre8-field label=\"Email\" type=\"email\"></cre8-field>\n  <cre8-field label=\"Password\" type=\"password\"></cre8-field>\n  <cre8-button text=\"Sign In\" variant=\"primary\" full-width></cre8-button>\n</cre8-card>"
+      "template": "<cre8-card>\n  <cre8-heading tag-variant=\"h2\" type=\"headline-default\">Sign In</cre8-heading>\n  <cre8-field label=\"Email\" type=\"email\"></cre8-field>\n  <cre8-field label=\"Password\" type=\"password\"></cre8-field>\n  <cre8-button text=\"Sign In\" variant=\"primary\" full-width></cre8-button>\n</cre8-card>"
     },
     {
       "name": "Data Table",
       "description": "Table with header and data rows",
-      "template": "<cre8-table striped hoverable>\n  <cre8-table-header>\n    <cre8-table-row>\n      <cre8-table-header-cell>Name</cre8-table-header-cell>\n      <cre8-table-header-cell>Status</cre8-table-header-cell>\n    </cre8-table-row>\n  </cre8-table-header>\n  <cre8-table-body>\n    <cre8-table-row>\n      <cre8-table-cell>Item 1</cre8-table-cell>\n      <cre8-table-cell><cre8-badge text=\"Active\" variant=\"success\"></cre8-badge></cre8-table-cell>\n    </cre8-table-row>\n  </cre8-table-body>\n</cre8-table>"
+      "template": "<cre8-table variant=\"striped\" is-hoverable>\n  <cre8-table-header>\n    <cre8-table-row>\n      <cre8-table-header-cell>Name</cre8-table-header-cell>\n      <cre8-table-header-cell>Status</cre8-table-header-cell>\n    </cre8-table-row>\n  </cre8-table-header>\n  <cre8-table-body>\n    <cre8-table-row>\n      <cre8-table-cell>Item 1</cre8-table-cell>\n      <cre8-table-cell><cre8-badge text=\"Active\" status=\"success\"></cre8-badge></cre8-table-cell>\n    </cre8-table-row>\n  </cre8-table-body>\n</cre8-table>"
     },
     {
       "name": "Page Layout",
       "description": "Standard page with header, main content, and footer",
-      "template": "<cre8-layout>\n  <cre8-header sticky>\n    <cre8-global-nav>\n      <span slot=\"logo\"><cre8-logo></cre8-logo></span>\n      <cre8-global-nav-item href=\"/\">Home</cre8-global-nav-item>\n    </cre8-global-nav>\n  </cre8-header>\n  <main>\n    <cre8-layout-container>\n      <!-- Page content -->\n    </cre8-layout-container>\n  </main>\n  <cre8-footer>\n    <span slot=\"copyright\">2024 Company Name</span>\n  </cre8-footer>\n</cre8-layout>"
+      "template": "<cre8-layout>\n  <cre8-header>\n    <cre8-global-nav>\n      <span slot=\"logo\"><cre8-logo></cre8-logo></span>\n      <cre8-global-nav-item href=\"/\">Home</cre8-global-nav-item>\n    </cre8-global-nav>\n  </cre8-header>\n  <cre8-main>\n    <cre8-layout-container>\n      <!-- Page content -->\n    </cre8-layout-container>\n  </cre8-main>\n  <cre8-footer>\n    <span slot=\"copyright\">2024 Company Name</span>\n  </cre8-footer>\n</cre8-layout>"
     },
     {
       "name": "Alert Banner",
       "description": "Dismissible alert at top of page",
-      "template": "<cre8-alert status=\"info\" dismissible>\n  Important announcement message here.\n</cre8-alert>"
+      "template": "<cre8-alert status=\"info\" variant=\"banner\">\n  Important announcement message here.\n</cre8-alert>"
     },
     {
       "name": "Tabbed Content",
       "description": "Content organized in tabs",
-      "template": "<cre8-tabs>\n  <cre8-tab label=\"Tab 1\" tab-id=\"tab1\" selected></cre8-tab>\n  <cre8-tab label=\"Tab 2\" tab-id=\"tab2\"></cre8-tab>\n  <cre8-tab-panel tab-id=\"tab1\">Content for Tab 1</cre8-tab-panel>\n  <cre8-tab-panel tab-id=\"tab2\">Content for Tab 2</cre8-tab-panel>\n</cre8-tabs>"
+      "template": "<cre8-tabs>\n  <cre8-tab label=\"Tab 1\" tab-id=\"tab1\" selected></cre8-tab>\n  <cre8-tab label=\"Tab 2\" tab-id=\"tab2\"></cre8-tab>\n  <cre8-tab-panel tab-id=\"tab1\" slot=\"panel\">Content for Tab 1</cre8-tab-panel>\n  <cre8-tab-panel tab-id=\"tab2\" slot=\"panel\">Content for Tab 2</cre8-tab-panel>\n</cre8-tabs>"
+    },
+    {
+      "name": "Modal Dialog",
+      "description": "Modal with header, body, and footer actions",
+      "template": "<cre8-modal is-active aria-label=\"Confirmation\">\n  <span slot=\"header\">Confirm Action</span>\n  <p>Are you sure you want to proceed?</p>\n  <div slot=\"footer\">\n    <cre8-button text=\"Cancel\" variant=\"secondary\"></cre8-button>\n    <cre8-button text=\"Confirm\" variant=\"primary\"></cre8-button>\n  </div>\n</cre8-modal>"
     }
   ],
   "designTokens": {
-    "description": "Global design tokens available as CSS custom properties",
-    "colors": {
-      "--cre8-color-primary": "Primary brand color",
-      "--cre8-color-primary-hover": "Primary color hover state",
-      "--cre8-color-primary-surface": "Light primary background",
-      "--cre8-color-on-primary": "Text on primary color",
-      "--cre8-color-secondary": "Secondary brand color",
-      "--cre8-color-background": "Page background",
-      "--cre8-color-surface": "Card/component surface",
-      "--cre8-color-surface-alt": "Alternate surface (stripes, etc)",
-      "--cre8-color-surface-hover": "Surface hover state",
-      "--cre8-color-border": "Default border color",
-      "--cre8-color-text": "Primary text color",
-      "--cre8-color-text-muted": "Secondary/muted text",
-      "--cre8-color-info": "Info status color",
-      "--cre8-color-info-surface": "Info background",
-      "--cre8-color-info-text": "Info text color",
-      "--cre8-color-success": "Success status color",
-      "--cre8-color-success-surface": "Success background",
-      "--cre8-color-warning": "Warning status color",
-      "--cre8-color-warning-surface": "Warning background",
-      "--cre8-color-error": "Error status color",
-      "--cre8-color-error-surface": "Error background",
-      "--cre8-color-on-error": "Text on error color"
-    },
-    "spacing": {
-      "--cre8-spacing-xs": "4px",
-      "--cre8-spacing-sm": "8px",
-      "--cre8-spacing-md": "16px",
-      "--cre8-spacing-lg": "24px",
-      "--cre8-spacing-xl": "32px",
-      "--cre8-spacing-2xl": "48px"
-    },
-    "typography": {
-      "--cre8-font-family-base": "Body font family",
-      "--cre8-font-family-heading": "Heading font family",
-      "--cre8-font-size-xs": "12px",
-      "--cre8-font-size-sm": "14px",
-      "--cre8-font-size-md": "16px",
-      "--cre8-font-size-lg": "18px",
-      "--cre8-font-size-xl": "20px",
-      "--cre8-font-size-2xl": "24px",
-      "--cre8-font-size-3xl": "32px"
-    },
-    "radii": {
-      "--cre8-radius-none": "0",
-      "--cre8-radius-sm": "4px",
-      "--cre8-radius-md": "8px",
-      "--cre8-radius-lg": "12px",
-      "--cre8-radius-full": "9999px"
-    },
-    "shadows": {
-      "--cre8-shadow-sm": "0 1px 2px rgba(0,0,0,0.05)",
-      "--cre8-shadow-md": "0 4px 6px rgba(0,0,0,0.1)",
-      "--cre8-shadow-lg": "0 10px 15px rgba(0,0,0,0.1)"
-    }
+    "description": "Design tokens are provided by the @tmorrow/cre8-design-tokens package",
+    "tokenPackage": "@tmorrow/cre8-design-tokens",
+    "categories": [
+      "colors",
+      "typography",
+      "spacing",
+      "borders",
+      "shadows",
+      "breakpoints"
+    ]
+  },
+  "accessibility": {
+    "features": [
+      "ARIA attributes (aria-label, aria-describedby, aria-live, aria-expanded)",
+      "Semantic HTML elements",
+      "Focus management with @a11y/focus-trap",
+      "Keyboard navigation (Escape, Tab, Arrow keys, Enter, Space)",
+      "Screen reader support",
+      "Form validation and error messaging"
+    ]
+  },
+  "dependencies": {
+    "lit": "3.3.1",
+    "@lit/context": "^1.1.6",
+    "@lit/react": "^1.0.8",
+    "@a11y/focus-trap": "^1.0.5",
+    "chart.js": "^4.5.1",
+    "classnames": "2.5.1",
+    "nanoid": "^5.1.6",
+    "zod": "^4.1.12",
+    "@tmorrow/cre8-design-tokens": "^1.0.16"
   }
 }

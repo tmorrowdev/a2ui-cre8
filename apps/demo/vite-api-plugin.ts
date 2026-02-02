@@ -165,11 +165,11 @@ let catalog: Catalog | null = null;
 function loadCatalog(): Catalog {
   if (catalog) return catalog;
   // When running from apps/demo, cwd is already apps/demo
-  // When running from repo root, we need apps/demo prefix
+  // When running from repo root, we need apps/cre8-mcp prefix
   const cwd = process.cwd();
   const catalogPath = cwd.endsWith('demo')
-    ? join(cwd, 'mcp-server', 'data', 'components.json')
-    : join(cwd, 'apps', 'demo', 'mcp-server', 'data', 'components.json');
+    ? join(cwd, '..', 'cre8-mcp', 'data', 'react-components.json')
+    : join(cwd, 'apps', 'cre8-mcp', 'data', 'react-components.json');
   catalog = JSON.parse(readFileSync(catalogPath, 'utf-8'));
   return catalog!;
 }

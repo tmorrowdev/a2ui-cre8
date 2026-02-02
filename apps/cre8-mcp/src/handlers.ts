@@ -2,83 +2,85 @@
  * Cre8 MCP Tool Handlers
  *
  * Functions that implement the Cre8 Design System MCP tools.
+ * Supports both Web Components (default) and React formats.
  */
 
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
-// Types
-interface PropDef {
-  type: string;
-  description?: string;
-  enum?: string[];
-  default?: unknown;
-  required?: boolean;
-}
+// Format type
+export type ComponentFormat = 'web' | 'react';
 
-interface ComponentDef {
-  name: string;
-  category: string;
-  description: string;
-  props: Record<string, PropDef>;
-  examples?: Array<{ description: string; jsx: string }>;
-}
-
+// Common types
 interface Pattern {
   name: string;
   description: string;
   template: string;
 }
 
-interface Catalog {
+// Generic catalog interface for shared operations
+interface BaseCatalog {
   version: string;
   library: string;
-  components: ComponentDef[];
+  components: Array<{ name: string; category: string; description: string }>;
   patterns: Pattern[];
 }
 
-// Load catalog
-let catalog: Catalog;
+// Cache for catalogs
+const catalogs: Record<ComponentFormat, BaseCatalog | null> = {
+  web: null,
+  react: null,
+};
 
-function loadCatalog(): Catalog {
-  if (catalog) return catalog;
+function getCatalogPath(format: ComponentFormat): string {
+  const filename = format === 'react' ? 'react-components.json' : 'web-components.json';
 
   try {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = dirname(__filename);
-    const catalogPath = join(__dirname, '..', 'data', 'components.json');
-    catalog = JSON.parse(readFileSync(catalogPath, 'utf-8'));
+    return join(__dirname, '..', 'data', filename);
   } catch {
-    const catalogPath = join(process.cwd(), 'apps', 'cre8-mcp', 'data', 'components.json');
-    catalog = JSON.parse(readFileSync(catalogPath, 'utf-8'));
+    return join(process.cwd(), 'apps', 'cre8-mcp', 'data', filename);
   }
+}
 
-  return catalog;
+function loadCatalog(format: ComponentFormat = 'web'): BaseCatalog {
+  if (catalogs[format]) return catalogs[format]!;
+
+  const catalogPath = getCatalogPath(format);
+  catalogs[format] = JSON.parse(readFileSync(catalogPath, 'utf-8'));
+
+  return catalogs[format]!;
 }
 
 // Tool Input Types
 export interface ListComponentsInput {
   category?: string;
+  format?: ComponentFormat;
 }
 
 export interface GetComponentInput {
   name: string;
+  format?: ComponentFormat;
 }
 
 export interface GetPatternsInput {
   name?: string;
+  format?: ComponentFormat;
 }
 
 export interface SearchComponentsInput {
   query: string;
+  format?: ComponentFormat;
 }
 
 /**
  * list_components - Lists all available Cre8 components
  */
 export function handleListComponents(input: ListComponentsInput): string {
-  const cat = loadCatalog();
+  const format = input.format || 'web';
+  const cat = loadCatalog(format);
   let components = cat.components;
 
   if (input.category) {
@@ -100,6 +102,7 @@ export function handleListComponents(input: ListComponentsInput): string {
   }
 
   const result = {
+    format,
     library: cat.library,
     version: cat.version,
     categories: Object.entries(grouped).map(([category, comps]) => ({
@@ -116,14 +119,20 @@ export function handleListComponents(input: ListComponentsInput): string {
  * get_component - Gets detailed info for a specific component
  */
 export function handleGetComponent(input: GetComponentInput): string {
-  const cat = loadCatalog();
+  const format = input.format || 'web';
+  const cat = loadCatalog(format);
 
-  // Find component (case-insensitive, with or without Cre8 prefix)
-  const searchName = input.name.toLowerCase().replace(/^cre8/, '');
-  const component = cat.components.find(
-    (c) => c.name.toLowerCase() === input.name.toLowerCase() ||
-           c.name.toLowerCase().replace(/^cre8/, '') === searchName
-  );
+  // Normalize search name (handle both cre8-button and Cre8Button formats)
+  const searchName = input.name.toLowerCase()
+    .replace(/^cre8-?/, '')  // Remove cre8- or cre8 prefix
+    .replace(/-/g, '');       // Remove hyphens for comparison
+
+  const component = cat.components.find((c) => {
+    const compName = c.name.toLowerCase()
+      .replace(/^cre8-?/, '')
+      .replace(/-/g, '');
+    return compName === searchName || c.name.toLowerCase() === input.name.toLowerCase();
+  });
 
   if (!component) {
     return JSON.stringify({
@@ -132,23 +141,55 @@ export function handleGetComponent(input: GetComponentInput): string {
     });
   }
 
-  const result = {
-    name: component.name,
-    category: component.category,
-    description: component.description,
-    import: `import { ${component.name} } from '@tmorrow/cre8-react';`,
-    props: component.props,
-    examples: component.examples || [],
+  // Return format-specific details
+  if (format === 'react') {
+    const reactComp = component as { name: string; category: string; description: string; props?: Record<string, unknown>; examples?: Array<{ description: string; jsx: string }> };
+    return JSON.stringify({
+      format,
+      name: reactComp.name,
+      category: reactComp.category,
+      description: reactComp.description,
+      import: `import { ${reactComp.name} } from '@tmorrow/cre8-react';`,
+      props: reactComp.props || {},
+      examples: reactComp.examples || [],
+    }, null, 2);
+  }
+
+  // Web component format
+  const webComp = component as {
+    name: string;
+    category: string;
+    description: string;
+    attributes?: Record<string, unknown>;
+    properties?: Record<string, unknown>;
+    slots?: Record<string, unknown>;
+    events?: Record<string, unknown>;
+    cssProperties?: Record<string, unknown>;
+    examples?: Array<{ description: string; html: string }>;
   };
 
-  return JSON.stringify(result, null, 2);
+  return JSON.stringify({
+    format,
+    name: webComp.name,
+    tagName: webComp.name,
+    category: webComp.category,
+    description: webComp.description,
+    import: `import '@tmorrow/cre8-wc/${webComp.name}';`,
+    attributes: webComp.attributes || {},
+    properties: webComp.properties || {},
+    slots: webComp.slots || {},
+    events: webComp.events || {},
+    cssProperties: webComp.cssProperties || {},
+    examples: webComp.examples || [],
+  }, null, 2);
 }
 
 /**
  * get_patterns - Gets layout patterns and templates
  */
 export function handleGetPatterns(input: GetPatternsInput): string {
-  const cat = loadCatalog();
+  const format = input.format || 'web';
+  const cat = loadCatalog(format);
 
   if (input.name) {
     const pattern = cat.patterns.find(
@@ -162,10 +203,11 @@ export function handleGetPatterns(input: GetPatternsInput): string {
       });
     }
 
-    return JSON.stringify(pattern, null, 2);
+    return JSON.stringify({ format, ...pattern }, null, 2);
   }
 
   return JSON.stringify({
+    format,
     patterns: cat.patterns.map((p) => ({
       name: p.name,
       description: p.description,
@@ -177,7 +219,8 @@ export function handleGetPatterns(input: GetPatternsInput): string {
  * search_components - Search components by name or description
  */
 export function handleSearchComponents(input: SearchComponentsInput): string {
-  const cat = loadCatalog();
+  const format = input.format || 'web';
+  const cat = loadCatalog(format);
   const query = input.query.toLowerCase();
 
   const matches = cat.components.filter(
@@ -189,12 +232,14 @@ export function handleSearchComponents(input: SearchComponentsInput): string {
 
   if (matches.length === 0) {
     return JSON.stringify({
+      format,
       message: `No components found matching "${input.query}"`,
       suggestion: 'Try a broader search term or use list_components',
     });
   }
 
   return JSON.stringify({
+    format,
     query: input.query,
     results: matches.map((c) => ({
       name: c.name,

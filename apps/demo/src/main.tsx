@@ -28,6 +28,7 @@ import { Learn } from './components/Learn';
 import { UseCases } from './components/UseCases';
 import { Teams } from './components/Teams';
 import { Architecture } from './components/Architecture';
+import { UsageDashboard } from './components/UsageDashboard';
 import './index.css';
 
 // Minimal theme with reduced visual noise
@@ -67,6 +68,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route path="/architecture" element={<Architecture />} />
             <Route path="/use-cases" element={<UseCases />} />
             <Route path="/teams" element={<Teams />} />
+            <Route path="/usage" element={<UsageDashboard />} />
           </Routes>
         </BrowserRouter>
       </MantineProvider>

@@ -1,2 +1,3 @@
 # Generated data files (copied at build time)
-src/data/components.json
+src/data/web-components.json
+src/data/react-components.json

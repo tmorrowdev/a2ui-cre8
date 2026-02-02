@@ -1,0 +1,9 @@
+# Railway deployment configuration for a2ui-bridge monorepo
+
+[build]
+builder = "nixpacks"
+
+[deploy]
+numReplicas = 1
+healthcheckPath = "/health"
+healthcheckTimeout = 30

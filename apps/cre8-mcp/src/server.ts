@@ -56,7 +56,20 @@ const port = parseInt(process.env.PORT || '3001', 10);
 console.log(`Cre8 MCP API starting on port ${port}`);
 console.log(`CORS origin: ${allowedOrigin}`);
 
-serve({
+const server = serve({
   fetch: app.fetch,
   port,
+}, (info) => {
+  console.log(`Server running on http://localhost:${info.port}`);
+});
+
+// Keep process alive and handle shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down...');
+  server.close();
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down...');
+  server.close();
 });

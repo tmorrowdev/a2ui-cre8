@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Search, Menu, X, ChevronRight, ChevronDown, Copy, Check, ExternalLink, Code, Layers, Zap, Package, BookOpen, Terminal, Box, Layout, Type, Navigation, Bell, Database, Eye, Play, Server, Cpu, Globe, FileJson, GitBranch, Sparkles, ArrowRight, Info } from 'lucide-react';
 
 // ============================================================================
-// COMPONENT DATA - Mirrors the A2UI Skill Schema
+// COMPONENT DATA - Mirrors the CRE8 MCP Component API v1.0.27
 // ============================================================================
 const componentManifest = {
   metadata: {
     library: "@tmorrow/cre8-a2ui",
-    version: "1.0.0",
+    version: "1.0.27",
     frameworks: {
       react: { package: "@tmorrow/cre8-react", naming: "PascalCase" },
       webComponents: { package: "@tmorrow/cre8-wc", naming: "kebab-case", prefix: "cre8-" }
     },
-    totalComponents: 72,
+    totalComponents: 82,
     mcpEndpoint: "https://enterprisedsnetwork-production.up.railway.app/mcp/design-system"
   },
   categories: {
@@ -21,35 +21,42 @@ const componentManifest = {
       color: "#8B5CF6",
       description: "Interactive elements for user actions",
       components: [
-        { 
-          name: "Button", 
-          react: "Cre8Button", 
-          wc: "cre8-button", 
-          description: "Primary interactive element for user actions",
+        {
+          name: "Button",
+          react: "Cre8Button",
+          wc: "cre8-button",
+          description: "Primary interactive element for user actions. Supports primary, secondary, and tertiary variants with extensive customization options.",
           props: [
-            { name: "text", type: "string", required: true, description: "Button text. Keep short, max 3 words, Title Case." },
+            { name: "text", type: "string", description: "Button text label" },
             { name: "variant", type: '"primary" | "secondary" | "tertiary"', default: '"primary"', description: "Visual priority level" },
             { name: "size", type: '"sm" | "md" | "lg"', default: '"md"', description: "Button size" },
             { name: "disabled", type: "boolean", default: "false", description: "Disabled state" },
+            { name: "neutral", type: "boolean", default: "false", description: "Neutral style variant" },
+            { name: "inverse", type: "boolean", default: "false", description: "Inverse colors for dark backgrounds" },
             { name: "fullWidth", type: "boolean", default: "false", description: "100% width" },
             { name: "loading", type: "boolean", default: "false", description: "Loading state" },
+            { name: "loadingComplete", type: "boolean", default: "false", description: "Indicate loading completion" },
+            { name: "hideText", type: "boolean", default: "false", description: "Visually hide text (icon-only)" },
+            { name: "iconPosition", type: '"before" | "after"', default: '"before"', description: "Icon position relative to text" },
             { name: "href", type: "string", description: "Makes button an anchor element" },
-            { name: "type", type: '"button" | "submit" | "reset"', default: '"button"', description: "Button type" }
+            { name: "type", type: '"button" | "submit" | "reset"', default: '"button"', description: "Button type" },
+            { name: "svg", type: "string", description: "SVG icon as raw string" }
           ],
           aiRules: [
             "One variant=\"primary\" per screen/view",
             "Use variant=\"secondary\" for secondary actions",
+            "Use variant=\"tertiary\" for low-emphasis actions",
             "Keep text short: max 3 words, use Title Case",
             "Use type=\"submit\" inside forms"
           ]
         },
-        { 
-          name: "DangerButton", 
-          react: "Cre8DangerButton", 
-          wc: "cre8-danger-button", 
-          description: "Button for destructive actions like delete or remove",
+        {
+          name: "DangerButton",
+          react: "Cre8DangerButton",
+          wc: "cre8-danger-button",
+          description: "Button for destructive actions like delete or remove.",
           props: [
-            { name: "text", type: "string", required: true, description: "Button text" },
+            { name: "text", type: "string", description: "Button text" },
             { name: "disabled", type: "boolean", default: "false", description: "Disabled state" }
           ],
           aiRules: [
@@ -57,6 +64,18 @@ const componentManifest = {
             "Always confirm dangerous actions with Cre8Modal",
             "Never use as primary page CTA"
           ]
+        },
+        {
+          name: "ButtonGroup",
+          react: "Cre8ButtonGroup",
+          wc: "cre8-button-group",
+          description: "Container for grouping related buttons."
+        },
+        {
+          name: "SplitButton",
+          react: "Cre8SplitButton",
+          wc: "cre8-split-button",
+          description: "Split button with primary action and dropdown menu."
         }
       ]
     },
@@ -65,7 +84,7 @@ const componentManifest = {
       color: "#3B82F6",
       description: "User input and form controls",
       components: [
-        { name: "Field", react: "Cre8Field", wc: "cre8-field", description: "Text input field with label and validation",
+        { name: "Field", react: "Cre8Field", wc: "cre8-field", description: "Text input field with label and validation support. Extends Cre8FormElement for form association.",
           props: [
             { name: "label", type: "string", required: true, description: "Field label" },
             { name: "value", type: "string", description: "Input value" },
@@ -73,24 +92,84 @@ const componentManifest = {
             { name: "placeholder", type: "string", description: "Placeholder text" },
             { name: "disabled", type: "boolean", default: "false" },
             { name: "required", type: "boolean", default: "false" },
-            { name: "errorNote", type: "string", description: "Error message to display" }
+            { name: "readonly", type: "boolean", default: "false" },
+            { name: "isError", type: "boolean", default: "false", description: "Error state" },
+            { name: "isSuccess", type: "boolean", default: "false", description: "Success state" },
+            { name: "name", type: "string", description: "Form field name" }
           ],
-          aiRules: ["Always provide label", "Use appropriate type for better mobile keyboards"]
+          aiRules: ["Always provide label", "Use appropriate type for better mobile keyboards", "Use isError with field notes for validation"]
         },
-        { name: "Select", react: "Cre8Select", wc: "cre8-select", description: "Dropdown select input",
+        { name: "FieldNote", react: "Cre8FieldNote", wc: "cre8-field-note", description: "Helper, error, or success text for form fields.",
+          props: [
+            { name: "isSuccess", type: "boolean", default: "false" },
+            { name: "isError", type: "boolean", default: "false" },
+            { name: "iconName", type: "string", description: "Icon name to display" }
+          ]
+        },
+        { name: "Select", react: "Cre8Select", wc: "cre8-select", description: "Native select dropdown with label and validation support. Extends Cre8FormElement.",
           props: [
             { name: "label", type: "string", description: "Field label" },
             { name: "value", type: "string", description: "Selected value" },
             { name: "disabled", type: "boolean", default: "false" },
-            { name: "required", type: "boolean", default: "false" }
+            { name: "required", type: "boolean", default: "false" },
+            { name: "isError", type: "boolean", default: "false" },
+            { name: "errorNote", type: "string", description: "Error message" },
+            { name: "isSuccess", type: "boolean", default: "false" },
+            { name: "successNote", type: "string", description: "Success message" },
+            { name: "items", type: "Array<Cre8SelectOption>", description: "Options array" }
           ]
         },
-        { name: "MultiSelect", react: "Cre8MultiSelect", wc: "cre8-multi-select", description: "Multi-select dropdown" },
-        { name: "CheckboxField", react: "Cre8CheckboxField", wc: "cre8-checkbox-field", description: "Container for checkbox items" },
-        { name: "CheckboxFieldItem", react: "Cre8CheckboxFieldItem", wc: "cre8-checkbox-field-item", description: "Individual checkbox" },
-        { name: "RadioField", react: "Cre8RadioField", wc: "cre8-radio-field", description: "Container for radio buttons" },
-        { name: "RadioFieldItem", react: "Cre8RadioFieldItem", wc: "cre8-radio-field-item", description: "Individual radio button" },
-        { name: "DatePicker", react: "Cre8DatePicker", wc: "cre8-date-picker", description: "Date picker input" }
+        { name: "MultiSelect", react: "Cre8MultiSelect", wc: "cre8-multi-select", description: "Multi-select dropdown for choosing multiple options.",
+          props: [
+            { name: "label", type: "string" },
+            { name: "disabled", type: "boolean", default: "false" },
+            { name: "placeholder", type: "string" },
+            { name: "value", type: "string[]", description: "Array of selected values" },
+            { name: "options", type: "Array<{value: string, label: string}>", description: "Options array" }
+          ]
+        },
+        { name: "CheckboxField", react: "Cre8CheckboxField", wc: "cre8-checkbox-field", description: "Group container for checkbox items.",
+          props: [
+            { name: "label", type: "string", description: "Group legend label" },
+            { name: "fieldNote", type: "string", description: "Helper text" }
+          ]
+        },
+        { name: "CheckboxFieldItem", react: "Cre8CheckboxFieldItem", wc: "cre8-checkbox-field-item", description: "Individual checkbox item within a CheckboxField.",
+          props: [
+            { name: "label", type: "string", required: true },
+            { name: "checked", type: "boolean", default: "false" },
+            { name: "disabled", type: "boolean", default: "false" },
+            { name: "value", type: "string" },
+            { name: "indeterminate", type: "boolean", default: "false" }
+          ]
+        },
+        { name: "RadioField", react: "Cre8RadioField", wc: "cre8-radio-field", description: "Group container for radio button items.",
+          props: [
+            { name: "label", type: "string" },
+            { name: "name", type: "string", required: true, description: "Shared name for radio group" },
+            { name: "value", type: "string", description: "Currently selected value" }
+          ]
+        },
+        { name: "RadioFieldItem", react: "Cre8RadioFieldItem", wc: "cre8-radio-field-item", description: "Individual radio button within a RadioField.",
+          props: [
+            { name: "label", type: "string", required: true },
+            { name: "value", type: "string", required: true },
+            { name: "checked", type: "boolean", default: "false" },
+            { name: "disabled", type: "boolean", default: "false" }
+          ]
+        },
+        { name: "DatePicker", react: "Cre8DatePicker", wc: "cre8-date-picker", description: "Date picker input component. Extends Cre8FormElement.",
+          props: [
+            { name: "label", type: "string" },
+            { name: "value", type: "string", description: "ISO date string (YYYY-MM-DD)" },
+            { name: "disabled", type: "boolean", default: "false" },
+            { name: "min", type: "string", description: "Minimum selectable date" },
+            { name: "max", type: "string", description: "Maximum selectable date" },
+            { name: "placeholder", type: "string" }
+          ]
+        },
+        { name: "SelectTile", react: "Cre8SelectTile", wc: "cre8-select-tile", description: "Tile-based selection option." },
+        { name: "SelectTileList", react: "Cre8SelectTileList", wc: "cre8-select-tile-list", description: "Container for select tiles." }
       ]
     },
     layout: {
@@ -98,22 +177,29 @@ const componentManifest = {
       color: "#10B981",
       description: "Page structure and content containers",
       components: [
-        { name: "Layout", react: "Cre8Layout", wc: "cre8-layout", description: "Page layout wrapper. Top-level container for pages.",
+        { name: "Layout", react: "Cre8Layout", wc: "cre8-layout", description: "Page layout wrapper with header, main, and footer areas.",
           aiRules: ["Always use as root wrapper for full pages"]
         },
-        { name: "LayoutSection", react: "Cre8LayoutSection", wc: "cre8-layout-section", description: "Section within a Layout" },
-        { name: "LayoutContainer", react: "Cre8LayoutContainer", wc: "cre8-layout-container", description: "Content container with max-width constraints",
+        { name: "LayoutSection", react: "Cre8LayoutSection", wc: "cre8-layout-section", description: "Section within a Layout." },
+        { name: "LayoutContainer", react: "Cre8LayoutContainer", wc: "cre8-layout-container", description: "Content container with max-width constraints.",
           aiRules: ["Use to constrain content width within sections/bands"]
         },
-        { name: "Section", react: "Cre8Section", wc: "cre8-section", description: "Generic section container" },
-        { name: "Hero", react: "Cre8Hero", wc: "cre8-hero", description: "Hero section for landing pages",
+        { name: "Section", react: "Cre8Section", wc: "cre8-section", description: "Generic section container." },
+        { name: "LinelengthContainer", react: "Cre8LinelengthContainer", wc: "cre8-linelength-container", description: "Container that constrains line length for optimal readability." },
+        { name: "Main", react: "Cre8Main", wc: "cre8-main", description: "Semantic main content element." },
+        { name: "Hero", react: "Cre8Hero", wc: "cre8-hero", description: "Hero section for landing pages.",
           aiRules: ["Use for prominent page introductions, typically at top of landing pages"]
         },
-        { name: "Band", react: "Cre8Band", wc: "cre8-band", description: "Full-width content band/section" },
-        { name: "Card", react: "Cre8Card", wc: "cre8-card", description: "Container card for grouping related content" },
-        { name: "Grid", react: "Cre8Grid", wc: "cre8-grid", description: "CSS Grid layout container" },
-        { name: "GridItem", react: "Cre8GridItem", wc: "cre8-grid-item", description: "Item within a Grid container" },
-        { name: "Divider", react: "Cre8Divider", wc: "cre8-divider", description: "Visual separator between content sections" }
+        { name: "Band", react: "Cre8Band", wc: "cre8-band", description: "Full-width content band/section." },
+        { name: "Card", react: "Cre8Card", wc: "cre8-card", description: "Container card for grouping related content.",
+          props: [
+            { name: "variant", type: '"bare" | "horizontal" | "horizontal-bare"', description: "Card style variant" },
+            { name: "align", type: '"center"', description: "Content alignment" }
+          ]
+        },
+        { name: "Grid", react: "Cre8Grid", wc: "cre8-grid", description: "CSS Grid layout container." },
+        { name: "GridItem", react: "Cre8GridItem", wc: "cre8-grid-item", description: "Item within a Grid container." },
+        { name: "Divider", react: "Cre8Divider", wc: "cre8-divider", description: "Visual separator between content sections." }
       ]
     },
     typography: {
@@ -121,13 +207,22 @@ const componentManifest = {
       color: "#F59E0B",
       description: "Text and heading components",
       components: [
-        { name: "Heading", react: "Cre8Heading", wc: "cre8-heading", description: "Semantic heading element",
+        { name: "Heading", react: "Cre8Heading", wc: "cre8-heading", description: "Heading text component with semantic levels and typography presets.",
           props: [
-            { name: "type", type: '"h1" | "h2" | "h3" | "h4" | "h5" | "h6"', required: true, description: "Heading level" }
+            { name: "type", type: '"display-default" | "display-small" | "headline-large" | "headline-default" | "headline-small" | "title-xlarge" | "title-large" | "title-default" | "title-small" | "label-large" | "label-default" | "label-small"', description: "Typography preset" },
+            { name: "tagVariant", type: '"h1" | "h2" | "h3" | "h4" | "h5" | "h6"', default: '"h2"', description: "HTML heading level" },
+            { name: "inverted", type: "boolean", default: "false", description: "Light text for dark backgrounds" },
+            { name: "brandColor", type: "boolean", default: "false", description: "Apply brand color" }
           ]
         },
-        { name: "TextPassage", react: "Cre8TextPassage", wc: "cre8-text-passage", description: "Body text container" },
-        { name: "TextLink", react: "Cre8TextLink", wc: "cre8-text-link", description: "Styled text link (inline within text)" }
+        { name: "TextPassage", react: "Cre8TextPassage", wc: "cre8-text-passage", description: "Typography wrapper for body text and paragraphs." },
+        { name: "TextLink", react: "Cre8TextLink", wc: "cre8-text-link", description: "Styled inline text link.",
+          props: [
+            { name: "href", type: "string", required: true },
+            { name: "target", type: '"_blank" | "_self" | "_parent" | "_top"' },
+            { name: "rel", type: "string", description: "Link relationship" }
+          ]
+        }
       ]
     },
     navigation: {
@@ -135,21 +230,65 @@ const componentManifest = {
       color: "#06B6D4",
       description: "Navigation patterns and links",
       components: [
-        { name: "Header", react: "Cre8Header", wc: "cre8-header", description: "Page header container" },
-        { name: "Footer", react: "Cre8Footer", wc: "cre8-footer", description: "Page footer container" },
-        { name: "GlobalNav", react: "Cre8GlobalNav", wc: "cre8-global-nav", description: "Global navigation bar container" },
-        { name: "GlobalNavItem", react: "Cre8GlobalNavItem", wc: "cre8-global-nav-item", description: "Item within GlobalNav" },
-        { name: "PrimaryNav", react: "Cre8PrimaryNav", wc: "cre8-primary-nav", description: "Primary navigation container" },
-        { name: "PrimaryNavItem", react: "Cre8PrimaryNavItem", wc: "cre8-primary-nav-item", description: "Item within PrimaryNav" },
-        { name: "TertiaryNav", react: "Cre8TertiaryNav", wc: "cre8-tertiary-nav", description: "Tertiary navigation container" },
-        { name: "TertiaryNavItem", react: "Cre8TertiaryNavItem", wc: "cre8-tertiary-nav-item", description: "Item within TertiaryNav" },
-        { name: "Breadcrumbs", react: "Cre8Breadcrumbs", wc: "cre8-breadcrumbs", description: "Breadcrumb navigation container" },
-        { name: "BreadcrumbsItem", react: "Cre8BreadcrumbsItem", wc: "cre8-breadcrumbs-item", description: "Item within Breadcrumbs" },
-        { name: "Tabs", react: "Cre8Tabs", wc: "cre8-tabs", description: "Tab navigation container" },
-        { name: "Tab", react: "Cre8Tab", wc: "cre8-tab", description: "Individual tab within Tabs" },
-        { name: "TabPanel", react: "Cre8TabPanel", wc: "cre8-tab-panel", description: "Content panel for a Tab" },
-        { name: "Pagination", react: "Cre8Pagination", wc: "cre8-pagination", description: "Pagination controls for lists" },
-        { name: "Link", react: "Cre8Link", wc: "cre8-link", description: "Navigation link component" }
+        { name: "Header", react: "Cre8Header", wc: "cre8-header", description: "Page header container." },
+        { name: "Footer", react: "Cre8Footer", wc: "cre8-footer", description: "Page footer container." },
+        { name: "GlobalNav", react: "Cre8GlobalNav", wc: "cre8-global-nav", description: "Global/application navigation bar container." },
+        { name: "GlobalNavItem", react: "Cre8GlobalNavItem", wc: "cre8-global-nav-item", description: "Item within GlobalNav.",
+          props: [
+            { name: "href", type: "string" },
+            { name: "active", type: "boolean", default: "false" }
+          ]
+        },
+        { name: "PrimaryNav", react: "Cre8PrimaryNav", wc: "cre8-primary-nav", description: "Primary navigation container." },
+        { name: "PrimaryNavItem", react: "Cre8PrimaryNavItem", wc: "cre8-primary-nav-item", description: "Item within PrimaryNav." },
+        { name: "TertiaryNav", react: "Cre8TertiaryNav", wc: "cre8-tertiary-nav", description: "Tertiary navigation container." },
+        { name: "TertiaryNavItem", react: "Cre8TertiaryNavItem", wc: "cre8-tertiary-nav-item", description: "Item within TertiaryNav." },
+        { name: "UtilityNav", react: "Cre8UtilityNav", wc: "cre8-utility-nav", description: "Utility navigation container." },
+        { name: "UtilityNavItem", react: "Cre8UtilityNavItem", wc: "cre8-utility-nav-item", description: "Item within UtilityNav." },
+        { name: "NavContainer", react: "Cre8NavContainer", wc: "cre8-nav-container", description: "Navigation wrapper container." },
+        { name: "Breadcrumbs", react: "Cre8Breadcrumbs", wc: "cre8-breadcrumbs", description: "Breadcrumb navigation container." },
+        { name: "BreadcrumbsItem", react: "Cre8BreadcrumbsItem", wc: "cre8-breadcrumbs-item", description: "Item within Breadcrumbs.",
+          props: [
+            { name: "href", type: "string" },
+            { name: "current", type: "boolean", default: "false", description: "Is current page" }
+          ]
+        },
+        { name: "LinkList", react: "Cre8LinkList", wc: "cre8-link-list", description: "List of links." },
+        { name: "LinkListItem", react: "Cre8LinkListItem", wc: "cre8-link-list-item", description: "Link item within LinkList." },
+        { name: "Tabs", react: "Cre8Tabs", wc: "cre8-tabs", description: "Tab navigation container with automatic management.",
+          props: [
+            { name: "size", type: '"sm"', description: "Small size variant" },
+            { name: "fullWidth", type: "boolean", default: "false", description: "Full width tabs" },
+            { name: "activeIndex", type: "number", default: "0", description: "Initial active tab index" }
+          ]
+        },
+        { name: "Tab", react: "Cre8Tab", wc: "cre8-tab", description: "Individual tab within Tabs.",
+          props: [
+            { name: "label", type: "string", required: true },
+            { name: "selected", type: "boolean", default: "false" },
+            { name: "disabled", type: "boolean", default: "false" },
+            { name: "tabId", type: "string", description: "Unique tab identifier" }
+          ]
+        },
+        { name: "TabPanel", react: "Cre8TabPanel", wc: "cre8-tab-panel", description: "Content panel for a Tab.",
+          props: [
+            { name: "tabId", type: "string", description: "Associated tab ID" }
+          ]
+        },
+        { name: "Pagination", react: "Cre8Pagination", wc: "cre8-pagination", description: "Pagination controls for lists.",
+          props: [
+            { name: "totalResults", type: "number", required: true, description: "Total result count" },
+            { name: "pageSize", type: "number", default: "10", description: "Items per page" },
+            { name: "currentPage", type: "number", default: "1", description: "Current page number" },
+            { name: "display", type: '"compact" | "icon-only" | "default"', default: '"default"', description: "Display variant" }
+          ]
+        },
+        { name: "Link", react: "Cre8Link", wc: "cre8-link", description: "Navigation link component.",
+          props: [
+            { name: "href", type: "string", required: true },
+            { name: "active", type: "boolean", default: "false", description: "Active/current state" }
+          ]
+        }
       ]
     },
     disclosure: {
@@ -157,15 +296,53 @@ const componentManifest = {
       color: "#EC4899",
       description: "Expandable/hideable content",
       components: [
-        { name: "Accordion", react: "Cre8Accordion", wc: "cre8-accordion", description: "Accordion container for collapsible sections" },
-        { name: "AccordionItem", react: "Cre8AccordionItem", wc: "cre8-accordion-item", description: "Individual collapsible item within Accordion" },
-        { name: "Modal", react: "Cre8Modal", wc: "cre8-modal", description: "Modal dialog overlay",
-          aiRules: ["Use for focused tasks, confirmations, forms", "Always provide clear close mechanism"]
+        { name: "Accordion", react: "Cre8Accordion", wc: "cre8-accordion", description: "Accordion container for collapsible sections.",
+          props: [
+            { name: "borderType", type: '"rectangle" | "rounded-bottom" | "rounded" | "none"', description: "Border style" },
+            { name: "hasDivider", type: "boolean", default: "false", description: "Show internal dividers" }
+          ]
         },
-        { name: "Dropdown", react: "Cre8Dropdown", wc: "cre8-dropdown", description: "Dropdown menu container" },
-        { name: "DropdownItem", react: "Cre8DropdownItem", wc: "cre8-dropdown-item", description: "Item within Dropdown" },
-        { name: "Popover", react: "Cre8Popover", wc: "cre8-popover", description: "Popover content container" },
-        { name: "Tooltip", react: "Cre8Tooltip", wc: "cre8-tooltip", description: "Tooltip for additional context",
+        { name: "AccordionItem", react: "Cre8AccordionItem", wc: "cre8-accordion-item", description: "Individual collapsible item within Accordion.",
+          props: [
+            { name: "label", type: "string", required: true },
+            { name: "expanded", type: "boolean", default: "false" },
+            { name: "disabled", type: "boolean", default: "false" }
+          ]
+        },
+        { name: "Modal", react: "Cre8Modal", wc: "cre8-modal", description: "Modal dialog overlay with focus trap.",
+          props: [
+            { name: "isActive", type: "boolean", default: "false", description: "Modal visibility state" },
+            { name: "status", type: '"error" | "warning" | "success" | "info" | "help"', description: "Status type" },
+            { name: "notDismissible", type: "boolean", default: "false", description: "Prevent dismissal" },
+            { name: "ariaLabel", type: "string", required: true, description: "Accessibility label" }
+          ],
+          aiRules: ["Use for focused tasks, confirmations, forms", "Always provide ariaLabel for accessibility"]
+        },
+        { name: "Dropdown", react: "Cre8Dropdown", wc: "cre8-dropdown", description: "Dropdown menu container.",
+          props: [
+            { name: "open", type: "boolean", default: "false" }
+          ]
+        },
+        { name: "DropdownItem", react: "Cre8DropdownItem", wc: "cre8-dropdown-item", description: "Item within Dropdown.",
+          props: [
+            { name: "disabled", type: "boolean", default: "false" },
+            { name: "href", type: "string" }
+          ]
+        },
+        { name: "Submenu", react: "Cre8Submenu", wc: "cre8-submenu", description: "Submenu wrapper within dropdown." },
+        { name: "SubmenuItem", react: "Cre8SubmenuItem", wc: "cre8-submenu-item", description: "Submenu item." },
+        { name: "Popover", react: "Cre8Popover", wc: "cre8-popover", description: "Popover content container.",
+          props: [
+            { name: "open", type: "boolean", default: "false" }
+          ]
+        },
+        { name: "Tooltip", react: "Cre8Tooltip", wc: "cre8-tooltip", description: "Tooltip for additional context.",
+          props: [
+            { name: "position", type: '"top" | "bottom" | "left" | "right"', default: '"bottom"', description: "Tooltip position" },
+            { name: "knockout", type: "boolean", default: "false", description: "White background variant" },
+            { name: "isDynamic", type: "boolean", default: "false", description: "Auto-position based on viewport" },
+            { name: "isActive", type: "boolean", default: "false", description: "Visibility state" }
+          ],
           aiRules: ["Keep content brief (one sentence max)", "Don't put essential information in tooltips"]
         }
       ]
@@ -175,18 +352,59 @@ const componentManifest = {
       color: "#EAB308",
       description: "User feedback and status indicators",
       components: [
-        { name: "Alert", react: "Cre8Alert", wc: "cre8-alert", description: "Alert message for important notifications",
+        { name: "Alert", react: "Cre8Alert", wc: "cre8-alert", description: "Alert/notification display.",
           props: [
-            { name: "status", type: '"info" | "success" | "warning" | "error"', default: '"info"', description: "Alert type" }
+            { name: "status", type: '"error" | "info" | "notification" | "neutral" | "warning" | "success"', default: '"info"', description: "Alert type" },
+            { name: "variant", type: '"standalone" | "banner"', description: "Display style" },
+            { name: "emphasis", type: '"subtle" | "strong"', description: "Emphasis level" },
+            { name: "headerText", type: "string", description: "Header text" },
+            { name: "dismissed", type: "boolean", default: "false", description: "Dismissed state" },
+            { name: "notDismissible", type: "boolean", default: "false", description: "Prevent dismissal" }
           ],
           aiRules: ["error — Failures, problems", "warning — Caution needed", "success — Confirmations", "info — Neutral information"]
         },
-        { name: "InlineAlert", react: "Cre8InlineAlert", wc: "cre8-inline-alert", description: "Inline alert for contextual messages" },
-        { name: "Badge", react: "Cre8Badge", wc: "cre8-badge", description: "Badge for status indicators or counts" },
-        { name: "LoadingSpinner", react: "Cre8LoadingSpinner", wc: "cre8-loading-spinner", description: "Loading spinner indicator" },
-        { name: "SkeletonLoader", react: "Cre8SkeletonLoader", wc: "cre8-skeleton-loader", description: "Skeleton loading placeholder" },
-        { name: "ProgressMeter", react: "Cre8ProgressMeter", wc: "cre8-progress-meter", description: "Progress bar for completion status" },
-        { name: "PercentBar", react: "Cre8PercentBar", wc: "cre8-percent-bar", description: "Percentage bar visualization" }
+        { name: "InlineAlert", react: "Cre8InlineAlert", wc: "cre8-inline-alert", description: "Inline alert for contextual messages.",
+          props: [
+            { name: "status", type: '"info" | "success" | "warning" | "error"', default: '"info"' }
+          ]
+        },
+        { name: "Badge", react: "Cre8Badge", wc: "cre8-badge", description: "Status badge indicator.",
+          props: [
+            { name: "text", type: "string", description: "Badge text" },
+            { name: "status", type: '"neutral" | "success" | "warning" | "error" | "info" | "attention"', default: '"neutral"', description: "Status color" },
+            { name: "variant", type: '"light" | "white"', description: "Background style" }
+          ]
+        },
+        { name: "LoadingSpinner", react: "Cre8LoadingSpinner", wc: "cre8-loading-spinner", description: "Loading spinner indicator.",
+          props: [
+            { name: "size", type: '"sm" | "md" | "lg"', default: '"md"' },
+            { name: "neutral", type: "boolean", default: "false" },
+            { name: "inverse", type: "boolean", default: "false" }
+          ]
+        },
+        { name: "SkeletonLoader", react: "Cre8SkeletonLoader", wc: "cre8-skeleton-loader", description: "Skeleton loading placeholder.",
+          props: [
+            { name: "variant", type: '"text" | "circle" | "rect"', default: '"text"' },
+            { name: "width", type: "string", description: "Width (CSS value)" },
+            { name: "height", type: "string", description: "Height (CSS value)" },
+            { name: "lines", type: "number", default: "1", description: "Number of text lines" }
+          ]
+        },
+        { name: "ProgressMeter", react: "Cre8ProgressMeter", wc: "cre8-progress-meter", description: "Progress bar for completion status.",
+          props: [
+            { name: "value", type: "number", description: "Current progress value" },
+            { name: "max", type: "number", default: "100", description: "Maximum value" },
+            { name: "label", type: "string", description: "Accessible label" },
+            { name: "showValue", type: "boolean", default: "false", description: "Show value text" }
+          ]
+        },
+        { name: "ProgressSteps", react: "Cre8ProgressSteps", wc: "cre8-progress-steps", description: "Step indicator container." },
+        { name: "ProgressStepsItem", react: "Cre8ProgressStepsItem", wc: "cre8-progress-steps-item", description: "Individual progress step." },
+        { name: "PercentBar", react: "Cre8PercentBar", wc: "cre8-percent-bar", description: "Percentage bar visualization.",
+          props: [
+            { name: "value", type: "number", description: "Percentage value (0-100)" }
+          ]
+        }
       ]
     },
     data: {
@@ -194,20 +412,56 @@ const componentManifest = {
       color: "#6366F1",
       description: "Data display and visualization",
       components: [
-        { name: "Table", react: "Cre8Table", wc: "cre8-table", description: "Data table container" },
-        { name: "TableHeader", react: "Cre8TableHeader", wc: "cre8-table-header", description: "Table header section" },
-        { name: "TableHeaderCell", react: "Cre8TableHeaderCell", wc: "cre8-table-header-cell", description: "Header cell in table" },
-        { name: "TableBody", react: "Cre8TableBody", wc: "cre8-table-body", description: "Table body section" },
-        { name: "TableRow", react: "Cre8TableRow", wc: "cre8-table-row", description: "Table row" },
-        { name: "TableCell", react: "Cre8TableCell", wc: "cre8-table-cell", description: "Table cell" },
-        { name: "List", react: "Cre8List", wc: "cre8-list", description: "List container" },
-        { name: "ListItem", react: "Cre8ListItem", wc: "cre8-list-item", description: "Item within List" },
-        { name: "LinkList", react: "Cre8LinkList", wc: "cre8-link-list", description: "List of links" },
-        { name: "LinkListItem", react: "Cre8LinkListItem", wc: "cre8-link-list-item", description: "Link item within LinkList" },
-        { name: "Tag", react: "Cre8Tag", wc: "cre8-tag", description: "Tag/chip for categorization" },
-        { name: "TagList", react: "Cre8TagList", wc: "cre8-tag-list", description: "Container for tags" },
-        { name: "RemoveTag", react: "Cre8RemoveTag", wc: "cre8-remove-tag", description: "Removable tag with close button" },
-        { name: "Chart", react: "Cre8Chart", wc: "cre8-chart", description: "Chart visualization component" }
+        { name: "Table", react: "Cre8Table", wc: "cre8-table", description: "Data table wrapper.",
+          props: [
+            { name: "caption", type: "string", description: "Table caption/title" },
+            { name: "behavior", type: '"responsive"', description: "Responsive stacking on small screens" },
+            { name: "isHoverable", type: "boolean", default: "false", description: "Highlight rows on hover" },
+            { name: "variant", type: '"striped"', description: "Zebra striping" }
+          ]
+        },
+        { name: "TableHeader", react: "Cre8TableHeader", wc: "cre8-table-header", description: "Table header section." },
+        { name: "TableHeaderCell", react: "Cre8TableHeaderCell", wc: "cre8-table-header-cell", description: "Header cell in table.",
+          props: [
+            { name: "sortable", type: "boolean", default: "false" },
+            { name: "sortDirection", type: '"asc" | "desc" | "none"', default: '"none"' },
+            { name: "align", type: '"left" | "center" | "right"', default: '"left"' }
+          ]
+        },
+        { name: "TableBody", react: "Cre8TableBody", wc: "cre8-table-body", description: "Table body section." },
+        { name: "TableRow", react: "Cre8TableRow", wc: "cre8-table-row", description: "Table row.",
+          props: [
+            { name: "selected", type: "boolean", default: "false" }
+          ]
+        },
+        { name: "TableCell", react: "Cre8TableCell", wc: "cre8-table-cell", description: "Table cell.",
+          props: [
+            { name: "align", type: '"left" | "center" | "right"', default: '"left"' }
+          ]
+        },
+        { name: "TableObject", react: "Cre8TableObject", wc: "cre8-table-object", description: "Object-based table abstraction for rendering tables from data." },
+        { name: "List", react: "Cre8List", wc: "cre8-list", description: "List container." },
+        { name: "ListItem", react: "Cre8ListItem", wc: "cre8-list-item", description: "Item within List." },
+        { name: "Tag", react: "Cre8Tag", wc: "cre8-tag", description: "Tag/label component for categorization.",
+          props: [
+            { name: "text", type: "string" },
+            { name: "variant", type: '"default" | "primary" | "success" | "warning" | "error"', default: '"default"' }
+          ]
+        },
+        { name: "TagList", react: "Cre8TagList", wc: "cre8-tag-list", description: "Container for tags." },
+        { name: "RemoveTag", react: "Cre8RemoveTag", wc: "cre8-remove-tag", description: "Removable tag with close button.",
+          props: [
+            { name: "text", type: "string" }
+          ]
+        },
+        { name: "Chart", react: "Cre8Chart", wc: "cre8-chart", description: "Chart visualization component. Integrates with Chart.js.",
+          props: [
+            { name: "type", type: '"bar" | "line" | "pie" | "donut" | "area"', default: '"bar"' },
+            { name: "title", type: "string" },
+            { name: "data", type: "ChartData", description: "Chart data object" },
+            { name: "options", type: "ChartOptions", description: "Chart configuration options" }
+          ]
+        }
       ]
     },
     media: {
@@ -215,8 +469,21 @@ const componentManifest = {
       color: "#EF4444",
       description: "Media and visual elements",
       components: [
-        { name: "Icon", react: "Cre8Icon", wc: "cre8-icon", description: "SVG icon component" },
-        { name: "Logo", react: "Cre8Logo", wc: "cre8-logo", description: "Logo component" }
+        { name: "Icon", react: "Cre8Icon", wc: "cre8-icon", description: "SVG icon renderer with 100+ built-in icons.",
+          props: [
+            { name: "name", type: "string", description: "Icon name (legacy method)" },
+            { name: "svg", type: "string", description: "SVG as raw string (preferred)" },
+            { name: "focusable", type: "boolean", default: "false", description: "Focusable state" },
+            { name: "iconTitle", type: "string", description: "Icon title/alt text" }
+          ]
+        },
+        { name: "Logo", react: "Cre8Logo", wc: "cre8-logo", description: "Logo component.",
+          props: [
+            { name: "variant", type: '"full" | "mark" | "wordmark"', default: '"full"' },
+            { name: "size", type: '"sm" | "md" | "lg"', default: '"md"' },
+            { name: "src", type: "string", description: "Custom logo image source" }
+          ]
+        }
       ]
     },
     marketing: {
@@ -224,104 +491,97 @@ const componentManifest = {
       color: "#14B8A6",
       description: "Marketing and promotional components",
       components: [
-        { name: "Feature", react: "Cre8Feature", wc: "cre8-feature", description: "Feature highlight component" },
-        { name: "PageHeader", react: "Cre8PageHeader", wc: "cre8-page-header", description: "Page header with actions" }
+        { name: "Feature", react: "Cre8Feature", wc: "cre8-feature", description: "Feature highlight component for marketing pages." },
+        { name: "PageHeader", react: "Cre8PageHeader", wc: "cre8-page-header", description: "Page header with title and actions." }
       ]
     }
   }
 };
 
 // ============================================================================
-// USAGE PATTERNS
+// USAGE PATTERNS - Matches CRE8 MCP v1.0.27 patterns
 // ============================================================================
 const usagePatterns = {
   loginForm: {
     name: "Login Form",
-    description: "Standard authentication form pattern",
+    description: "Standard login form with email and password",
     react: `<Cre8Card>
-  <Cre8Heading type="h2">Sign In</Cre8Heading>
-  <Cre8Field label="Email" type="email" required />
-  <Cre8Field label="Password" type="password" required />
+  <Cre8Heading tagVariant="h2" type="headline-default">Sign In</Cre8Heading>
+  <Cre8Field label="Email" type="email" />
+  <Cre8Field label="Password" type="password" />
   <Cre8Button text="Sign In" variant="primary" fullWidth />
 </Cre8Card>`,
     wc: `<cre8-card>
-  <cre8-heading type="h2">Sign In</cre8-heading>
-  <cre8-field label="Email" type="email" required></cre8-field>
-  <cre8-field label="Password" type="password" required></cre8-field>
+  <cre8-heading tag-variant="h2" type="headline-default">Sign In</cre8-heading>
+  <cre8-field label="Email" type="email"></cre8-field>
+  <cre8-field label="Password" type="password"></cre8-field>
   <cre8-button text="Sign In" variant="primary" full-width></cre8-button>
 </cre8-card>`
   },
   pageLayout: {
     name: "Page Layout",
-    description: "Standard page structure with header and footer",
+    description: "Standard page with header, main content, and footer",
     react: `<Cre8Layout>
   <Cre8Header>
-    <Cre8GlobalNav>
+    <Cre8GlobalNav slotLogo={<Cre8Logo />}>
       <Cre8GlobalNavItem href="/">Home</Cre8GlobalNavItem>
-      <Cre8GlobalNavItem href="/about">About</Cre8GlobalNavItem>
     </Cre8GlobalNav>
   </Cre8Header>
-  <main>
+  <Cre8Main>
     <Cre8LayoutContainer>
       {/* Page content */}
     </Cre8LayoutContainer>
-  </main>
-  <Cre8Footer />
+  </Cre8Main>
+  <Cre8Footer slotCopyright={<span>2024 Company Name</span>} />
 </Cre8Layout>`,
     wc: `<cre8-layout>
   <cre8-header>
     <cre8-global-nav>
+      <span slot="logo"><cre8-logo></cre8-logo></span>
       <cre8-global-nav-item href="/">Home</cre8-global-nav-item>
-      <cre8-global-nav-item href="/about">About</cre8-global-nav-item>
     </cre8-global-nav>
   </cre8-header>
-  <main>
+  <cre8-main>
     <cre8-layout-container>
       <!-- Page content -->
     </cre8-layout-container>
-  </main>
-  <cre8-footer></cre8-footer>
+  </cre8-main>
+  <cre8-footer>
+    <span slot="copyright">2024 Company Name</span>
+  </cre8-footer>
 </cre8-layout>`
   },
   dataTable: {
     name: "Data Table",
-    description: "Table with status badges and actions",
-    react: `<Cre8Table>
+    description: "Table with header and data rows",
+    react: `<Cre8Table variant="striped" isHoverable>
   <Cre8TableHeader>
     <Cre8TableRow>
       <Cre8TableHeaderCell>Name</Cre8TableHeaderCell>
       <Cre8TableHeaderCell>Status</Cre8TableHeaderCell>
-      <Cre8TableHeaderCell>Actions</Cre8TableHeaderCell>
     </Cre8TableRow>
   </Cre8TableHeader>
   <Cre8TableBody>
     <Cre8TableRow>
-      <Cre8TableCell>Project Alpha</Cre8TableCell>
+      <Cre8TableCell>Item 1</Cre8TableCell>
       <Cre8TableCell>
-        <Cre8Badge text="Active" variant="success" />
-      </Cre8TableCell>
-      <Cre8TableCell>
-        <Cre8Button text="Edit" variant="tertiary" size="sm" />
+        <Cre8Badge text="Active" status="success" />
       </Cre8TableCell>
     </Cre8TableRow>
   </Cre8TableBody>
 </Cre8Table>`,
-    wc: `<cre8-table>
+    wc: `<cre8-table variant="striped" is-hoverable>
   <cre8-table-header>
     <cre8-table-row>
       <cre8-table-header-cell>Name</cre8-table-header-cell>
       <cre8-table-header-cell>Status</cre8-table-header-cell>
-      <cre8-table-header-cell>Actions</cre8-table-header-cell>
     </cre8-table-row>
   </cre8-table-header>
   <cre8-table-body>
     <cre8-table-row>
-      <cre8-table-cell>Project Alpha</cre8-table-cell>
+      <cre8-table-cell>Item 1</cre8-table-cell>
       <cre8-table-cell>
-        <cre8-badge text="Active" variant="success"></cre8-badge>
-      </cre8-table-cell>
-      <cre8-table-cell>
-        <cre8-button text="Edit" variant="tertiary" size="sm"></cre8-button>
+        <cre8-badge text="Active" status="success"></cre8-badge>
       </cre8-table-cell>
     </cre8-table-row>
   </cre8-table-body>
@@ -329,49 +589,52 @@ const usagePatterns = {
   },
   alertBanner: {
     name: "Alert Banner",
-    description: "Feedback alerts for user notifications",
-    react: `<Cre8Alert status="success">
-  Your changes have been saved successfully.
-</Cre8Alert>
-
-<Cre8Alert status="error">
-  Something went wrong. Please try again.
-</Cre8Alert>
-
-<Cre8Alert status="warning">
-  Your session will expire in 5 minutes.
+    description: "Dismissible alert at top of page",
+    react: `<Cre8Alert status="info" variant="banner">
+  Important announcement message here.
 </Cre8Alert>`,
-    wc: `<cre8-alert status="success">
-  Your changes have been saved successfully.
-</cre8-alert>
-
-<cre8-alert status="error">
-  Something went wrong. Please try again.
-</cre8-alert>
-
-<cre8-alert status="warning">
-  Your session will expire in 5 minutes.
+    wc: `<cre8-alert status="info" variant="banner">
+  Important announcement message here.
 </cre8-alert>`
   },
   tabbedContent: {
     name: "Tabbed Content",
-    description: "Tab-based content organization",
+    description: "Content organized in tabs",
     react: `<Cre8Tabs>
-  <Cre8Tab label="Overview" selected />
-  <Cre8Tab label="Features" />
-  <Cre8Tab label="Pricing" />
-  <Cre8TabPanel>Overview content here</Cre8TabPanel>
-  <Cre8TabPanel>Features content here</Cre8TabPanel>
-  <Cre8TabPanel>Pricing content here</Cre8TabPanel>
+  <Cre8Tab label="Tab 1" tabId="tab1" selected />
+  <Cre8Tab label="Tab 2" tabId="tab2" />
+  <Cre8TabPanel tabId="tab1" slot="panel">Content for Tab 1</Cre8TabPanel>
+  <Cre8TabPanel tabId="tab2" slot="panel">Content for Tab 2</Cre8TabPanel>
 </Cre8Tabs>`,
     wc: `<cre8-tabs>
-  <cre8-tab label="Overview" selected></cre8-tab>
-  <cre8-tab label="Features"></cre8-tab>
-  <cre8-tab label="Pricing"></cre8-tab>
-  <cre8-tab-panel>Overview content here</cre8-tab-panel>
-  <cre8-tab-panel>Features content here</cre8-tab-panel>
-  <cre8-tab-panel>Pricing content here</cre8-tab-panel>
+  <cre8-tab label="Tab 1" tab-id="tab1" selected></cre8-tab>
+  <cre8-tab label="Tab 2" tab-id="tab2"></cre8-tab>
+  <cre8-tab-panel tab-id="tab1" slot="panel">Content for Tab 1</cre8-tab-panel>
+  <cre8-tab-panel tab-id="tab2" slot="panel">Content for Tab 2</cre8-tab-panel>
 </cre8-tabs>`
+  },
+  modalDialog: {
+    name: "Modal Dialog",
+    description: "Modal with header, body, and footer actions",
+    react: `<Cre8Modal
+  isActive
+  ariaLabel="Confirmation"
+  slotHeader={<span>Confirm Action</span>}
+  slotFooter={<>
+    <Cre8Button text="Cancel" variant="secondary" />
+    <Cre8Button text="Confirm" variant="primary" />
+  </>}
+>
+  <p>Are you sure you want to proceed?</p>
+</Cre8Modal>`,
+    wc: `<cre8-modal is-active aria-label="Confirmation">
+  <span slot="header">Confirm Action</span>
+  <p>Are you sure you want to proceed?</p>
+  <div slot="footer">
+    <cre8-button text="Cancel" variant="secondary"></cre8-button>
+    <cre8-button text="Confirm" variant="primary"></cre8-button>
+  </div>
+</cre8-modal>`
   }
 };
 

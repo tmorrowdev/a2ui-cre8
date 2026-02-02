@@ -3,6 +3,12 @@
 [build]
 builder = "nixpacks"
 
+[phases.setup]
+cmds = ["corepack enable"]
+
+[phases.install]
+cmds = ["pnpm install"]
+
 [deploy]
 numReplicas = 1
 healthcheckPath = "/health"

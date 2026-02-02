@@ -1,0 +1,215 @@
+# Cre8 Design System - AI Agent Instructions
+
+## Overview
+
+Cre8 is a design system available as Web Components (`@tmorrow/cre8-wc`) and React (`@tmorrow/cre8-react`). This MCP server provides component intelligence for AI-assisted development.
+
+## Quick Start
+
+### MCP Connection (Claude Desktop)
+```json
+{
+  "mcpServers": {
+    "cre8": {
+      "command": "npx",
+      "args": ["-y", "cre8-mcp"]
+    }
+  }
+}
+```
+
+### Available Tools
+- `list_components` - List all components by category
+- `get_component` - Get detailed component info (props, slots, events, CSS vars)
+- `get_patterns` - Get pre-built UI patterns
+- `search_components` - Search by name/description
+
+## Component Formats
+
+### Web Components (Default)
+Use kebab-case tag names and attributes:
+```html
+<cre8-button text="Submit" variant="primary" full-width></cre8-button>
+<cre8-field label="Email" type="email" error-note="Required"></cre8-field>
+<cre8-card>
+  <cre8-heading type="h2">Title</cre8-heading>
+  <p>Content goes here</p>
+</cre8-card>
+```
+
+Import: `import '@tmorrow/cre8-wc/cre8-button';`
+
+### React Components
+Use PascalCase component names and camelCase props:
+```jsx
+<Cre8Button text="Submit" variant="primary" fullWidth />
+<Cre8Field label="Email" type="email" errorNote="Required" />
+<Cre8Card>
+  <Cre8Heading type="h2">Title</Cre8Heading>
+  <p>Content goes here</p>
+</Cre8Card>
+```
+
+Import: `import { Cre8Button } from '@tmorrow/cre8-react';`
+
+## Web Component API Structure
+
+Each web component exposes:
+
+### Attributes (HTML)
+Reflected properties settable via HTML attributes. Use kebab-case.
+Example: `<cre8-button full-width disabled></cre8-button>`
+
+### Properties (JS)
+JavaScript-only properties for complex types.
+Example: `element.iconSvg = svgElement;`
+
+### Slots
+Named content projection points.
+- `default` - Main content
+- Named slots like `header`, `footer`, `icon`
+
+Example:
+```html
+<cre8-card>
+  <span slot="header">Card Title</span>
+  Main content here
+  <div slot="footer">Footer actions</div>
+</cre8-card>
+```
+
+### Events
+Custom events with detail payloads. Always prefixed with `cre8-`.
+- `cre8-click` - Button clicks
+- `cre8-change` - Input value changes
+- `cre8-toggle` - Accordion/disclosure toggle
+
+Example: `element.addEventListener('cre8-change', (e) => console.log(e.detail.value));`
+
+### CSS Custom Properties
+Component-level design tokens for styling customization.
+
+Example:
+```css
+cre8-button {
+  --cre8-button-background: #custom-color;
+  --cre8-button-border-radius: 8px;
+}
+```
+
+## Component Categories
+
+1. **Actions** - Button, DangerButton
+2. **Forms** - Field, Select, Checkbox, Radio, DatePicker
+3. **Layout** - Card, Grid, Section, Hero, Band, Divider
+4. **Typography** - Heading, TextPassage, TextLink
+5. **Navigation** - Tabs, Breadcrumbs, Pagination, GlobalNav
+6. **Disclosure** - Accordion, Modal, Dropdown, Tooltip, Popover
+7. **Feedback** - Alert, Badge, LoadingSpinner, ProgressMeter
+8. **Data** - Table, List, Tag, Chart
+9. **Media** - Icon, Logo
+10. **Marketing** - Feature, PageHeader
+
+## Common Patterns
+
+### Form with Validation
+```html
+<cre8-card>
+  <cre8-heading type="h2">Sign Up</cre8-heading>
+  <cre8-field label="Email" type="email" required></cre8-field>
+  <cre8-field label="Password" type="password" required></cre8-field>
+  <cre8-button text="Create Account" variant="primary" full-width></cre8-button>
+</cre8-card>
+```
+
+### Data Table
+```html
+<cre8-table striped hoverable>
+  <cre8-table-header>
+    <cre8-table-row>
+      <cre8-table-header-cell>Name</cre8-table-header-cell>
+      <cre8-table-header-cell>Status</cre8-table-header-cell>
+    </cre8-table-row>
+  </cre8-table-header>
+  <cre8-table-body>
+    <cre8-table-row>
+      <cre8-table-cell>Item 1</cre8-table-cell>
+      <cre8-table-cell><cre8-badge text="Active" variant="success"></cre8-badge></cre8-table-cell>
+    </cre8-table-row>
+  </cre8-table-body>
+</cre8-table>
+```
+
+### Page Layout
+```html
+<cre8-layout>
+  <cre8-header sticky>
+    <cre8-global-nav>
+      <span slot="logo"><cre8-logo></cre8-logo></span>
+      <cre8-global-nav-item href="/">Home</cre8-global-nav-item>
+    </cre8-global-nav>
+  </cre8-header>
+  <main>
+    <cre8-layout-container>
+      <!-- Page content -->
+    </cre8-layout-container>
+  </main>
+  <cre8-footer></cre8-footer>
+</cre8-layout>
+```
+
+## Design Tokens
+
+Global CSS custom properties available:
+
+### Colors
+- `--cre8-color-primary` - Primary brand color
+- `--cre8-color-secondary` - Secondary color
+- `--cre8-color-background` - Page background
+- `--cre8-color-surface` - Card/component surface
+- `--cre8-color-text` - Primary text
+- `--cre8-color-border` - Default borders
+- `--cre8-color-error` / `success` / `warning` / `info` - Status colors
+
+### Spacing
+- `--cre8-spacing-xs` (4px) through `--cre8-spacing-2xl` (48px)
+
+### Typography
+- `--cre8-font-size-xs` (12px) through `--cre8-font-size-3xl` (32px)
+- `--cre8-font-family-base` - Body font
+- `--cre8-font-family-heading` - Heading font
+
+### Radii
+- `--cre8-radius-sm` (4px) through `--cre8-radius-full` (9999px)
+
+### Shadows
+- `--cre8-shadow-sm` / `md` / `lg`
+
+## Best Practices
+
+1. **Use semantic components** - Choose `cre8-heading` over raw `<h1>` tags
+2. **Leverage slots** - Use named slots for complex layouts
+3. **Customize via CSS vars** - Don't override component styles directly
+4. **Handle events** - Listen for `cre8-*` events, not native events
+5. **Accessibility** - Components include ARIA attributes by default
+6. **Responsive** - Use Grid and Container for responsive layouts
+
+## REST API
+
+Base URL: `https://a2ui-bridgecre8-mcp-production.up.railway.app`
+
+- `GET /components` - Web components (default)
+- `GET /components/:name` - Component details
+- `GET /react/components` - React components
+- `GET /react/components/:name` - React component details
+- `GET /patterns` - UI patterns
+- `GET /search?q=query` - Search
+- `GET /llms.txt` - This file
+
+## Need Help?
+
+Use the MCP tools to explore:
+1. `list_components` to see all available components
+2. `get_component` with a component name for full API details
+3. `search_components` to find components by keyword
+4. `get_patterns` for ready-to-use UI templates

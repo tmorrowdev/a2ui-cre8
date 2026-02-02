@@ -7,6 +7,9 @@
 import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import { readFileSync, readdirSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import {
   handleGetPatterns,
   handleSearchComponents,
@@ -14,6 +17,41 @@ import {
   handleGetComponent,
 } from './handlers.js';
 import type { GetPatternsInput, SearchComponentsInput, ComponentFormat } from './handlers.js';
+
+// Get data directory path
+function getDataDir(): string {
+  try {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = dirname(__filename);
+    return join(__dirname, '..', 'data');
+  } catch {
+    return join(process.cwd(), 'apps', 'cre8-mcp', 'data');
+  }
+}
+
+// Load llms.txt
+function loadLlmsTxt(): string {
+  return readFileSync(join(getDataDir(), 'llms.txt'), 'utf-8');
+}
+
+// Load skill file
+function loadSkillFile(skillName: string, filePath?: string): string {
+  const dataDir = getDataDir();
+  const skillDir = join(dataDir, 'skills', skillName);
+  const targetPath = filePath ? join(skillDir, filePath) : join(skillDir, 'SKILL.md');
+  return readFileSync(targetPath, 'utf-8');
+}
+
+// List skill reference files
+function listSkillReferences(skillName: string): string[] {
+  const dataDir = getDataDir();
+  const refsDir = join(dataDir, 'skills', skillName, 'references');
+  try {
+    return readdirSync(refsDir).filter((f: string) => f.endsWith('.md'));
+  } catch {
+    return [];
+  }
+}
 
 const app = new Hono();
 
@@ -34,6 +72,12 @@ app.get('/', (c) => c.json({
   defaultFormat: 'web',
   endpoints: {
     health: 'GET /health',
+    llms: 'GET /llms.txt',
+    skills: {
+      list: 'GET /skills',
+      detail: 'GET /skills/:name',
+      reference: 'GET /skills/:name/references/:ref',
+    },
     webComponents: {
       list: 'GET /components',
       detail: 'GET /components/:name',
@@ -49,8 +93,77 @@ app.get('/', (c) => c.json({
       search: 'GET /react/search?q=query',
     },
   },
-  usage: 'npx @anthropic-ai/cre8-mcp (coming soon) or run locally with: npx -y cre8-mcp-proxy',
+  usage: 'npx cre8-mcp-proxy',
 }));
+
+// LLMs.txt - AI agent instructions
+app.get('/llms.txt', (c) => {
+  const content = loadLlmsTxt();
+  return c.text(content);
+});
+
+// ==========================================
+// Skills API
+// ==========================================
+
+// List available skills
+app.get('/skills', (c) => {
+  return c.json({
+    skills: [
+      {
+        name: 'cre8-a2ui',
+        description: 'Web Components skill for CRE8 design system (@tmorrow/cre8-wc)',
+        url: '/skills/cre8-a2ui',
+      },
+      {
+        name: 'cre8-a2ui-react',
+        description: 'React skill for CRE8 design system (@tmorrow/cre8-react)',
+        url: '/skills/cre8-a2ui-react',
+      },
+    ],
+  });
+});
+
+// Get skill main file
+app.get('/skills/:name', (c) => {
+  const skillName = c.req.param('name');
+  if (!['cre8-a2ui', 'cre8-a2ui-react'].includes(skillName)) {
+    return c.json({ error: `Skill "${skillName}" not found` }, 404);
+  }
+  try {
+    const content = loadSkillFile(skillName);
+    const refs = listSkillReferences(skillName);
+    return c.json({
+      name: skillName,
+      content,
+      references: refs.map(f => ({
+        name: f.replace('.md', ''),
+        url: `/skills/${skillName}/references/${f.replace('.md', '')}`,
+      })),
+    });
+  } catch (err) {
+    return c.json({ error: 'Failed to load skill' }, 500);
+  }
+});
+
+// Get skill reference file
+app.get('/skills/:name/references/:ref', (c) => {
+  const skillName = c.req.param('name');
+  const refName = c.req.param('ref');
+  if (!['cre8-a2ui', 'cre8-a2ui-react'].includes(skillName)) {
+    return c.json({ error: `Skill "${skillName}" not found` }, 404);
+  }
+  try {
+    const content = loadSkillFile(skillName, `references/${refName}.md`);
+    return c.json({
+      skill: skillName,
+      reference: refName,
+      content,
+    });
+  } catch (err) {
+    return c.json({ error: `Reference "${refName}" not found` }, 404);
+  }
+});
 
 // ==========================================
 // Web Components (default)

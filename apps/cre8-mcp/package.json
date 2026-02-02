@@ -1,6 +1,6 @@
 {
   "name": "cre8-mcp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "MCP server providing component intelligence for Cre8 design system (@tmorrow/cre8-wc and @tmorrow/cre8-react)",
   "type": "module",
   "main": "dist/index.js",
@@ -57,5 +57,9 @@
   "files": [
     "dist",
     "data"
-  ]
+  ],
+  "exports": {
+    ".": "./dist/index.js",
+    "./skills/*": "./data/skills/*"
+  }
 }

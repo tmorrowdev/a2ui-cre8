@@ -1,7 +1,7 @@
 # Railway deployment configuration for a2ui-bridge monorepo
 
 [build]
-builder = "nixpacks"
+builder = "docker"
 
 [phases.setup]
 cmds = ["corepack enable"]

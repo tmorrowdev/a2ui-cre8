@@ -1,14 +1,5 @@
 # Railway deployment configuration for a2ui-bridge monorepo
 
-[build]
-builder = "docker"
-
-[phases.setup]
-cmds = ["corepack enable"]
-
-[phases.install]
-cmds = ["pnpm install"]
-
 [deploy]
 numReplicas = 1
 healthcheckPath = "/health"

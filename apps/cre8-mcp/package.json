@@ -1,12 +1,13 @@
 {
-  "name": "@a2ui-bridge/cre8-mcp",
+  "name": "cre8-mcp",
   "version": "0.1.0",
   "description": "Cre8 Design System MCP Server - Component intelligence for AI agents",
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "cre8-mcp": "./dist/index.js"
+    "cre8-mcp": "./dist/index.js",
+    "cre8-mcp-proxy": "./dist/proxy.js"
   },
   "scripts": {
     "build": "tsc",

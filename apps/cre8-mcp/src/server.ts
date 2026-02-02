@@ -4,6 +4,7 @@
  * Exposes component patterns and search as HTTP endpoints for Railway deployment.
  */
 
+import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import {
@@ -55,7 +56,7 @@ const port = parseInt(process.env.PORT || '3001', 10);
 console.log(`Cre8 MCP API starting on port ${port}`);
 console.log(`CORS origin: ${allowedOrigin}`);
 
-export default {
-  port,
+serve({
   fetch: app.fetch,
-};
+  port,
+});

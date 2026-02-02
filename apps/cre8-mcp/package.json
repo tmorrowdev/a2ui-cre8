@@ -16,6 +16,7 @@
     "dev:api": "tsx watch src/server.ts"
   },
   "dependencies": {
+    "@hono/node-server": "^1.19.9",
     "@modelcontextprotocol/sdk": "^1.0.0",
     "hono": "^4.11.4",
     "zod": "^3.23.8"

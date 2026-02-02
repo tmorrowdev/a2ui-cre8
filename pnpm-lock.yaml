@@ -66,6 +66,9 @@ importers:
 
   apps/cre8-mcp:
     dependencies:
+      '@hono/node-server':
+        specifier: ^1.19.9
+        version: 1.19.9(hono@4.11.4)
       '@modelcontextprotocol/sdk':
         specifier: ^1.0.0
         version: 1.25.3(hono@4.11.4)(zod@3.25.76)
